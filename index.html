@@ -4,12 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz de Estudos</title>
-  <meta name="theme-color" content="#4f46e5">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Quiz Estudos">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3426/3426653.png">
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Quiz%20de%20Estudos%22,%22short_name%22:%22QuizEstudos%22,%22start_url%22:%22.%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%234f46e5%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3426/3426653.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
-  
   <style>
     :root {
       --bg-color: #f4f6f9;
@@ -85,15 +79,15 @@
 </head>
 <body>
 
-  <div class="container" role="main">
-    <button class="settings-btn-corner" onclick="toggleSettingsModal()" aria-label="Acessibilidade e Configurações" title="Configurações">⚙️</button>
+  <div class="container">
+    <button class="settings-btn-corner" onclick="toggleSettingsModal()">⚙️</button>
 
     <div class="header">
-      <span class="owl-icon" role="img" aria-label="Coruja">🦉</span>
+      <span class="owl-icon">🦉</span>
       <h1>Quiz de Estudos</h1>
     </div>
 
-    <div class="nav-tabs" id="tab-bar">
+    <div class="nav-tabs">
       <button class="tab-btn active" id="btn-tab-play" onclick="switchTab('play')">Jogar</button>
       <button class="tab-btn" id="btn-tab-create" onclick="switchTab('create')">Criar Pergunta</button>
     </div>
@@ -103,10 +97,10 @@
         <div class="highscore-tag">🏆 Seu Recorde: <span id="top-score-display">0</span> pts</div>
         
         <div style="text-align: left;">
-          <label for="category-select">1. Categoria Principal:</label>
+          <label>1. Categoria Principal:</label>
           <select id="category-select" onchange="updateSubcategories('play')"></select>
 
-          <label for="subcategory-select">2. Matéria / Disciplina:</label>
+          <label>2. Matéria / Disciplina:</label>
           <select id="subcategory-select"></select>
         </div>
 
@@ -134,16 +128,16 @@
     <div id="create-screen" class="hide">
       <h3 style="margin-bottom: 12px;">Adicionar Pergunta</h3>
       
-      <label for="create-category-select">Categoria:</label>
+      <label>Categoria:</label>
       <select id="create-category-select" onchange="updateSubcategories('create')"></select>
 
-      <label for="create-subcategory-select">Matéria / Disciplina:</label>
+      <label>Matéria / Disciplina:</label>
       <select id="create-subcategory-select"></select>
 
-      <label for="custom-subcat-input">Nova Matéria Personalizada (opcional):</label>
+      <label>Nova Matéria Personalizada (opcional):</label>
       <input type="text" id="custom-subcat-input" placeholder="Ex: Minha Matéria Especial">
 
-      <label for="new-q">Pergunta:</label>
+      <label>Pergunta:</label>
       <input type="text" id="new-q" placeholder="Digite a pergunta">
       
       <label>Opções de Resposta:</label>
@@ -159,7 +153,7 @@
   <div id="settings-modal" class="modal-overlay hide">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modal-title" style="color: var(--primary);">♿ Acessibilidade e Som</h3>
+        <h3 style="color: var(--primary);">♿ Acessibilidade e Som</h3>
         <button class="modal-close" onclick="toggleSettingsModal()">✖</button>
       </div>
 
@@ -181,8 +175,8 @@
       <div class="setting-item" style="border: none;">
         <label>🔍 Tamanho da Fonte:</label>
         <div style="display: flex; gap: 8px;">
-          <button onclick="changeFontSize(0.1)" style="padding: 8px 14px; font-weight: bold; cursor: pointer; border-radius: 6px;">A+</button>
-          <button onclick="changeFontSize(-0.1)" style="padding: 8px 14px; font-weight: bold; cursor: pointer; border-radius: 6px;">A-</button>
+          <button onclick="changeFontSize(0.1)" style="padding: 8px 14px; font-weight: bold; cursor: pointer;">A+</button>
+          <button onclick="changeFontSize(-0.1)" style="padding: 8px 14px; font-weight: bold; cursor: pointer;">A-</button>
         </div>
       </div>
 
@@ -191,7 +185,7 @@
   </div>
 
   <script>
-    const catalogData = {
+    var catalogData = {
       "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Libras"],
       "Matemática": ["Aritmética", "Matemática Básica", "Matemática Financeira", "Álgebra", "Geometria Plana", "Estatística", "Lógica Matemática"],
       "Língua Portuguesa e Literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de Textos", "Literatura Brasileira"],
@@ -204,7 +198,7 @@
       "Outras Áreas": ["Conhecimentos Gerais", "Cultura Geral", "Raciocínio Lógico"]
     };
 
-    const realQuestionsBank = {
+    var realQuestionsBank = {
       "Geografia de Minas Gerais": [
         { q: "Qual é a capital do estado de Minas Gerais?", options: ["Belo Horizonte", "Uberlândia", "Juiz de Fora", "Ouro Preto"], correct: 0 },
         { q: "Qual rio de grande extensão nasce na Serra da Canastra em MG?", options: ["Rio São Francisco", "Rio Doce", "Rio Grande", "Rio Paraná"], correct: 0 },
@@ -233,59 +227,45 @@
       ]
     };
 
-    let audioCtx = null;
-    let isMusicOn = false;
-    let isVoiceOn = false;
-    let musicInterval = null;
-    let currentScale = 1;
-    let customQuestions = {};
-    let currentCategory = "";
-    let currentSubcategory = "";
-    let score = 0;
-    let highScore = localStorage.getItem("quiz_highscore") || 0;
-    let timer = null;
-    let timeLeft = 60;
+    var audioCtx = null;
+    var isMusicOn = false;
+    var isVoiceOn = false;
+    var musicInterval = null;
+    var currentScale = 1;
+    var customQuestions = {};
+    var currentCategory = "";
+    var currentSubcategory = "";
+    var score = 0;
+    var highScore = localStorage.getItem("quiz_highscore") || 0;
+    var timer = null;
+    var timeLeft = 60;
 
     function populateCategories() {
-      const playCatSelect = document.getElementById("category-select");
-      const createCatSelect = document.getElementById("create-category-select");
+      var playCatSelect = document.getElementById("category-select");
+      var createCatSelect = document.getElementById("create-category-select");
       if(!playCatSelect || !createCatSelect) return;
       playCatSelect.innerHTML = "";
       createCatSelect.innerHTML = "";
 
-      for (let cat in catalogData) {
+      for (var cat in catalogData) {
         playCatSelect.add(new Option(cat, cat));
         createCatSelect.add(new Option(cat, cat));
       }
     }
 
     function updateSubcategories(mode) {
-      const catSelect = mode === 'play' ? document.getElementById("category-select") : document.getElementById("create-category-select");
-      const subSelect = mode === 'play' ? document.getElementById("subcategory-select") : document.getElementById("create-subcategory-select");
+      var catSelect = mode === 'play' ? document.getElementById("category-select") : document.getElementById("create-category-select");
+      var subSelect = mode === 'play' ? document.getElementById("subcategory-select") : document.getElementById("create-subcategory-select");
       if(!catSelect || !subSelect) return;
       
-      const selectedCat = catSelect.value;
+      var selectedCat = catSelect.value;
       subSelect.innerHTML = "";
 
       if (catalogData[selectedCat]) {
-        catalogData[selectedCat].forEach(sub => {
+        catalogData[selectedCat].forEach(function(sub) {
           subSelect.add(new Option(sub, sub));
         });
       }
-    }
-
-    function initApp() {
-      populateCategories();
-      updateSubcategories('play');
-      updateSubcategories('create');
-      const topScore = document.getElementById("top-score-display");
-      if (topScore) topScore.textContent = highScore;
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initApp);
-    } else {
-      initApp();
     }
 
     function initAudio() {
@@ -293,7 +273,7 @@
     }
 
     function toggleSettingsModal() {
-      const modal = document.getElementById("settings-modal");
+      var modal = document.getElementById("settings-modal");
       modal.classList.toggle("hide");
     }
 
@@ -307,9 +287,9 @@
       isMusicOn = document.getElementById("music-toggle").checked;
       
       if (isMusicOn) {
-        let notes = [261.63, 329.63, 392.00, 523.25];
-        let step = 0;
-        musicInterval = setInterval(() => {
+        var notes = [261.63, 329.63, 392.00, 523.25];
+        var step = 0;
+        musicInterval = setInterval(function() {
           playTone(notes[step % notes.length], 'sine', 0.4);
           step++;
         }, 500);
@@ -332,8 +312,8 @@
     function playTone(freq, type, duration) {
       if (!audioCtx) return;
       try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
         osc.type = type;
         osc.frequency.value = freq;
         gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
@@ -349,7 +329,7 @@
       initAudio();
       if (type === 'correct') {
         playTone(523.25, 'triangle', 0.15);
-        setTimeout(() => playTone(659.25, 'triangle', 0.25), 150);
+        setTimeout(function() { playTone(659.25, 'triangle', 0.25); }, 150);
       } else if (type === 'wrong') {
         playTone(180, 'sawtooth', 0.3);
       }
@@ -358,18 +338,18 @@
     function speakText(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
+        var utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'pt-BR';
         window.speechSynthesis.speak(utterance);
       }
     }
 
     function speakCurrentText() {
-      const qText = document.getElementById("question-text").textContent;
+      var qText = document.getElementById("question-text").textContent;
       if (qText) {
-        let fullSpeech = qText + ". Opções: ";
-        const btns = document.querySelectorAll(".btn-option");
-        btns.forEach((b, i) => { fullSpeech += `Opção ${i+1}: ${b.textContent}. `; });
+        var fullSpeech = qText + ". Opções: ";
+        var btns = document.querySelectorAll(".btn-option");
+        btns.forEach(function(b, i) { fullSpeech += "Opção " + (i+1) + ": " + b.textContent + ". "; });
         speakText(fullSpeech);
       }
     }
@@ -399,7 +379,7 @@
       timeLeft = 60;
       document.getElementById("time-display").textContent = timeLeft + "s";
 
-      timer = setInterval(() => {
+      timer = setInterval(function() {
         timeLeft--;
         document.getElementById("time-display").textContent = timeLeft + "s";
         if (timeLeft <= 0) {
@@ -411,35 +391,74 @@
 
     function getRandomQuestion(subcat) {
       if (customQuestions[subcat] && customQuestions[subcat].length > 0) {
-        const randIndex = Math.floor(Math.random() * customQuestions[subcat].length);
+        var randIndex = Math.floor(Math.random() * customQuestions[subcat].length);
         return customQuestions[subcat][randIndex];
       }
 
       if (realQuestionsBank[subcat] && realQuestionsBank[subcat].length > 0) {
-        const randIndex = Math.floor(Math.random() * realQuestionsBank[subcat].length);
+        var randIndex = Math.floor(Math.random() * realQuestionsBank[subcat].length);
         return realQuestionsBank[subcat][randIndex];
       }
 
-      const numA = Math.floor(Math.random() * 20) + 1;
-      const numB = Math.floor(Math.random() * 20) + 1;
+      var numA = Math.floor(Math.random() * 20) + 1;
+      var numB = Math.floor(Math.random() * 20) + 1;
       return {
-        q: `[${subcat}] Teste Rápido: Quanto é ${numA} + ${numB}?`,
-        options: [`${numA + numB}`, `${numA + numB + 2}`, `${numA + numB - 1}`, `${numA + numB + 4}`],
+        q: "[" + subcat + "] Teste Rápido: Quanto é " + numA + " + " + numB + "?",
+        options: ["" + (numA + numB), "" + (numA + numB + 2), "" + (numA + numB - 1), "" + (numA + numB + 4)],
         correct: 0
       };
     }
 
     function loadQuestion() {
       startTimer();
-      const q = getRandomQuestion(currentSubcategory);
+      var q = getRandomQuestion(currentSubcategory);
 
-      document.getElementById("score-display").textContent = `Pontos: ${score}`;
+      document.getElementById("score-display").textContent = "Pontos: " + score;
       document.getElementById("question-text").textContent = q.q;
 
-      const box = document.getElementById("options-box");
+      var box = document.getElementById("options-box");
       box.innerHTML = "";
 
-      let optionsList = q.options.map((text, idx) => ({ text, isCorrect: idx === q.correct }));
-      optionsList.sort(() => Math.random() - 0.5);
+      var optionsList = q.options.map(function(text, idx) { return { text: text, isCorrect: idx === q.correct }; });
+      optionsList.sort(function() { return Math.random() - 0.5; });
 
-      opti
+      optionsList.forEach(function(optObj) {
+        var btn = document.createElement("button");
+        btn.className = "btn-option";
+        btn.textContent = optObj.text;
+        btn.onclick = function() { handleAnswer(optObj.isCorrect, btn); };
+        box.appendChild(btn);
+      });
+
+      if (isVoiceOn) speakCurrentText();
+    }
+
+    function handleAnswer(isCorrect, selectedBtn) {
+      clearInterval(timer);
+      var btns = document.querySelectorAll(".btn-option");
+      btns.forEach(function(b) { b.disabled = true; });
+
+      if (isCorrect) {
+        playSoundEffect('correct');
+        selectedBtn.classList.add("correct");
+        score++;
+        
+        if (score > highScore) {
+          highScore = score;
+          localStorage.setItem("quiz_highscore", highScore);
+          document.getElementById("top-score-display").textContent = highScore;
+        }
+
+        setTimeout(function() { loadQuestion(); }, 1000);
+
+      } else {
+        playSoundEffect('wrong');
+        selectedBtn.classList.add("wrong");
+        setTimeout(function() { gameOver("❌ Resposta incorreta! Você foi eliminado."); }, 1200);
+      }
+    }
+
+    function gameOver(reason) {
+      clearInterval(timer);
+      document.getElementById("quiz-view").classList.add("hide");
+      document.getElementById("result-vie
