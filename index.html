@@ -20,144 +20,341 @@
       --border: #e5e7eb;
       --success: #10b981;
       --error: #ef4444;
+      --font-scale: 1rem;
+    }
+
+    body.high-contrast {
+      --bg-color: #000000;
+      --card-bg: #121212;
+      --primary: #fbbf24;
+      --text: #ffffff;
+      --border: #ffffff;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
-    .container { background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 520px; padding: 24px; }
+    body { background-color: var(--bg-color); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; font-size: var(--font-scale); }
+    .container { background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 520px; padding: 24px; position: relative; }
     
+    /* Botão de Acessibilidade Grande e Confortável no Canto */
+    .settings-btn-corner { 
+      position: absolute; 
+      top: 16px; 
+      right: 16px; 
+      background: #e0e7ff; 
+      border: 2px solid var(--primary); 
+      border-radius: 12px; 
+      width: 52px; 
+      height: 52px; 
+      font-size: 1.4rem; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      z-index: 10;
+    }
+    .settings-btn-corner:focus { outline: 3px solid var(--primary); }
+
+    /* Modal de Configurações */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
+    .modal-content { background: var(--card-bg); color: var(--text); border-radius: 16px; width: 100%; max-width: 420px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); border: 2px solid var(--border); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-close { background: none; border: none; font-size: 1.6rem; font-weight: bold; cursor: pointer; color: var(--text); padding: 4px; }
+
+    .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .setting-item label { font-weight: bold; font-size: 1rem; margin: 0; }
+
+    /* Estilo Original */
     .header { text-align: center; margin-bottom: 20px; }
     .owl-icon { font-size: 48px; margin-bottom: 8px; display: block; }
     h1 { font-size: 1.6rem; color: var(--primary); }
 
     .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
-    .tab-btn { flex: 1; padding: 10px; border: none; background: none; font-weight: bold; color: #6b7280; cursor: pointer; border-radius: 8px; }
+    .tab-btn { flex: 1; padding: 10px; border: none; background: none; font-weight: bold; color: #6b7280; cursor: pointer; border-radius: 8px; font-size: 1rem; }
     .tab-btn.active { background: #e0e7ff; color: var(--primary); }
 
-    .hud { display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; padding: 12px; border-radius: 10px; font-weight: bold; margin-bottom: 16px; }
+    .hud { display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; color: #1f2937; padding: 12px; border-radius: 10px; font-weight: bold; margin-bottom: 16px; font-size: 1rem; }
     .timer { color: #b91c1c; font-size: 1.1rem; display: flex; align-items: center; gap: 4px; }
+    .highscore-tag { background: #fef3c7; color: #d97706; padding: 6px 14px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 16px; }
 
     label { font-weight: bold; display: block; margin: 10px 0 4px 0; font-size: 0.95rem; }
-    select, input, textarea { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+    select, input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: var(--card-bg); color: var(--text); }
     
     .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .btn-option { padding: 14px; border: 2px solid var(--border); border-radius: 10px; background: #fff; font-size: 1rem; text-align: left; font-weight: 500; cursor: pointer; }
+    .btn-option { padding: 14px; border: 2px solid var(--border); border-radius: 10px; background: var(--card-bg); font-size: 1rem; text-align: left; font-weight: 500; cursor: pointer; color: var(--text); }
+    .btn-option:focus { outline: 3px solid var(--primary); }
     .btn-option.correct { background: var(--success); color: white; border-color: var(--success); }
     .btn-option.wrong { background: var(--error); color: white; border-color: var(--error); }
     
     .btn-main { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--primary); color: white; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
-    .hide { display: none; }
+    .btn-main:focus { outline: 3px solid #000; }
+    .hide { display: none !important; }
   </style>
 </head>
 <body>
 
-  <div class="container">
+  <div class="container" role="main">
+    <!-- Botão de Acessibilidade -->
+    <button class="settings-btn-corner" onclick="toggleSettingsModal()" aria-label="Abrir Acessibilidade e Configurações" title="Configurações e Acessibilidade">⚙️</button>
+
     <div class="header">
-      <span class="owl-icon">🦉</span>
+      <span class="owl-icon" role="img" aria-label="Ícone de Coruja">🦉</span>
       <h1>Quiz de Estudos</h1>
     </div>
 
-    <!-- Navegação: Jogar / Criar -->
-    <div class="nav-tabs" id="tab-bar">
-      <button class="tab-btn active" id="btn-tab-play" onclick="switchTab('play')">Jogar</button>
-      <button class="tab-btn" id="btn-tab-create" onclick="switchTab('create')">Criar Pergunta</button>
+    <!-- Navegação Estilo Original -->
+    <div class="nav-tabs" id="tab-bar" role="tablist">
+      <button class="tab-btn active" id="btn-tab-play" onclick="switchTab('play')" role="tab" aria-selected="true">Jogar</button>
+      <button class="tab-btn" id="btn-tab-create" onclick="switchTab('create')" role="tab" aria-selected="false">Criar Pergunta</button>
     </div>
 
     <!-- TELA DE JOGO -->
     <div id="play-screen">
-      <div id="setup-view">
-        <label>1. Escolha a Categoria Principal:</label>
-        <select id="category-select" onchange="updateSubcategories('play')"></select>
+      <div id="setup-view" style="text-align: center;">
+        <div class="highscore-tag" aria-live="polite">🏆 Seu Recorde: <span id="top-score-display">0</span> pts</div>
+        
+        <div style="text-align: left;">
+          <label for="category-select">1. Categoria Principal:</label>
+          <select id="category-select" onchange="updateSubcategories('play')"></select>
 
-        <label>2. Escolha a Matéria / Disciplina:</label>
-        <select id="subcategory-select"></select>
+          <label for="subcategory-select">2. Matéria / Disciplina:</label>
+          <select id="subcategory-select"></select>
+        </div>
 
-        <button class="btn-main" onclick="startQuiz()">Iniciar Quiz Infinito</button>
+        <button class="btn-main" onclick="startQuiz()">Iniciar Desafio Infinito</button>
       </div>
 
-      <div id="quiz-view" class="hide">
+      <div id="quiz-view" class="hide" aria-live="assertive">
         <div class="hud">
           <span id="score-display">Pontos: 0</span>
           <div class="timer">⏱️ <span id="time-display">60s</span></div>
         </div>
         <h3 id="question-text" style="margin-bottom: 16px;"></h3>
-        <div class="options" id="options-box"></div>
-        <button id="next-btn" class="btn-main hide" onclick="nextQuestion()">Próxima Pergunta</button>
+        <div class="options" id="options-box" role="group" aria-label="Opções de resposta"></div>
+        <button class="btn-main" style="background: #6b7280; margin-top: 8px;" onclick="speakCurrentText()">🔊 Ouvir Pergunta Novamente</button>
       </div>
 
-      <div id="result-view" class="hide" style="text-align: center;">
-        <h2 id="result-title" style="margin-bottom: 12px;"></h2>
-        <p id="result-msg" style="margin-bottom: 20px;"></p>
-        <button class="btn-main" onclick="resetToSetup()">Voltar ao Menu</button>
+      <div id="result-view" class="hide" style="text-align: center;" aria-live="polite">
+        <h2 id="result-title" style="color: var(--error); margin-bottom: 12px;">💥 ELIMINADO!</h2>
+        <p id="result-msg" style="margin-bottom: 16px; font-size: 1.05rem;"></p>
+        <p style="font-weight: bold; color: var(--primary); margin-bottom: 20px;">🏆 Maior Recorde: <span id="record-in-game">0</span> pontos</p>
+        <button class="btn-main" onclick="resetToSetup()">Tentar Novamente</button>
       </div>
     </div>
 
-    <!-- TELA DE CRIAR PERGUNTA (LIVRE) -->
+    <!-- TELA DE CRIAR PERGUNTA -->
     <div id="create-screen" class="hide">
-      <h3 style="margin-bottom: 12px;">Adicionar Nova Pergunta</h3>
+      <h3 style="margin-bottom: 12px;">Adicionar Pergunta</h3>
       
-      <label>Categoria:</label>
+      <label for="create-category-select">Categoria:</label>
       <select id="create-category-select" onchange="updateSubcategories('create')"></select>
 
-      <label>Matéria / Disciplina:</label>
+      <label for="create-subcategory-select">Matéria / Disciplina:</label>
       <select id="create-subcategory-select"></select>
 
-      <label>Ou digite uma nova Matéria Personalizada:</label>
+      <label for="custom-subcat-input">Nova Matéria Personalizada (opcional):</label>
       <input type="text" id="custom-subcat-input" placeholder="Ex: Minha Matéria Especial">
 
-      <label>Pergunta:</label>
+      <label for="new-q">Pergunta:</label>
       <input type="text" id="new-q" placeholder="Digite a pergunta">
       
       <label>Opções de Resposta:</label>
       <input type="text" id="opt0" placeholder="Opção 1 (Correta)">
-      <input type="text" id="opt1" placeholder="Opção 2">
-      <input type="text" id="opt2" placeholder="Opção 3">
-      <input type="text" id="opt3" placeholder="Opção 4">
+      <input type="text" id="opt1" placeholder="Opção 2 (Incorreta)">
+      <input type="text" id="opt2" placeholder="Opção 3 (Incorreta)">
+      <input type="text" id="opt3" placeholder="Opção 4 (Incorreta)">
       
       <button class="btn-main" onclick="saveCustomQuestion()">Guardar Pergunta</button>
     </div>
   </div>
 
+  <!-- MODAL DE ACESSIBILIDADE E SOM -->
+  <div id="settings-modal" class="modal-overlay hide" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title" style="color: var(--primary);">♿ Acessibilidade e Som</h3>
+        <button class="modal-close" onclick="toggleSettingsModal()" aria-label="Fechar janela">✖</button>
+      </div>
+
+      <div class="setting-item">
+        <label for="voice-toggle">🔊 Leitor Automático de Voz:</label>
+        <input type="checkbox" id="voice-toggle" style="width: 26px; height: 26px; cursor: pointer;" onchange="toggleVoiceSetting()">
+      </div>
+
+      <div class="setting-item">
+        <label for="music-toggle">🎵 Música de Fundo:</label>
+        <input type="checkbox" id="music-toggle" style="width: 26px; height: 26px; cursor: pointer;" onchange="toggleAudioSetting()">
+      </div>
+
+      <div class="setting-item">
+        <label for="contrast-toggle">👁️ Modo Alto Contraste:</label>
+        <input type="checkbox" id="contrast-toggle" style="width: 26px; height: 26px; cursor: pointer;" onchange="toggleContrast()">
+      </div>
+
+      <div class="setting-item" style="border: none;">
+        <label>🔍 Tamanho da Fonte:</label>
+        <div style="display: flex; gap: 8px;">
+          <button onclick="changeFontSize(0.1)" style="padding: 8px 14px; font-weight: bold; cursor: pointer; border-radius: 6px;">A+</button>
+          <button onclick="changeFontSize(-0.1)" style="padding: 8px 14px; font-weight: bold; cursor: pointer; border-radius: 6px;">A-</button>
+        </div>
+      </div>
+
+      <button class="btn-main" onclick="toggleSettingsModal()">Salvar e Voltar</button>
+    </div>
+  </div>
+
   <script>
-    // ÁRVORE COMPLETA DE CATEGORIAS E SUBMATÉRIAS
+    let audioCtx = null;
+    let isMusicOn = false;
+    let isVoiceOn = false;
+    let musicInterval = null;
+    let currentScale = 1;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function toggleSettingsModal() {
+      const modal = document.getElementById("settings-modal");
+      modal.classList.toggle("hide");
+    }
+
+    function toggleVoiceSetting() {
+      isVoiceOn = document.getElementById("voice-toggle").checked;
+      if (isVoiceOn) speakText("Leitor de voz ativado.");
+    }
+
+    function toggleAudioSetting() {
+      initAudio();
+      isMusicOn = document.getElementById("music-toggle").checked;
+      
+      if (isMusicOn) {
+        let notes = [261.63, 329.63, 392.00, 523.25];
+        let step = 0;
+        musicInterval = setInterval(() => {
+          playTone(notes[step % notes.length], 'sine', 0.4);
+          step++;
+        }, 500);
+      } else {
+        clearInterval(musicInterval);
+      }
+    }
+
+    function toggleContrast() {
+      document.body.classList.toggle("high-contrast");
+    }
+
+    function changeFontSize(delta) {
+      currentScale += delta;
+      if (currentScale < 0.8) currentScale = 0.8;
+      if (currentScale > 1.4) currentScale = 1.4;
+      document.documentElement.style.setProperty('--font-scale', currentScale + 'rem');
+    }
+
+    function playTone(freq, type, duration) {
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e){}
+    }
+
+    function playSoundEffect(type) {
+      initAudio();
+      if (type === 'correct') {
+        playTone(523.25, 'triangle', 0.15);
+        setTimeout(() => playTone(659.25, 'triangle', 0.25), 150);
+      } else if (type === 'wrong') {
+        playTone(180, 'sawtooth', 0.3);
+      }
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'pt-BR';
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function speakCurrentText() {
+      const qText = document.getElementById("question-text").textContent;
+      if (qText) {
+        let fullSpeech = qText + ". Opções: ";
+        const btns = document.querySelectorAll(".btn-option");
+        btns.forEach((b, i) => { fullSpeech += `Opção ${i+1}: ${b.textContent}. `; });
+        speakText(fullSpeech);
+      }
+    }
+
     const catalogData = {
-      "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Mandarim", "Coreano", "Russo", "Árabe", "Latim", "Libras", "Esperanto"],
-      "Matemática": ["Aritmética", "Matemática Básica", "Matemática Financeira", "Álgebra", "Geometria Plana", "Geometria Espacial", "Trigonometria", "Estatística", "Probabilidade", "Cálculo Diferencial", "Lógica Matemática"],
-      "Língua Portuguesa e Literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de Textos", "Redação", "Literatura Brasileira", "Literatura Portuguesa", "Linguística"],
-      "Ciências da Natureza": ["Biologia", "Física", "Química", "Astronomia", "Geologia", "Ecologia", "Genética", "Anatomia", "Bioquímica"],
-      "História": ["História Geral", "História do Brasil", "História de Minas Gerais", "História Antiga", "História Medieval", "História Contemporânea"],
-      "Geografia": ["Geografia Geral", "Geografia do Brasil", "Geografia de Minas Gerais", "Geografia Física", "Geopolítica", "Cartografia", "Climatologia"],
-      "Ciências Humanas e Sociais": ["Filosofia", "Sociologia", "Antropologia", "Ciência Política", "Psicologia", "Economia", "Ética"],
-      "Direito e Legislação": ["Direito Constitucional", "Direito Administrativo", "Direito Civil", "Direito Penal", "Direitos Humanos", "Legislação de Trânsito"],
-      "Administração e RH": ["Administração Geral", "Recursos Humanos", "Gestão de Pessoas", "Gestão de Projetos", "Empreendedorismo", "Logística"],
-      "Economia e Finanças": ["Macroeconomia", "Microeconomia", "Educação Financeira", "Investimentos", "Contabilidade"],
-      "Informática e Tecnologia": ["Informática Básica", "Redes e Segurança", "Programação (Python, JS)", "Desenvolvimento Web", "Inteligência Artificial", "Banco de Dados"],
-      "Saúde e Corpo Humano": ["Anatomia Humana", "Nutrição", "Primeiros Socorros", "Enfermagem", "Farmacologia"],
-      "Artes e Criatividade": ["Artes Visuais", "Desenho", "Cinema", "Música", "Design Gráfico"],
-      "Religião e Teologia": ["Teologia", "História das Religiões", "Estudos Bíblicos"],
-      "Outras Áreas": ["Conhecimentos Gerais", "Cultura Geral", "Raciocínio Lógico", "Atualidades"]
+      "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Libras"],
+      "Matemática": ["Aritmética", "Matemática Básica", "Matemática Financeira", "Álgebra", "Geometria Plana", "Estatística", "Lógica Matemática"],
+      "Língua Portuguesa e Literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de Textos", "Literatura Brasileira"],
+      "Ciências da Natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética"],
+      "História": ["História Geral", "História do Brasil", "História de Minas Gerais", "História Antiga"],
+      "Geografia": ["Geografia Geral", "Geografia do Brasil", "Geografia de Minas Gerais", "Geopolítica"],
+      "Ciências Humanas e Sociais": ["Filosofia", "Sociologia", "Psicologia", "Economia"],
+      "Direito e Legislação": ["Direito Constitucional", "Direito Penal", "Direitos Humanos", "Legislação de Trânsito"],
+      "Informática e Tecnologia": ["Informática Básica", "Redes e Segurança", "Programação", "Inteligência Artificial"],
+      "Outras Áreas": ["Conhecimentos Gerais", "Cultura Geral", "Raciocínio Lógico"]
     };
 
-    // BANCO DE PERGUNTAS INICIAL + GERADOR INFINITO
-    let customQuestions = {};
+    const realQuestionsBank = {
+      "Geografia de Minas Gerais": [
+        { q: "Qual é a capital do estado de Minas Gerais?", options: ["Belo Horizonte", "Uberlândia", "Juiz de Fora", "Ouro Preto"], correct: 0 },
+        { q: "Qual rio de grande extensão nasce na Serra da Canastra em MG?", options: ["Rio São Francisco", "Rio Doce", "Rio Grande", "Rio Paraná"], correct: 0 },
+        { q: "Qual bioma é predominante na região central e norte de Minas Gerais?", options: ["Cerrado", "Caatinga", "Mata Atlântica", "Pampa"], correct: 0 }
+      ],
+      "Geografia do Brasil": [
+        { q: "Qual é o maior estado brasileiro em extensão territorial?", options: ["Amazonas", "Pará", "Mato Grosso", "Minas Gerais"], correct: 0 }
+      ],
+      "Português": [
+        { q: "Qual das palavras abaixo é um substantivo abstrato?", options: ["Saudade", "Cadeira", "Livro", "Caneta"], correct: 0 }
+      ],
+      "Inglês": [
+        { q: "Como se diz 'Livro' em inglês?", options: ["Book", "Pencil", "Door", "Water"], correct: 0 }
+      ],
+      "História do Brasil": [
+        { q: "Em que ano ocorreu a Proclamação da República no Brasil?", options: ["1889", "1500", "1822", "1988"], correct: 0 }
+      ],
+      "Biologia": [
+        { q: "Qual é a unidade fundamental da vida em todos os seres vivos?", options: ["Célula", "Átomo", "Molécula", "Órgão"], correct: 0 }
+      ],
+      "Química": [
+        { q: "Qual é a fórmula química da água?", options: ["H2O", "CO2", "NaCl", "O2"], correct: 0 }
+      ],
+      "Física": [
+        { q: "Qual é a unidade de medida da força no Sistema Internacional?", options: ["Newton", "Joule", "Watt", "Pascal"], correct: 0 }
+      ]
+    };
 
+    let customQuestions = {};
     let currentCategory = "";
     let currentSubcategory = "";
     let score = 0;
+    let highScore = localStorage.getItem("quiz_highscore") || 0;
     let timer = null;
     let timeLeft = 60;
 
-    // Inicialização da tela
     window.onload = function() {
       populateCategories();
       updateSubcategories('play');
       updateSubcategories('create');
+      document.getElementById("top-score-display").textContent = highScore;
     };
 
     function populateCategories() {
       const playCatSelect = document.getElementById("category-select");
       const createCatSelect = document.getElementById("create-category-select");
-      
       playCatSelect.innerHTML = "";
       createCatSelect.innerHTML = "";
 
@@ -188,8 +385,8 @@
       document.getElementById('create-screen').classList.toggle('hide', tab !== 'create');
     }
 
-    // INICIAR O QUIZ
     function startQuiz() {
+      initAudio();
       currentCategory = document.getElementById("category-select").value;
       currentSubcategory = document.getElementById("subcategory-select").value;
       score = 0;
@@ -211,151 +408,24 @@
         document.getElementById("time-display").textContent = timeLeft + "s";
         if (timeLeft <= 0) {
           clearInterval(timer);
-          endGame("⏰ O tempo acabou! Game Over.");
+          gameOver("⏰ O tempo acabou!");
         }
       }, 1000);
     }
 
-    // GERADOR DE QUESTÕES INFINITAS E DINÂMICAS
-    function generateQuestion(subcat) {
-      // Se houver questão personalizada criada pelo utilizador para esta matéria
+    function getRandomQuestion(subcat) {
       if (customQuestions[subcat] && customQuestions[subcat].length > 0) {
-        const customQ = customQuestions[subcat].pop(); // Pega na personalizada
-        return customQ;
+        const randIndex = Math.floor(Math.random() * customQuestions[subcat].length);
+        return customQuestions[subcat][randIndex];
       }
 
-      // Pergunta gerada dinamicamente para garantir fluxo infinito
-      const randomA = Math.floor(Math.random() * 50) + 1;
-      const randomB = Math.floor(Math.random() * 50) + 1;
-
-      if (subcat.includes("Geografia de Minas Gerais")) {
-        return {
-          q: "Sobre a geografia de Minas Gerais: qual elemento é característico do estado?",
-          options: ["Belo Horizonte é a capital", "Possui litoral banhado pelo oceano", "O clima predominante é o polar", "Não possui rios importantes"],
-          correct: 0
-        };
-      } else if (subcat.includes("Matemática") || subcat.includes("Álgebra") || subcat.includes("Aritmética")) {
-        const correctAns = randomA + randomB;
-        return {
-          q: `[${subcat}] Quanto é ${randomA} + ${randomB}?`,
-          options: [`${correctAns}`, `${correctAns + 3}`, `${correctAns - 2}`, `${correctAns + 5}`],
-          correct: 0
-        };
-      } else {
-        return {
-          q: `[${subcat}] Questão sobre o tópico: Qual é a afirmação mais adequada sobre ${subcat}?`,
-          options: [
-            `Conceito fundamental e correto de ${subcat}`,
-            `Definição incorreta número 1`,
-            `Definição incorreta número 2`,
-            `Nenhuma das anteriores`
-          ],
-          correct: 0
-        };
-      }
-    }
-
-    function loadQuestion() {
-      startTimer();
-      const q = generateQuestion(currentSubcategory);
-
-      document.getElementById("score-display").textContent = `Pontos: ${score}`;
-      document.getElementById("question-text").textContent = q.q;
-      document.getElementById("next-btn").classList.add("hide");
-
-      const box = document.getElementById("options-box");
-      box.innerHTML = "";
-
-      // Embaralha ligeiramente as opções para variar
-      let shuffledOptions = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correct }));
-      shuffledOptions.sort(() => Math.random() - 0.5);
-
-      shuffledOptions.forEach((optObj, idx) => {
-        const btn = document.createElement("button");
-        btn.className = "btn-option";
-        btn.textContent = optObj.text;
-        btn.onclick = () => handleAnswer(optObj.isCorrect, btn);
-        box.appendChild(btn);
-      });
-    }
-
-    function handleAnswer(isCorrect, selectedBtn) {
-      clearInterval(timer);
-      const btns = document.querySelectorAll(".btn-option");
-      btns.forEach(b => b.disabled = true);
-
-      if (isCorrect) {
-        selectedBtn.classList.add("correct");
-        score++;
-      } else {
-        selectedBtn.classList.add("wrong");
+      if (realQuestionsBank[subcat] && realQuestionsBank[subcat].length > 0) {
+        const randIndex = Math.floor(Math.random() * realQuestionsBank[subcat].length);
+        return realQuestionsBank[subcat][randIndex];
       }
 
-      document.getElementById("next-btn").classList.remove("hide");
-    }
-
-    function nextQuestion() {
-      loadQuestion();
-    }
-
-    function endGame(msg) {
-      clearInterval(timer);
-      document.getElementById("quiz-view").classList.add("hide");
-      document.getElementById("result-view").classList.remove("hide");
-      document.getElementById("result-title").textContent = "Fim de Jogo!";
-      document.getElementById("result-msg").textContent = `${msg} Você fez ${score} ponto(s) em ${currentSubcategory}.`;
-    }
-
-    function resetToSetup() {
-      document.getElementById("result-view").classList.add("hide");
-      document.getElementById("setup-view").classList.remove("hide");
-    }
-
-    // SALVAR PERGUNTA CRIADA PELO UTILIZADOR
-    function saveCustomQuestion() {
-      const cat = document.getElementById("create-category-select").value;
-      let subcat = document.getElementById("custom-subcat-input").value.trim();
-      
-      if (!subcat) {
-        subcat = document.getElementById("create-subcategory-select").value;
-      } else {
-        // Adiciona a nova subcategoria criada ao catálogo
-        if (!catalogData[cat].includes(subcat)) {
-          catalogData[cat].push(subcat);
-          populateCategories();
-        }
-      }
-
-      const qText = document.getElementById("new-q").value;
-      const o0 = document.getElementById("opt0").value;
-      const o1 = document.getElementById("opt1").value;
-      const o2 = document.getElementById("opt2").value;
-      const o3 = document.getElementById("opt3").value;
-
-      if (!qText || !o0 || !o1 || !o2 || !o3) {
-        alert("Por favor, preencha a pergunta e todas as 4 opções!");
-        return;
-      }
-
-      if (!customQuestions[subcat]) customQuestions[subcat] = [];
-      customQuestions[subcat].push({
-        q: qText,
-        options: [o0, o1, o2, o3],
-        correct: 0
-      });
-
-      alert(`Pergunta guardada com sucesso na matéria "${subcat}"!`);
-      
-      // Limpa os campos
-      document.getElementById("new-q").value = "";
-      document.getElementById("opt0").value = "";
-      document.getElementById("opt1").value = "";
-      document.getElementById("opt2").value = "";
-      document.getElementById("opt3").value = "";
-      document.getElementById("custom-subcat-input").value = "";
-
-      switchTab('play');
-    }
-  </script>
-</body>
-</html>
+      const numA = Math.floor(Math.random() * 20) + 1;
+      const numB = Math.floor(Math.random() * 20) + 1;
+      return {
+        q: `[${subcat}] Teste Rápido: Quanto é ${numA} + ${numB}?`,
+        options: [`${numA + numB}`, `${numA + numB + 2}`, `${numA + numB - 1}`, `${numA + nu
