@@ -15,7 +15,6 @@
       --bg-color: #f4f6f9;
       --card-bg: #ffffff;
       --primary: #4f46e5;
-      --primary-hover: #4338ca;
       --text: #1f2937;
       --border: #e5e7eb;
       --success: #10b981;
@@ -35,7 +34,6 @@
     body { background-color: var(--bg-color); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; font-size: var(--font-scale); }
     .container { background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 520px; padding: 24px; position: relative; }
     
-    /* Botão de Acessibilidade Grande e Confortável no Canto */
     .settings-btn-corner { 
       position: absolute; 
       top: 16px; 
@@ -52,9 +50,7 @@
       justify-content: center; 
       z-index: 10;
     }
-    .settings-btn-corner:focus { outline: 3px solid var(--primary); }
 
-    /* Modal de Configurações */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
     .modal-content { background: var(--card-bg); color: var(--text); border-radius: 16px; width: 100%; max-width: 420px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); border: 2px solid var(--border); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -63,7 +59,6 @@
     .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
     .setting-item label { font-weight: bold; font-size: 1rem; margin: 0; }
 
-    /* Estilo Original */
     .header { text-align: center; margin-bottom: 20px; }
     .owl-icon { font-size: 48px; margin-bottom: 8px; display: block; }
     h1 { font-size: 1.6rem; color: var(--primary); }
@@ -81,36 +76,31 @@
     
     .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
     .btn-option { padding: 14px; border: 2px solid var(--border); border-radius: 10px; background: var(--card-bg); font-size: 1rem; text-align: left; font-weight: 500; cursor: pointer; color: var(--text); }
-    .btn-option:focus { outline: 3px solid var(--primary); }
     .btn-option.correct { background: var(--success); color: white; border-color: var(--success); }
     .btn-option.wrong { background: var(--error); color: white; border-color: var(--error); }
     
     .btn-main { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--primary); color: white; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
-    .btn-main:focus { outline: 3px solid #000; }
     .hide { display: none !important; }
   </style>
 </head>
 <body>
 
   <div class="container" role="main">
-    <!-- Botão de Acessibilidade -->
-    <button class="settings-btn-corner" onclick="toggleSettingsModal()" aria-label="Abrir Acessibilidade e Configurações" title="Configurações e Acessibilidade">⚙️</button>
+    <button class="settings-btn-corner" onclick="toggleSettingsModal()" aria-label="Acessibilidade e Configurações" title="Configurações">⚙️</button>
 
     <div class="header">
-      <span class="owl-icon" role="img" aria-label="Ícone de Coruja">🦉</span>
+      <span class="owl-icon" role="img" aria-label="Coruja">🦉</span>
       <h1>Quiz de Estudos</h1>
     </div>
 
-    <!-- Navegação Estilo Original -->
-    <div class="nav-tabs" id="tab-bar" role="tablist">
-      <button class="tab-btn active" id="btn-tab-play" onclick="switchTab('play')" role="tab" aria-selected="true">Jogar</button>
-      <button class="tab-btn" id="btn-tab-create" onclick="switchTab('create')" role="tab" aria-selected="false">Criar Pergunta</button>
+    <div class="nav-tabs" id="tab-bar">
+      <button class="tab-btn active" id="btn-tab-play" onclick="switchTab('play')">Jogar</button>
+      <button class="tab-btn" id="btn-tab-create" onclick="switchTab('create')">Criar Pergunta</button>
     </div>
 
-    <!-- TELA DE JOGO -->
     <div id="play-screen">
       <div id="setup-view" style="text-align: center;">
-        <div class="highscore-tag" aria-live="polite">🏆 Seu Recorde: <span id="top-score-display">0</span> pts</div>
+        <div class="highscore-tag">🏆 Seu Recorde: <span id="top-score-display">0</span> pts</div>
         
         <div style="text-align: left;">
           <label for="category-select">1. Categoria Principal:</label>
@@ -123,17 +113,17 @@
         <button class="btn-main" onclick="startQuiz()">Iniciar Desafio Infinito</button>
       </div>
 
-      <div id="quiz-view" class="hide" aria-live="assertive">
+      <div id="quiz-view" class="hide">
         <div class="hud">
           <span id="score-display">Pontos: 0</span>
           <div class="timer">⏱️ <span id="time-display">60s</span></div>
         </div>
         <h3 id="question-text" style="margin-bottom: 16px;"></h3>
-        <div class="options" id="options-box" role="group" aria-label="Opções de resposta"></div>
+        <div class="options" id="options-box"></div>
         <button class="btn-main" style="background: #6b7280; margin-top: 8px;" onclick="speakCurrentText()">🔊 Ouvir Pergunta Novamente</button>
       </div>
 
-      <div id="result-view" class="hide" style="text-align: center;" aria-live="polite">
+      <div id="result-view" class="hide" style="text-align: center;">
         <h2 id="result-title" style="color: var(--error); margin-bottom: 12px;">💥 ELIMINADO!</h2>
         <p id="result-msg" style="margin-bottom: 16px; font-size: 1.05rem;"></p>
         <p style="font-weight: bold; color: var(--primary); margin-bottom: 20px;">🏆 Maior Recorde: <span id="record-in-game">0</span> pontos</p>
@@ -141,7 +131,6 @@
       </div>
     </div>
 
-    <!-- TELA DE CRIAR PERGUNTA -->
     <div id="create-screen" class="hide">
       <h3 style="margin-bottom: 12px;">Adicionar Pergunta</h3>
       
@@ -167,12 +156,11 @@
     </div>
   </div>
 
-  <!-- MODAL DE ACESSIBILIDADE E SOM -->
-  <div id="settings-modal" class="modal-overlay hide" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+  <div id="settings-modal" class="modal-overlay hide">
     <div class="modal-content">
       <div class="modal-header">
         <h3 id="modal-title" style="color: var(--primary);">♿ Acessibilidade e Som</h3>
-        <button class="modal-close" onclick="toggleSettingsModal()" aria-label="Fechar janela">✖</button>
+        <button class="modal-close" onclick="toggleSettingsModal()">✖</button>
       </div>
 
       <div class="setting-item">
@@ -203,11 +191,102 @@
   </div>
 
   <script>
+    const catalogData = {
+      "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Libras"],
+      "Matemática": ["Aritmética", "Matemática Básica", "Matemática Financeira", "Álgebra", "Geometria Plana", "Estatística", "Lógica Matemática"],
+      "Língua Portuguesa e Literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de Textos", "Literatura Brasileira"],
+      "Ciências da Natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética"],
+      "História": ["História Geral", "História do Brasil", "História de Minas Gerais", "História Antiga"],
+      "Geografia": ["Geografia Geral", "Geografia do Brasil", "Geografia de Minas Gerais", "Geopolítica"],
+      "Ciências Humanas e Sociais": ["Filosofia", "Sociologia", "Psicologia", "Economia"],
+      "Direito e Legislação": ["Direito Constitucional", "Direito Penal", "Direitos Humanos", "Legislação de Trânsito"],
+      "Informática e Tecnologia": ["Informática Básica", "Redes e Segurança", "Programação", "Inteligência Artificial"],
+      "Outras Áreas": ["Conhecimentos Gerais", "Cultura Geral", "Raciocínio Lógico"]
+    };
+
+    const realQuestionsBank = {
+      "Geografia de Minas Gerais": [
+        { q: "Qual é a capital do estado de Minas Gerais?", options: ["Belo Horizonte", "Uberlândia", "Juiz de Fora", "Ouro Preto"], correct: 0 },
+        { q: "Qual rio de grande extensão nasce na Serra da Canastra em MG?", options: ["Rio São Francisco", "Rio Doce", "Rio Grande", "Rio Paraná"], correct: 0 },
+        { q: "Qual bioma é predominante na região central e norte de Minas Gerais?", options: ["Cerrado", "Caatinga", "Mata Atlântica", "Pampa"], correct: 0 }
+      ],
+      "Geografia do Brasil": [
+        { q: "Qual é o maior estado brasileiro em extensão territorial?", options: ["Amazonas", "Pará", "Mato Grosso", "Minas Gerais"], correct: 0 }
+      ],
+      "Português": [
+        { q: "Qual das palavras abaixo é um substantivo abstrato?", options: ["Saudade", "Cadeira", "Livro", "Caneta"], correct: 0 }
+      ],
+      "Inglês": [
+        { q: "Como se diz 'Livro' em inglês?", options: ["Book", "Pencil", "Door", "Water"], correct: 0 }
+      ],
+      "História do Brasil": [
+        { q: "Em que ano ocorreu a Proclamação da República no Brasil?", options: ["1889", "1500", "1822", "1988"], correct: 0 }
+      ],
+      "Biologia": [
+        { q: "Qual é a unidade fundamental da vida em todos os seres vivos?", options: ["Célula", "Átomo", "Molécula", "Órgão"], correct: 0 }
+      ],
+      "Química": [
+        { q: "Qual é a fórmula química da água?", options: ["H2O", "CO2", "NaCl", "O2"], correct: 0 }
+      ],
+      "Física": [
+        { q: "Qual é a unidade de medida da força no Sistema Internacional?", options: ["Newton", "Joule", "Watt", "Pascal"], correct: 0 }
+      ]
+    };
+
     let audioCtx = null;
     let isMusicOn = false;
     let isVoiceOn = false;
     let musicInterval = null;
     let currentScale = 1;
+    let customQuestions = {};
+    let currentCategory = "";
+    let currentSubcategory = "";
+    let score = 0;
+    let highScore = localStorage.getItem("quiz_highscore") || 0;
+    let timer = null;
+    let timeLeft = 60;
+
+    function populateCategories() {
+      const playCatSelect = document.getElementById("category-select");
+      const createCatSelect = document.getElementById("create-category-select");
+      if(!playCatSelect || !createCatSelect) return;
+      playCatSelect.innerHTML = "";
+      createCatSelect.innerHTML = "";
+
+      for (let cat in catalogData) {
+        playCatSelect.add(new Option(cat, cat));
+        createCatSelect.add(new Option(cat, cat));
+      }
+    }
+
+    function updateSubcategories(mode) {
+      const catSelect = mode === 'play' ? document.getElementById("category-select") : document.getElementById("create-category-select");
+      const subSelect = mode === 'play' ? document.getElementById("subcategory-select") : document.getElementById("create-subcategory-select");
+      if(!catSelect || !subSelect) return;
+      
+      const selectedCat = catSelect.value;
+      subSelect.innerHTML = "";
+
+      if (catalogData[selectedCat]) {
+        catalogData[selectedCat].forEach(sub => {
+          subSelect.add(new Option(sub, sub));
+        });
+      }
+    }
+
+    function initApp() {
+      populateCategories();
+      updateSubcategories('play');
+      updateSubcategories('create');
+      const topScore = document.getElementById("top-score-display");
+      if (topScore) topScore.textContent = highScore;
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -295,89 +374,6 @@
       }
     }
 
-    const catalogData = {
-      "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Libras"],
-      "Matemática": ["Aritmética", "Matemática Básica", "Matemática Financeira", "Álgebra", "Geometria Plana", "Estatística", "Lógica Matemática"],
-      "Língua Portuguesa e Literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de Textos", "Literatura Brasileira"],
-      "Ciências da Natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética"],
-      "História": ["História Geral", "História do Brasil", "História de Minas Gerais", "História Antiga"],
-      "Geografia": ["Geografia Geral", "Geografia do Brasil", "Geografia de Minas Gerais", "Geopolítica"],
-      "Ciências Humanas e Sociais": ["Filosofia", "Sociologia", "Psicologia", "Economia"],
-      "Direito e Legislação": ["Direito Constitucional", "Direito Penal", "Direitos Humanos", "Legislação de Trânsito"],
-      "Informática e Tecnologia": ["Informática Básica", "Redes e Segurança", "Programação", "Inteligência Artificial"],
-      "Outras Áreas": ["Conhecimentos Gerais", "Cultura Geral", "Raciocínio Lógico"]
-    };
-
-    const realQuestionsBank = {
-      "Geografia de Minas Gerais": [
-        { q: "Qual é a capital do estado de Minas Gerais?", options: ["Belo Horizonte", "Uberlândia", "Juiz de Fora", "Ouro Preto"], correct: 0 },
-        { q: "Qual rio de grande extensão nasce na Serra da Canastra em MG?", options: ["Rio São Francisco", "Rio Doce", "Rio Grande", "Rio Paraná"], correct: 0 },
-        { q: "Qual bioma é predominante na região central e norte de Minas Gerais?", options: ["Cerrado", "Caatinga", "Mata Atlântica", "Pampa"], correct: 0 }
-      ],
-      "Geografia do Brasil": [
-        { q: "Qual é o maior estado brasileiro em extensão territorial?", options: ["Amazonas", "Pará", "Mato Grosso", "Minas Gerais"], correct: 0 }
-      ],
-      "Português": [
-        { q: "Qual das palavras abaixo é um substantivo abstrato?", options: ["Saudade", "Cadeira", "Livro", "Caneta"], correct: 0 }
-      ],
-      "Inglês": [
-        { q: "Como se diz 'Livro' em inglês?", options: ["Book", "Pencil", "Door", "Water"], correct: 0 }
-      ],
-      "História do Brasil": [
-        { q: "Em que ano ocorreu a Proclamação da República no Brasil?", options: ["1889", "1500", "1822", "1988"], correct: 0 }
-      ],
-      "Biologia": [
-        { q: "Qual é a unidade fundamental da vida em todos os seres vivos?", options: ["Célula", "Átomo", "Molécula", "Órgão"], correct: 0 }
-      ],
-      "Química": [
-        { q: "Qual é a fórmula química da água?", options: ["H2O", "CO2", "NaCl", "O2"], correct: 0 }
-      ],
-      "Física": [
-        { q: "Qual é a unidade de medida da força no Sistema Internacional?", options: ["Newton", "Joule", "Watt", "Pascal"], correct: 0 }
-      ]
-    };
-
-    let customQuestions = {};
-    let currentCategory = "";
-    let currentSubcategory = "";
-    let score = 0;
-    let highScore = localStorage.getItem("quiz_highscore") || 0;
-    let timer = null;
-    let timeLeft = 60;
-
-    window.onload = function() {
-      populateCategories();
-      updateSubcategories('play');
-      updateSubcategories('create');
-      document.getElementById("top-score-display").textContent = highScore;
-    };
-
-    function populateCategories() {
-      const playCatSelect = document.getElementById("category-select");
-      const createCatSelect = document.getElementById("create-category-select");
-      playCatSelect.innerHTML = "";
-      createCatSelect.innerHTML = "";
-
-      for (let cat in catalogData) {
-        playCatSelect.add(new Option(cat, cat));
-        createCatSelect.add(new Option(cat, cat));
-      }
-    }
-
-    function updateSubcategories(mode) {
-      const catSelect = mode === 'play' ? document.getElementById("category-select") : document.getElementById("create-category-select");
-      const subSelect = mode === 'play' ? document.getElementById("subcategory-select") : document.getElementById("create-subcategory-select");
-      
-      const selectedCat = catSelect.value;
-      subSelect.innerHTML = "";
-
-      if (catalogData[selectedCat]) {
-        catalogData[selectedCat].forEach(sub => {
-          subSelect.add(new Option(sub, sub));
-        });
-      }
-    }
-
     function switchTab(tab) {
       document.getElementById('btn-tab-play').classList.toggle('active', tab === 'play');
       document.getElementById('btn-tab-create').classList.toggle('active', tab === 'create');
@@ -428,4 +424,22 @@
       const numB = Math.floor(Math.random() * 20) + 1;
       return {
         q: `[${subcat}] Teste Rápido: Quanto é ${numA} + ${numB}?`,
-        options: [`${numA + numB}`, `${numA + numB + 2}`, `${numA + numB - 1}`, `${numA + nu
+        options: [`${numA + numB}`, `${numA + numB + 2}`, `${numA + numB - 1}`, `${numA + numB + 4}`],
+        correct: 0
+      };
+    }
+
+    function loadQuestion() {
+      startTimer();
+      const q = getRandomQuestion(currentSubcategory);
+
+      document.getElementById("score-display").textContent = `Pontos: ${score}`;
+      document.getElementById("question-text").textContent = q.q;
+
+      const box = document.getElementById("options-box");
+      box.innerHTML = "";
+
+      let optionsList = q.options.map((text, idx) => ({ text, isCorrect: idx === q.correct }));
+      optionsList.sort(() => Math.random() - 0.5);
+
+      opti
