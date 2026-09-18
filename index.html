@@ -4,597 +4,212 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz de Estudos</title>
-  
-  <meta name="theme-color" content="#4a90e2">
+  <meta name="theme-color" content="#4f46e5">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Quiz Estudos">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3426/3426653.png">
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Quiz%20de%20Estudos%22,%22short_name%22:%22QuizEstudos%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%234f46e5%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3426/3426653.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
   
-  <link rel="manifest" href='data:application/manifest+json,{"name":"Quiz de Estudos","short_name":"QuizEstudos","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#4a90e2","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3426/3426653.png","sizes":"512x512","type":"image/png"}]}'>
-
   <style>
     :root {
-      --bg-color: #ffffff;
-      --card-bg: #f8f9fa;
-      --primary: #4a90e2;
-      --primary-hover: #357abd;
-      --correct: #2ecc71;
-      --wrong: #e74c3c;
-      --text: #2c3e50;
-      --border-radius: 16px;
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --text: #1f2937;
+      --success: #10b981;
+      --error: #ef4444;
+      --border-radius: 12px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 600px;
-      background: #ffffff;
-      border-radius: var(--border-radius);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      padding: 24px;
-      border: 2px solid #edf2f7;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
-
-    .mascot {
-      font-size: 2.5rem;
-      margin: 10px 0;
-      animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .screen {
-      display: none;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    .btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 14px 20px;
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    button:hover {
-      background-color: var(--primary-hover);
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      background-color: #e2e8f0;
-      color: var(--text);
-    }
-
-    .btn-secondary:hover {
-      background-color: #cbd5e1;
-    }
-
-    .btn-install {
-      background-color: #2ecc71;
-      display: none;
-    }
-
-    .btn-install:hover {
-      background-color: #27ae60;
-    }
-
-    .select-subject {
-      width: 100%;
-      padding: 12px;
-      border-radius: var(--border-radius);
-      border: 2px solid #cbd5e1;
-      font-size: 1rem;
-      margin-bottom: 12px;
-    }
-
-    .hud {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding: 12px;
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      font-weight: bold;
-    }
-
-    .question-box {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .options-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .option-card {
-      background: var(--card-bg);
-      border: 2px solid #e2e8f0;
-      padding: 16px;
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s ease;
-    }
-
-    .option-card:hover {
-      border-color: var(--primary);
-    }
-
-    .option-card.correct {
-      background-color: var(--correct);
-      color: white;
-      border-color: var(--correct);
-      animation: pop 0.3s ease;
-    }
-
-    .option-card.wrong {
-      background-color: var(--wrong);
-      color: white;
-      border-color: var(--wrong);
-      animation: shake 0.3s ease;
-    }
-
-    @keyframes pop {
-      0% { transform: scale(0.98); }
-      50% { transform: scale(1.02); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-5px); }
-      40%, 80% { transform: translateX(5px); }
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 4px;
-      font-weight: bold;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #cbd5e1;
-    }
-
-    .io-buttons {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .io-buttons button {
-      flex: 1;
-      padding: 8px;
-      font-size: 0.85rem;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+    .container { background: var(--card-bg); border-radius: var(--border-radius); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); width: 100%; max-width: 500px; padding: 24px; position: relative; }
+    h1 { font-size: 1.5rem; text-align: center; margin-bottom: 20px; color: var(--primary); }
+    .select-subject { width: 100%; padding: 12px; border-radius: var(--border-radius); border: 2px solid #cbd5e1; font-size: 1rem; margin-bottom: 16px; outline: none; }
+    .hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 12px; background: #e0e7ff; border-radius: var(--border-radius); font-weight: bold; }
+    .timer-container { display: flex; align-items: center; gap: 6px; color: #b91c1c; font-size: 1.1rem; }
+    .question-box { margin-bottom: 20px; font-size: 1.1rem; font-weight: 600; line-height: 1.4; }
+    .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .btn-option { padding: 14px; border: 2px solid #e2e8f0; border-radius: var(--border-radius); background: #ffffff; font-size: 1rem; font-weight: 500; text-align: left; cursor: pointer; transition: all 0.2s; }
+    .btn-option.correct { background-color: var(--success); color: white; border-color: var(--success); }
+    .btn-option.wrong { background-color: var(--error); color: white; border-color: var(--error); }
+    .btn-action { width: 100%; padding: 14px; border: none; border-radius: var(--border-radius); background: var(--primary); color: white; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    .hide { display: none; }
+    .result-screen { text-align: center; }
+    .result-screen h2 { margin-bottom: 12px; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <header>
-      <div class="mascot" id="mascot">🦉</div>
-      <h1>Quiz de Estudos</h1>
-    </header>
+    <h1>Quiz de Estudos</h1>
 
-    <div id="home-screen" class="screen active">
-      <div class="btn-group">
-        <button id="install-btn" class="btn-install" onclick="installPWA()">📲 Instalar Aplicativo</button>
-        <button onclick="startAutoQuizMenu()">Quiz Automático</button>
-        <button onclick="startCustomQuizMenu()" class="btn-secondary">Meu Quiz</button>
-        <button onclick="showScreen('creator-screen')" class="btn-secondary">Criar Perguntas</button>
-      </div>
+    <!-- Seleção de Matéria -->
+    <div id="setup-screen">
+      <label for="subject-select" style="font-weight:600; display:block; margin-bottom:8px;">Escolha a Matéria:</label>
+      <select id="subject-select" class="select-subject">
+        <option value="Geografia">Geografia (Foco Minas Gerais & Geral)</option>
+        <option value="Português">Português</option>
+        <option value="Matemática">Matemática</option>
+        <option value="Física">Física</option>
+        <option value="Química">Química</option>
+        <option value="Biologia">Biologia</option>
+        <option value="História">História</option>
+      </select>
+      <button class="btn-action" onclick="startQuiz()">Iniciar Quiz</button>
     </div>
 
-    <div id="subject-screen" class="screen">
-      <h2 style="margin-bottom: 12px; text-align: center;">Escolha a Matéria</h2>
-      <select id="subject-select" class="select-subject"></select>
-      <div class="hud" style="justify-content: center;">
-        Recorde Atual: <span id="subject-highscore" style="margin-left: 8px; color: var(--primary);">0</span>
-      </div>
-      <div class="btn-group">
-        <button onclick="launchQuiz()">Iniciar Jogo</button>
-        <button onclick="showScreen('home-screen')" class="btn-secondary">Voltar</button>
-      </div>
-    </div>
-
-    <div id="game-screen" class="screen">
+    <!-- Ecrã de Perguntas -->
+    <div id="quiz-screen" class="hide">
       <div class="hud">
-        <span>Pontos: <span id="current-score">0</span></span>
-        <span>Recorde: <span id="game-highscore">0</span></span>
-      </div>
-      <div class="question-box" id="question-text">Carregando...</div>
-      <div class="options-grid" id="options-container"></div>
-    </div>
-
-    <div id="result-screen" class="screen">
-      <h2 style="text-align: center; margin-bottom: 12px;">Fim da Rodada!</h2>
-      <div class="hud" style="flex-direction: column; gap: 8px;">
-        <p>Pontuação Final: <span id="final-score" style="color: var(--primary); font-size: 1.4rem;">0</span></p>
-        <p>Melhor Recorde: <span id="final-highscore">0</span></p>
-      </div>
-      <div class="btn-group">
-        <button onclick="restartGame()">Jogar Novamente</button>
-        <button onclick="showScreen('home-screen')" class="btn-secondary">Menu Principal</button>
-      </div>
-    </div>
-
-    <div id="creator-screen" class="screen">
-      <h2 style="margin-bottom: 12px;">Cadastrar Pergunta</h2>
-      <div class="form-group">
-        <label>Matéria</label>
-        <select id="custom-subject"></select>
-      </div>
-      <div class="form-group">
-        <label>Pergunta</label>
-        <input type="text" id="custom-question" placeholder="Digite a pergunta">
-      </div>
-      <div class="form-group">
-        <label>Alternativa 1</label>
-        <input type="text" id="opt-0" placeholder="Primeira opção">
-      </div>
-      <div class="form-group">
-        <label>Alternativa 2</label>
-        <input type="text" id="opt-1" placeholder="Segunda opção">
-      </div>
-      <div class="form-group">
-        <label>Alternativa 3</label>
-        <input type="text" id="opt-2" placeholder="Terceira opção">
-      </div>
-      <div class="form-group">
-        <label>Alternativa 4</label>
-        <input type="text" id="opt-3" placeholder="Quarta opção">
-      </div>
-      <div class="form-group">
-        <label>Alternativa Correta</label>
-        <select id="correct-opt">
-          <option value="0">Alternativa 1</option>
-          <option value="1">Alternativa 2</option>
-          <option value="2">Alternativa 3</option>
-          <option value="3">Alternativa 4</option>
-        </select>
-      </div>
-      <div class="btn-group">
-        <button onclick="saveCustomQuestion()">Salvar Pergunta</button>
-        <div class="io-buttons">
-          <button onclick="exportQuestions()" class="btn-secondary">Exportar Perguntas</button>
-          <button onclick="document.getElementById('import-file').click()" class="btn-secondary">Importar</button>
-          <input type="file" id="import-file" style="display: none;" onchange="importQuestions(event)">
+        <span id="score-text">Pontos: 0</span>
+        <div class="timer-container">
+          ⏱️ <span id="time-text">60s</span>
         </div>
-        <button onclick="showScreen('home-screen')" class="btn-secondary">Voltar</button>
       </div>
+      <div class="question-box" id="question-text">Pergunta aqui...</div>
+      <div class="options" id="options-container"></div>
+      <button id="next-btn" class="btn-action hide" onclick="nextQuestion()">Próxima Pergunta</button>
+    </div>
+
+    <!-- Ecrã de Resultados / Fim de Jogo -->
+    <div id="result-screen" class="hide result-screen">
+      <h2 id="result-title">Fim de Jogo!</h2>
+      <p id="result-text" style="margin-bottom: 20px; font-size: 1.1rem;"></p>
+      <button class="btn-action" onclick="restartQuiz()">Tentar Novamente</button>
     </div>
   </div>
 
   <script>
-    const subjects = [
-      "Matemática",
-      "Recursos Humanos",
-      "Português",
-      "Geografia — Minas Gerais e geral",
-      "História",
-      "Ciências",
-      "Educação Física"
-    ];
-
+    // Banco de Perguntas
     const defaultQuestions = {
-      "Matemática": [
-        { q: "Quanto é 7 x 8?", options: ["54", "56", "62", "48"], correct: 1 },
-        { q: "Qual é a raiz quadrada de 81?", options: ["7", "8", "9", "10"], correct: 2 }
-      ],
-      "Recursos Humanos": [
-        { q: "O que significa a sigla RH?", options: ["Rede Humana", "Recursos Humanos", "Registro Horizontal", "Relações Híbridas"], correct: 1 }
+      "Geografia": [
+        { q: "Qual é a capital do estado de Minas Gerais?", options: ["Uberlândia", "Belo Horizonte", "Juiz de Fora", "Ouro Preto"], correct: 1 },
+        { q: "Qual importante relevo caracteriza grande parte do território mineiro?", options: ["Planície Costeira", "Planalto Atlântico / Serros e Serras", "Depressão Amazônica", "Pantanal"], correct: 1 },
+        { q: "Qual o maior rio em extensão totalmente brasileiro que nasce em Minas Gerais?", options: ["Rio São Francisco", "Rio Doce", "Rio Grande", "Rio Paranaíba"], correct: 0 },
+        { q: "Qual é o bioma predominante na região do Cerrado mineiro?", options: ["Caatinga", "Cerrado", "Mata Atlântica", "Pampa"], correct: 1 }
       ],
       "Português": [
-        { q: "Qual das palavras é um substantivo?", options: ["Correr", "Bonito", "Cachorro", "Rapidamente"], correct: 2 }
+        { q: "Qual das palavras abaixo é um substantivo?", options: ["Correr", "Bonito", "Cachorro", "Rapidamente"], correct: 2 }
       ],
-      "Geografia — Minas Gerais e geral": [
-        { q: "Qual é a capital de Minas Gerais?", options: ["Uberlândia", "Belo Horizonte", "Juiz de Fora", "Ouro Preto"], correct: 1 }
+      "Matemática": [
+        { q: "Quanto é 7 x 8?", options: ["54", "56", "62", "48"], correct: 1 }
+      ],
+      "Física": [
+        { q: "Qual a unidade de medida da força no Sistema Internacional (SI)?", options: ["Joule", "Pascal", "Newton", "Watt"], correct: 2 }
+      ],
+      "Química": [
+        { q: "Qual é o símbolo químico da água?", options: ["CO2", "H2O", "O2", "NaCl"], correct: 1 }
+      ],
+      "Biologia": [
+        { q: "Qual o gás essencial para a respiração humana?", options: ["Gás Carbônico", "Nitrogênio", "Oxigênio", "Hélio"], correct: 2 }
       ],
       "História": [
         { q: "Em que ano ocorreu a Proclamação da República no Brasil?", options: ["1500", "1822", "1889", "1945"], correct: 2 }
-      ],
-      "Ciências": [
-        { q: "Qual o gás essencial para a respiração humana?", options: ["Gás Carbônico", "Nitrogênio", "Oxigênio", "Hélio"], correct: 2 }
-      ],
-      "Educação Física": [
-        { q: "Quantos jogadores de cada lado iniciam uma partida de futebol?", options: ["9", "10", "11", "12"], correct: 2 }
       ]
     };
 
-    let customQuestions = JSON.parse(localStorage.getItem('quiz_custom_questions')) || {};
-    let highScores = JSON.parse(localStorage.getItem('quiz_high_scores')) || {};
-
-    let currentMode = 'auto';
-    let currentSubject = '';
+    let currentSubject = "Geografia";
     let currentQuestions = [];
-    let qIndex = 0;
+    let currentIndex = 0;
     let score = 0;
-    let canAnswer = true;
-    let deferredPrompt;
+    let timer = null;
+    let timeLeft = 60;
 
-    function init() {
-      const selects = [document.getElementById('subject-select'), document.getElementById('custom-subject')];
-      selects.forEach(select => {
-        select.innerHTML = '';
-        subjects.forEach(subj => {
-          const opt = document.createElement('option');
-          opt.value = subj;
-          opt.innerText = subj;
-          select.appendChild(opt);
-        });
-      });
-      document.getElementById('subject-select').addEventListener('change', updateSubjectHighScore);
-      registerServiceWorker();
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const installBtn = document.getElementById('install-btn');
-      if (installBtn) installBtn.style.display = 'block';
-    });
-
-    function installPWA() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            document.getElementById('install-btn').style.display = 'none';
-          }
-          deferredPrompt = null;
-        });
-      }
-    }
-
-    function registerServiceWorker() {
-      if ('serviceWorker' in navigator) {
-        const swCode = `
-          const CACHE_NAME = 'quiz-pwa-v1';
-          self.addEventListener('install', (e) => {
-            e.waitUntil(
-              caches.open(CACHE_NAME).then((cache) => cache.addAll(['./']))
-            );
-          });
-          self.addEventListener('fetch', (e) => {
-            e.respondWith(
-              caches.match(e.request).then((res) => res || fetch(e.request))
-            );
-          });
-        `;
-        const blob = new Blob([swCode], { type: 'text/javascript' });
-        const swUrl = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl).catch(() => {});
-      }
-    }
-
-    function showScreen(screenId) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(screenId).classList.add('active');
-    }
-
-    function updateMascot(state) {
-      const mascot = document.getElementById('mascot');
-      if (state === 'happy') mascot.innerText = '🥳';
-      else if (state === 'sad') mascot.innerText = '😅';
-      else mascot.innerText = '🦉';
-    }
-
-    function startAutoQuizMenu() {
-      currentMode = 'auto';
-      showScreen('subject-screen');
-      updateSubjectHighScore();
-    }
-
-    function startCustomQuizMenu() {
-      currentMode = 'custom';
-      showScreen('subject-screen');
-      updateSubjectHighScore();
-    }
-
-    function updateSubjectHighScore() {
-      const subj = document.getElementById('subject-select').value;
-      const key = `${currentMode}_${subj}`;
-      document.getElementById('subject-highscore').innerText = highScores[key] || 0;
-    }
-
-    function launchQuiz() {
-      currentSubject = document.getElementById('subject-select').value;
-      const key = `${currentMode}_${currentSubject}`;
-      
-      if (currentMode === 'auto') {
-        currentQuestions = defaultQuestions[currentSubject] || [];
-      } else {
-        currentQuestions = customQuestions[currentSubject] || [];
-      }
-
-      if (currentQuestions.length === 0) {
-        alert('Nenhuma pergunta disponível para esta matéria/modo.');
-        return;
-      }
-
-      qIndex = 0;
+    function startQuiz() {
+      currentSubject = document.getElementById("subject-select").value;
+      currentQuestions = defaultQuestions[currentSubject] || [];
+      currentIndex = 0;
       score = 0;
-      document.getElementById('game-highscore').innerText = highScores[key] || 0;
-      showScreen('game-screen');
+
+      document.getElementById("setup-screen").classList.add("hide");
+      document.getElementById("result-screen").classList.add("hide");
+      document.getElementById("quiz-screen").classList.remove("hide");
+
       loadQuestion();
     }
 
-    function loadQuestion() {
-      canAnswer = true;
-      updateMascot('neutral');
-      document.getElementById('current-score').innerText = score;
+    function startTimer() {
+      clearInterval(timer);
+      timeLeft = 60;
+      document.getElementById("time-text").textContent = timeLeft + "s";
 
-      if (qIndex >= currentQuestions.length) {
-        endGame();
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time-text").textContent = timeLeft + "s";
+
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          gameOver("⏰ O tempo acabou! Você perdeu.");
+        }
+      }, 1000);
+    }
+
+    function loadQuestion() {
+      if (currentIndex >= currentQuestions.length) {
+        clearInterval(timer);
+        gameOver(`🎉 Parabéns! Você concluiu ${currentSubject} com ${score} ponto(s)!`);
         return;
       }
 
-      const qData = currentQuestions[qIndex];
-      document.getElementById('question-text').innerText = qData.q;
-      const optionsContainer = document.getElementById('options-container');
-      optionsContainer.innerHTML = '';
+      startTimer();
 
-      qData.options.forEach((optText, index) => {
-        const btn = document.createElement('div');
-        btn.className = 'option-card';
-        btn.innerText = optText;
-        btn.onclick = () => checkAnswer(index, btn);
+      const q = currentQuestions[currentIndex];
+      document.getElementById("score-text").textContent = `Pontos: ${score}`;
+      document.getElementById("question-text").textContent = q.q;
+      document.getElementById("next-btn").classList.add("hide");
+
+      const optionsContainer = document.getElementById("options-container");
+      optionsContainer.innerHTML = "";
+
+      q.options.forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.className = "btn-option";
+        btn.textContent = option;
+        btn.onclick = () => selectOption(index, q.correct);
         optionsContainer.appendChild(btn);
       });
     }
 
-    function checkAnswer(selectedIndex, cardElement) {
-      if (!canAnswer) return;
-      canAnswer = false;
+    function selectOption(selectedIndex, correctIndex) {
+      clearInterval(timer);
+      const buttons = document.querySelectorAll(".btn-option");
 
-      const qData = currentQuestions[qIndex];
-      if (selectedIndex === qData.correct) {
-        cardElement.classList.add('correct');
-        score++;
-        document.getElementById('current-score').innerText = score;
-        updateMascot('happy');
-      } else {
-        cardElement.classList.add('wrong');
-        updateMascot('sad');
-      }
-
-      setTimeout(() => {
-        qIndex++;
-        loadQuestion();
-      }, 1200);
-    }
-
-    function endGame() {
-      const key = `${currentMode}_${currentSubject}`;
-      const bestScore = highScores[key] || 0;
-
-      if (score > bestScore) {
-        highScores[key] = score;
-        localStorage.setItem('quiz_high_scores', JSON.stringify(highScores));
-      }
-
-      document.getElementById('final-score').innerText = score;
-      document.getElementById('final-highscore').innerText = highScores[key] || score;
-      showScreen('result-screen');
-    }
-
-    function restartGame() {
-      launchQuiz();
-    }
-
-    function saveCustomQuestion() {
-      const subj = document.getElementById('custom-subject').value;
-      const qText = document.getElementById('custom-question').value.trim();
-      const opts = [
-        document.getElementById('opt-0').value.trim(),
-        document.getElementById('opt-1').value.trim(),
-        document.getElementById('opt-2').value.trim(),
-        document.getElementById('opt-3').value.trim()
-      ];
-      const correctOpt = parseInt(document.getElementById('correct-opt').value);
-
-      if (!qText || opts.some(o => o === '')) {
-        alert('Por favor, preencha a pergunta e todas as alternativas.');
-        return;
-      }
-
-      if (!customQuestions[subj]) customQuestions[subj] = [];
-      customQuestions[subj].push({ q: qText, options: opts, correct: correctOpt });
-
-      localStorage.setItem('quiz_custom_questions', JSON.stringify(customQuestions));
-
-      document.getElementById('custom-question').value = '';
-      opts.forEach((_, i) => document.getElementById(`opt-${i}`).value = '');
-      alert('Pergunta salva com sucesso!');
-    }
-
-    function exportQuestions() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(customQuestions));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "meu_quiz_perguntas.json");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    function importQuestions(event) {
-      const fileReader = new FileReader();
-      fileReader.onload = function(e) {
-        try {
-          const imported = JSON.parse(e.target.result);
-          customQuestions = { ...customQuestions, ...imported };
-          localStorage.setItem('quiz_custom_questions', JSON.stringify(customQuestions));
-          alert('Perguntas importadas com sucesso!');
-        } catch (err) {
-          alert('Erro ao carregar o arquivo JSON.');
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === correctIndex) {
+          btn.classList.add("correct");
+        } else if (idx === selectedIndex) {
+          btn.classList.add("wrong");
         }
-      };
-      fileReader.readAsText(event.target.files[0]);
+      });
+
+      if (selectedIndex === correctIndex) {
+        score++;
+      }
+
+      document.getElementById("next-btn").classList.remove("hide");
     }
 
-    init();
+    function nextQuestion() {
+      currentIndex++;
+      loadQuestion();
+    }
+
+    function gameOver(message) {
+      clearInterval(timer);
+      document.getElementById("quiz-screen").classList.add("hide");
+      document.getElementById("result-screen").classList.remove("hide");
+      document.getElementById("result-title").textContent = message.includes("tempo acabou") ? "Derrota!" : "Fim do Quiz!";
+      document.getElementById("result-text").textContent = message;
+    }
+
+    function restartQuiz() {
+      document.getElementById("result-screen").classList.add("hide");
+      document.getElementById("setup-screen").classList.remove("hide");
+    }
   </script>
 </body>
 </html>
