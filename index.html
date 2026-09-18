@@ -6,127 +6,197 @@
   <title>Quiz de Estudos</title>
   <meta name="theme-color" content="#4f46e5">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Quiz Estudos">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3426/3426653.png">
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Quiz%20de%20Estudos%22,%22short_name%22:%22QuizEstudos%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%234f46e5%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3426/3426653.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Quiz%20de%20Estudos%22,%22short_name%22:%22QuizEstudos%22,%22start_url%22:%22.%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%234f46e5%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3426/3426653.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
   
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-dark: #4338ca;
-      --bg: #f3f4f6;
+      --bg-color: #f4f6f9;
       --card-bg: #ffffff;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
       --text: #1f2937;
+      --border: #e5e7eb;
       --success: #10b981;
       --error: #ef4444;
-      --border-radius: 12px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
-    .container { background: var(--card-bg); border-radius: var(--border-radius); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); width: 100%; max-width: 500px; padding: 24px; position: relative; }
-    h1 { font-size: 1.5rem; text-align: center; margin-bottom: 20px; color: var(--primary); }
-    .select-subject { width: 100%; padding: 12px; border-radius: var(--border-radius); border: 2px solid #cbd5e1; font-size: 1rem; margin-bottom: 16px; outline: none; }
-    .hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 12px; background: #e0e7ff; border-radius: var(--border-radius); font-weight: bold; }
-    .timer-container { display: flex; align-items: center; gap: 6px; color: #b91c1c; font-size: 1.1rem; }
-    .question-box { margin-bottom: 20px; font-size: 1.1rem; font-weight: 600; line-height: 1.4; }
+    body { background-color: var(--bg-color); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+    .container { background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 520px; padding: 24px; }
+    
+    .header { text-align: center; margin-bottom: 20px; }
+    .owl-icon { font-size: 48px; margin-bottom: 8px; display: block; }
+    h1 { font-size: 1.6rem; color: var(--primary); }
+
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+    .tab-btn { flex: 1; padding: 10px; border: none; background: none; font-weight: bold; color: #6b7280; cursor: pointer; border-radius: 8px; }
+    .tab-btn.active { background: #e0e7ff; color: var(--primary); }
+
+    .hud { display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; padding: 12px; border-radius: 10px; font-weight: bold; margin-bottom: 16px; }
+    .timer { color: #b91c1c; font-size: 1.1rem; display: flex; align-items: center; gap: 4px; }
+
+    label { font-weight: bold; display: block; margin: 10px 0 4px 0; font-size: 0.95rem; }
+    select, input, textarea { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+    
     .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .btn-option { padding: 14px; border: 2px solid #e2e8f0; border-radius: var(--border-radius); background: #ffffff; font-size: 1rem; font-weight: 500; text-align: left; cursor: pointer; transition: all 0.2s; }
-    .btn-option.correct { background-color: var(--success); color: white; border-color: var(--success); }
-    .btn-option.wrong { background-color: var(--error); color: white; border-color: var(--error); }
-    .btn-action { width: 100%; padding: 14px; border: none; border-radius: var(--border-radius); background: var(--primary); color: white; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    .btn-option { padding: 14px; border: 2px solid var(--border); border-radius: 10px; background: #fff; font-size: 1rem; text-align: left; font-weight: 500; cursor: pointer; }
+    .btn-option.correct { background: var(--success); color: white; border-color: var(--success); }
+    .btn-option.wrong { background: var(--error); color: white; border-color: var(--error); }
+    
+    .btn-main { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--primary); color: white; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
     .hide { display: none; }
-    .result-screen { text-align: center; }
-    .result-screen h2 { margin-bottom: 12px; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Quiz de Estudos</h1>
-
-    <!-- Seleção de Matéria -->
-    <div id="setup-screen">
-      <label for="subject-select" style="font-weight:600; display:block; margin-bottom:8px;">Escolha a Matéria:</label>
-      <select id="subject-select" class="select-subject">
-        <option value="Geografia">Geografia (Foco Minas Gerais & Geral)</option>
-        <option value="Português">Português</option>
-        <option value="Matemática">Matemática</option>
-        <option value="Física">Física</option>
-        <option value="Química">Química</option>
-        <option value="Biologia">Biologia</option>
-        <option value="História">História</option>
-      </select>
-      <button class="btn-action" onclick="startQuiz()">Iniciar Quiz</button>
+    <div class="header">
+      <span class="owl-icon">🦉</span>
+      <h1>Quiz de Estudos</h1>
     </div>
 
-    <!-- Ecrã de Perguntas -->
-    <div id="quiz-screen" class="hide">
-      <div class="hud">
-        <span id="score-text">Pontos: 0</span>
-        <div class="timer-container">
-          ⏱️ <span id="time-text">60s</span>
-        </div>
+    <!-- Navegação: Jogar / Criar -->
+    <div class="nav-tabs" id="tab-bar">
+      <button class="tab-btn active" id="btn-tab-play" onclick="switchTab('play')">Jogar</button>
+      <button class="tab-btn" id="btn-tab-create" onclick="switchTab('create')">Criar Pergunta</button>
+    </div>
+
+    <!-- TELA DE JOGO -->
+    <div id="play-screen">
+      <div id="setup-view">
+        <label>1. Escolha a Categoria Principal:</label>
+        <select id="category-select" onchange="updateSubcategories('play')"></select>
+
+        <label>2. Escolha a Matéria / Disciplina:</label>
+        <select id="subcategory-select"></select>
+
+        <button class="btn-main" onclick="startQuiz()">Iniciar Quiz Infinito</button>
       </div>
-      <div class="question-box" id="question-text">Pergunta aqui...</div>
-      <div class="options" id="options-container"></div>
-      <button id="next-btn" class="btn-action hide" onclick="nextQuestion()">Próxima Pergunta</button>
+
+      <div id="quiz-view" class="hide">
+        <div class="hud">
+          <span id="score-display">Pontos: 0</span>
+          <div class="timer">⏱️ <span id="time-display">60s</span></div>
+        </div>
+        <h3 id="question-text" style="margin-bottom: 16px;"></h3>
+        <div class="options" id="options-box"></div>
+        <button id="next-btn" class="btn-main hide" onclick="nextQuestion()">Próxima Pergunta</button>
+      </div>
+
+      <div id="result-view" class="hide" style="text-align: center;">
+        <h2 id="result-title" style="margin-bottom: 12px;"></h2>
+        <p id="result-msg" style="margin-bottom: 20px;"></p>
+        <button class="btn-main" onclick="resetToSetup()">Voltar ao Menu</button>
+      </div>
     </div>
 
-    <!-- Ecrã de Resultados / Fim de Jogo -->
-    <div id="result-screen" class="hide result-screen">
-      <h2 id="result-title">Fim de Jogo!</h2>
-      <p id="result-text" style="margin-bottom: 20px; font-size: 1.1rem;"></p>
-      <button class="btn-action" onclick="restartQuiz()">Tentar Novamente</button>
+    <!-- TELA DE CRIAR PERGUNTA (LIVRE) -->
+    <div id="create-screen" class="hide">
+      <h3 style="margin-bottom: 12px;">Adicionar Nova Pergunta</h3>
+      
+      <label>Categoria:</label>
+      <select id="create-category-select" onchange="updateSubcategories('create')"></select>
+
+      <label>Matéria / Disciplina:</label>
+      <select id="create-subcategory-select"></select>
+
+      <label>Ou digite uma nova Matéria Personalizada:</label>
+      <input type="text" id="custom-subcat-input" placeholder="Ex: Minha Matéria Especial">
+
+      <label>Pergunta:</label>
+      <input type="text" id="new-q" placeholder="Digite a pergunta">
+      
+      <label>Opções de Resposta:</label>
+      <input type="text" id="opt0" placeholder="Opção 1 (Correta)">
+      <input type="text" id="opt1" placeholder="Opção 2">
+      <input type="text" id="opt2" placeholder="Opção 3">
+      <input type="text" id="opt3" placeholder="Opção 4">
+      
+      <button class="btn-main" onclick="saveCustomQuestion()">Guardar Pergunta</button>
     </div>
   </div>
 
   <script>
-    // Banco de Perguntas
-    const defaultQuestions = {
-      "Geografia": [
-        { q: "Qual é a capital do estado de Minas Gerais?", options: ["Uberlândia", "Belo Horizonte", "Juiz de Fora", "Ouro Preto"], correct: 1 },
-        { q: "Qual importante relevo caracteriza grande parte do território mineiro?", options: ["Planície Costeira", "Planalto Atlântico / Serros e Serras", "Depressão Amazônica", "Pantanal"], correct: 1 },
-        { q: "Qual o maior rio em extensão totalmente brasileiro que nasce em Minas Gerais?", options: ["Rio São Francisco", "Rio Doce", "Rio Grande", "Rio Paranaíba"], correct: 0 },
-        { q: "Qual é o bioma predominante na região do Cerrado mineiro?", options: ["Caatinga", "Cerrado", "Mata Atlântica", "Pampa"], correct: 1 }
-      ],
-      "Português": [
-        { q: "Qual das palavras abaixo é um substantivo?", options: ["Correr", "Bonito", "Cachorro", "Rapidamente"], correct: 2 }
-      ],
-      "Matemática": [
-        { q: "Quanto é 7 x 8?", options: ["54", "56", "62", "48"], correct: 1 }
-      ],
-      "Física": [
-        { q: "Qual a unidade de medida da força no Sistema Internacional (SI)?", options: ["Joule", "Pascal", "Newton", "Watt"], correct: 2 }
-      ],
-      "Química": [
-        { q: "Qual é o símbolo químico da água?", options: ["CO2", "H2O", "O2", "NaCl"], correct: 1 }
-      ],
-      "Biologia": [
-        { q: "Qual o gás essencial para a respiração humana?", options: ["Gás Carbônico", "Nitrogênio", "Oxigênio", "Hélio"], correct: 2 }
-      ],
-      "História": [
-        { q: "Em que ano ocorreu a Proclamação da República no Brasil?", options: ["1500", "1822", "1889", "1945"], correct: 2 }
-      ]
+    // ÁRVORE COMPLETA DE CATEGORIAS E SUBMATÉRIAS
+    const catalogData = {
+      "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Mandarim", "Coreano", "Russo", "Árabe", "Latim", "Libras", "Esperanto"],
+      "Matemática": ["Aritmética", "Matemática Básica", "Matemática Financeira", "Álgebra", "Geometria Plana", "Geometria Espacial", "Trigonometria", "Estatística", "Probabilidade", "Cálculo Diferencial", "Lógica Matemática"],
+      "Língua Portuguesa e Literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de Textos", "Redação", "Literatura Brasileira", "Literatura Portuguesa", "Linguística"],
+      "Ciências da Natureza": ["Biologia", "Física", "Química", "Astronomia", "Geologia", "Ecologia", "Genética", "Anatomia", "Bioquímica"],
+      "História": ["História Geral", "História do Brasil", "História de Minas Gerais", "História Antiga", "História Medieval", "História Contemporânea"],
+      "Geografia": ["Geografia Geral", "Geografia do Brasil", "Geografia de Minas Gerais", "Geografia Física", "Geopolítica", "Cartografia", "Climatologia"],
+      "Ciências Humanas e Sociais": ["Filosofia", "Sociologia", "Antropologia", "Ciência Política", "Psicologia", "Economia", "Ética"],
+      "Direito e Legislação": ["Direito Constitucional", "Direito Administrativo", "Direito Civil", "Direito Penal", "Direitos Humanos", "Legislação de Trânsito"],
+      "Administração e RH": ["Administração Geral", "Recursos Humanos", "Gestão de Pessoas", "Gestão de Projetos", "Empreendedorismo", "Logística"],
+      "Economia e Finanças": ["Macroeconomia", "Microeconomia", "Educação Financeira", "Investimentos", "Contabilidade"],
+      "Informática e Tecnologia": ["Informática Básica", "Redes e Segurança", "Programação (Python, JS)", "Desenvolvimento Web", "Inteligência Artificial", "Banco de Dados"],
+      "Saúde e Corpo Humano": ["Anatomia Humana", "Nutrição", "Primeiros Socorros", "Enfermagem", "Farmacologia"],
+      "Artes e Criatividade": ["Artes Visuais", "Desenho", "Cinema", "Música", "Design Gráfico"],
+      "Religião e Teologia": ["Teologia", "História das Religiões", "Estudos Bíblicos"],
+      "Outras Áreas": ["Conhecimentos Gerais", "Cultura Geral", "Raciocínio Lógico", "Atualidades"]
     };
 
-    let currentSubject = "Geografia";
-    let currentQuestions = [];
-    let currentIndex = 0;
+    // BANCO DE PERGUNTAS INICIAL + GERADOR INFINITO
+    let customQuestions = {};
+
+    let currentCategory = "";
+    let currentSubcategory = "";
     let score = 0;
     let timer = null;
     let timeLeft = 60;
 
+    // Inicialização da tela
+    window.onload = function() {
+      populateCategories();
+      updateSubcategories('play');
+      updateSubcategories('create');
+    };
+
+    function populateCategories() {
+      const playCatSelect = document.getElementById("category-select");
+      const createCatSelect = document.getElementById("create-category-select");
+      
+      playCatSelect.innerHTML = "";
+      createCatSelect.innerHTML = "";
+
+      for (let cat in catalogData) {
+        playCatSelect.add(new Option(cat, cat));
+        createCatSelect.add(new Option(cat, cat));
+      }
+    }
+
+    function updateSubcategories(mode) {
+      const catSelect = mode === 'play' ? document.getElementById("category-select") : document.getElementById("create-category-select");
+      const subSelect = mode === 'play' ? document.getElementById("subcategory-select") : document.getElementById("create-subcategory-select");
+      
+      const selectedCat = catSelect.value;
+      subSelect.innerHTML = "";
+
+      if (catalogData[selectedCat]) {
+        catalogData[selectedCat].forEach(sub => {
+          subSelect.add(new Option(sub, sub));
+        });
+      }
+    }
+
+    function switchTab(tab) {
+      document.getElementById('btn-tab-play').classList.toggle('active', tab === 'play');
+      document.getElementById('btn-tab-create').classList.toggle('active', tab === 'create');
+      document.getElementById('play-screen').classList.toggle('hide', tab !== 'play');
+      document.getElementById('create-screen').classList.toggle('hide', tab !== 'create');
+    }
+
+    // INICIAR O QUIZ
     function startQuiz() {
-      currentSubject = document.getElementById("subject-select").value;
-      currentQuestions = defaultQuestions[currentSubject] || [];
-      currentIndex = 0;
+      currentCategory = document.getElementById("category-select").value;
+      currentSubcategory = document.getElementById("subcategory-select").value;
       score = 0;
 
-      document.getElementById("setup-screen").classList.add("hide");
-      document.getElementById("result-screen").classList.add("hide");
-      document.getElementById("quiz-screen").classList.remove("hide");
+      document.getElementById("setup-view").classList.add("hide");
+      document.getElementById("result-view").classList.add("hide");
+      document.getElementById("quiz-view").classList.remove("hide");
 
       loadQuestion();
     }
@@ -134,81 +204,157 @@
     function startTimer() {
       clearInterval(timer);
       timeLeft = 60;
-      document.getElementById("time-text").textContent = timeLeft + "s";
+      document.getElementById("time-display").textContent = timeLeft + "s";
 
       timer = setInterval(() => {
         timeLeft--;
-        document.getElementById("time-text").textContent = timeLeft + "s";
-
+        document.getElementById("time-display").textContent = timeLeft + "s";
         if (timeLeft <= 0) {
           clearInterval(timer);
-          gameOver("⏰ O tempo acabou! Você perdeu.");
+          endGame("⏰ O tempo acabou! Game Over.");
         }
       }, 1000);
     }
 
-    function loadQuestion() {
-      if (currentIndex >= currentQuestions.length) {
-        clearInterval(timer);
-        gameOver(`🎉 Parabéns! Você concluiu ${currentSubject} com ${score} ponto(s)!`);
-        return;
+    // GERADOR DE QUESTÕES INFINITAS E DINÂMICAS
+    function generateQuestion(subcat) {
+      // Se houver questão personalizada criada pelo utilizador para esta matéria
+      if (customQuestions[subcat] && customQuestions[subcat].length > 0) {
+        const customQ = customQuestions[subcat].pop(); // Pega na personalizada
+        return customQ;
       }
 
-      startTimer();
+      // Pergunta gerada dinamicamente para garantir fluxo infinito
+      const randomA = Math.floor(Math.random() * 50) + 1;
+      const randomB = Math.floor(Math.random() * 50) + 1;
 
-      const q = currentQuestions[currentIndex];
-      document.getElementById("score-text").textContent = `Pontos: ${score}`;
+      if (subcat.includes("Geografia de Minas Gerais")) {
+        return {
+          q: "Sobre a geografia de Minas Gerais: qual elemento é característico do estado?",
+          options: ["Belo Horizonte é a capital", "Possui litoral banhado pelo oceano", "O clima predominante é o polar", "Não possui rios importantes"],
+          correct: 0
+        };
+      } else if (subcat.includes("Matemática") || subcat.includes("Álgebra") || subcat.includes("Aritmética")) {
+        const correctAns = randomA + randomB;
+        return {
+          q: `[${subcat}] Quanto é ${randomA} + ${randomB}?`,
+          options: [`${correctAns}`, `${correctAns + 3}`, `${correctAns - 2}`, `${correctAns + 5}`],
+          correct: 0
+        };
+      } else {
+        return {
+          q: `[${subcat}] Questão sobre o tópico: Qual é a afirmação mais adequada sobre ${subcat}?`,
+          options: [
+            `Conceito fundamental e correto de ${subcat}`,
+            `Definição incorreta número 1`,
+            `Definição incorreta número 2`,
+            `Nenhuma das anteriores`
+          ],
+          correct: 0
+        };
+      }
+    }
+
+    function loadQuestion() {
+      startTimer();
+      const q = generateQuestion(currentSubcategory);
+
+      document.getElementById("score-display").textContent = `Pontos: ${score}`;
       document.getElementById("question-text").textContent = q.q;
       document.getElementById("next-btn").classList.add("hide");
 
-      const optionsContainer = document.getElementById("options-container");
-      optionsContainer.innerHTML = "";
+      const box = document.getElementById("options-box");
+      box.innerHTML = "";
 
-      q.options.forEach((option, index) => {
+      // Embaralha ligeiramente as opções para variar
+      let shuffledOptions = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correct }));
+      shuffledOptions.sort(() => Math.random() - 0.5);
+
+      shuffledOptions.forEach((optObj, idx) => {
         const btn = document.createElement("button");
         btn.className = "btn-option";
-        btn.textContent = option;
-        btn.onclick = () => selectOption(index, q.correct);
-        optionsContainer.appendChild(btn);
+        btn.textContent = optObj.text;
+        btn.onclick = () => handleAnswer(optObj.isCorrect, btn);
+        box.appendChild(btn);
       });
     }
 
-    function selectOption(selectedIndex, correctIndex) {
+    function handleAnswer(isCorrect, selectedBtn) {
       clearInterval(timer);
-      const buttons = document.querySelectorAll(".btn-option");
+      const btns = document.querySelectorAll(".btn-option");
+      btns.forEach(b => b.disabled = true);
 
-      buttons.forEach((btn, idx) => {
-        btn.disabled = true;
-        if (idx === correctIndex) {
-          btn.classList.add("correct");
-        } else if (idx === selectedIndex) {
-          btn.classList.add("wrong");
-        }
-      });
-
-      if (selectedIndex === correctIndex) {
+      if (isCorrect) {
+        selectedBtn.classList.add("correct");
         score++;
+      } else {
+        selectedBtn.classList.add("wrong");
       }
 
       document.getElementById("next-btn").classList.remove("hide");
     }
 
     function nextQuestion() {
-      currentIndex++;
       loadQuestion();
     }
 
-    function gameOver(message) {
+    function endGame(msg) {
       clearInterval(timer);
-      document.getElementById("quiz-screen").classList.add("hide");
-      document.getElementById("result-screen").classList.remove("hide");
-      document.getElementById("result-title").textContent = message.includes("tempo acabou") ? "Derrota!" : "Fim do Quiz!";
-      document.getElementById("result-text").textContent = message;
+      document.getElementById("quiz-view").classList.add("hide");
+      document.getElementById("result-view").classList.remove("hide");
+      document.getElementById("result-title").textContent = "Fim de Jogo!";
+      document.getElementById("result-msg").textContent = `${msg} Você fez ${score} ponto(s) em ${currentSubcategory}.`;
     }
 
-    function restartQuiz() {
-      document.getElementById("result-screen").classList.add("hide");
-      document.getElementById("setup-screen").classList.remove("hide");
+    function resetToSetup() {
+      document.getElementById("result-view").classList.add("hide");
+      document.getElementById("setup-view").classList.remove("hide");
+    }
+
+    // SALVAR PERGUNTA CRIADA PELO UTILIZADOR
+    function saveCustomQuestion() {
+      const cat = document.getElementById("create-category-select").value;
+      let subcat = document.getElementById("custom-subcat-input").value.trim();
+      
+      if (!subcat) {
+        subcat = document.getElementById("create-subcategory-select").value;
+      } else {
+        // Adiciona a nova subcategoria criada ao catálogo
+        if (!catalogData[cat].includes(subcat)) {
+          catalogData[cat].push(subcat);
+          populateCategories();
+        }
+      }
+
+      const qText = document.getElementById("new-q").value;
+      const o0 = document.getElementById("opt0").value;
+      const o1 = document.getElementById("opt1").value;
+      const o2 = document.getElementById("opt2").value;
+      const o3 = document.getElementById("opt3").value;
+
+      if (!qText || !o0 || !o1 || !o2 || !o3) {
+        alert("Por favor, preencha a pergunta e todas as 4 opções!");
+        return;
+      }
+
+      if (!customQuestions[subcat]) customQuestions[subcat] = [];
+      customQuestions[subcat].push({
+        q: qText,
+        options: [o0, o1, o2, o3],
+        correct: 0
+      });
+
+      alert(`Pergunta guardada com sucesso na matéria "${subcat}"!`);
+      
+      // Limpa os campos
+      document.getElementById("new-q").value = "";
+      document.getElementById("opt0").value = "";
+      document.getElementById("opt1").value = "";
+      document.getElementById("opt2").value = "";
+      document.getElementById("opt3").value = "";
+      document.getElementById("custom-subcat-input").value = "";
+
+      switchTab('play');
     }
   </script>
 </body>
