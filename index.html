@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Estudos - Acessibilidade Sequencial</title>
+  <title>Quiz de Estudos Leve</title>
   
   <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
   
@@ -13,300 +13,90 @@
       --card-bg: #ffffff;
       --text-color: #2d3748;
       --primary-color: #2563eb;
-      --primary-hover: #1d4ed8;
       --music-bar-bg: #60a5fa;
-      --success-color: #22c55e;
-      --error-color: #ef4444;
-      --font-size: 16px;
     }
-
     body.high-contrast {
       --bg-color: #000000;
       --card-bg: #1a1a1a;
       --text-color: #ffffff;
       --primary-color: #ffff00;
       --music-bar-bg: #00ffff;
-      --success-color: #00ff00;
-      --error-color: #ff0000;
     }
-
     body {
-      margin: 0;
-      padding: 20px 10px;
+      margin: 0; padding: 20px 10px;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-size: var(--font-size);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
+      background-color: var(--bg-color); color: var(--text-color);
+      display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
       box-sizing: border-box;
     }
-
     .container {
-      background-color: var(--card-bg);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      width: 100%;
-      max-width: 440px;
-      padding: 24px 20px;
-      position: relative;
-      box-sizing: border-box;
+      background-color: var(--card-bg); border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; max-width: 440px; padding: 24px 20px;
+      position: relative; box-sizing: border-box;
     }
-
     .settings-btn {
-      background: #e2e8f0;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 20px;
-      cursor: pointer;
-      position: absolute;
-      right: 20px;
-      top: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
+      background: #e2e8f0; border: none; border-radius: 50%; width: 40px; height: 40px;
+      font-size: 20px; cursor: pointer; position: absolute; right: 20px; top: 20px;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .owl-icon {
-      font-size: 48px;
-      text-align: center;
-      margin-bottom: 2px;
-    }
-
-    h1 {
-      text-align: center;
-      margin: 0 0 16px 0;
-      font-size: 1.5rem;
-      color: var(--primary-color);
-    }
-
+    .owl-icon { font-size: 48px; text-align: center; margin-bottom: 2px; }
+    h1 { text-align: center; margin: 0 0 16px 0; font-size: 1.5rem; color: var(--primary-color); }
     .music-player-bar {
-      background: var(--music-bar-bg);
-      border-radius: 14px;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: white;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4);
-      cursor: pointer;
+      background: var(--music-bar-bg); border-radius: 14px; padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between; color: white; margin-bottom: 20px;
+      cursor: pointer; font-weight: bold; font-size: 0.9rem; text-align: center; justify-content: center;
     }
-
-    .music-arrow {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 26px;
-      font-weight: bold;
-      cursor: pointer;
-      padding: 0 6px;
-      line-height: 1;
-    }
-
-    .music-info {
-      text-align: center;
-      flex: 1;
-      font-size: 0.9rem;
-      font-weight: 700;
-      padding: 0 8px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
     .record-badge {
-      background: #fef3c7;
-      color: #92400e;
-      padding: 10px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: bold;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
+      background: #fef3c7; color: #92400e; padding: 10px; border-radius: 10px;
+      text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 0.9rem;
     }
-
     .selection-card {
-      background: var(--card-bg);
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: bold;
+      background: var(--card-bg); border: 2px solid #e2e8f0; border-radius: 12px;
+      padding: 14px 16px; margin-bottom: 12px; cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center; font-weight: bold;
     }
-
     .btn-main {
-      width: 100%;
-      padding: 15px;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.05rem;
-      font-weight: bold;
-      cursor: pointer;
+      width: 100%; padding: 15px; background: var(--primary-color); color: white;
+      border: none; border-radius: 10px; font-size: 1.05rem; font-weight: bold; cursor: pointer;
       margin-top: 10px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     }
-
-    .game-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      font-weight: bold;
-    }
-
-    .timer-badge {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-    }
-
-    .question-box {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      line-height: 1.4;
-      background: #f8fafc;
-      padding: 16px;
-      border-radius: 12px;
-      border-left: 4px solid var(--primary-color);
-    }
-
-    .libras-badge {
-      background: #e0f2fe;
-      color: #0369a1;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: bold;
-    }
-
-    .question-image {
-      width: 100%;
-      max-height: 180px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 14px;
-      border: 1px solid #cbd5e1;
-    }
-
-    .options-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
+    .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-weight: bold; }
+    .timer-badge { background: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; }
+    .question-box { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; line-height: 1.4; background: #f8fafc; padding: 16px; border-radius: 12px; border-left: 4px solid var(--primary-color); }
+    .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
     .option-btn {
-      padding: 14px;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      background: var(--card-bg);
-      color: var(--text-color);
-      text-align: left;
-      font-size: 0.95rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: border-color 0.2s;
+      padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; background: var(--card-bg);
+      color: var(--text-color); text-align: left; font-size: 0.95rem; cursor: pointer; font-weight: 500;
     }
-
-    .option-btn.pending-selection {
-      border-color: var(--primary-color);
-      background: #eff6ff;
-    }
-
-    .game-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 14px;
-      margin-top: 10px;
-    }
-
+    .option-btn.pending-selection { border-color: var(--primary-color); background: #eff6ff; }
+    .game-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 14px; margin-top: 10px; }
     .timer-toggle-bottom-btn {
-      background: #e2e8f0;
-      border: none;
-      border-radius: 50%;
-      width: 44px;
-      height: 44px;
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      transition: background 0.2s;
+      background: #e2e8f0; border: none; border-radius: 50%; width: 44px; height: 44px;
+      font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 350px;
-    }
-
-    .picker-list {
-      max-height: 280px;
-      overflow-y: auto;
-      margin-top: 10px;
-    }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 350px; }
+    .picker-list { max-height: 280px; overflow-y: auto; margin-top: 10px; }
   </style>
 </head>
-<body onclick="handleGlobalTouch()" aria-live="polite">
+<body onclick="initAudio()">
 
   <div class="container" onclick="event.stopPropagation()">
-    <button class="settings-btn" onclick="openModal()" aria-label="Configurações e Acessibilidade" title="Configurações">⚙️</button>
+    <button class="settings-btn" onclick="openModal()">⚙️</button>
 
-    <div class="owl-icon" aria-hidden="true">🦉</div>
+    <div class="owl-icon">🦉</div>
     <h1>Quiz de Estudos</h1>
 
-    <div class="music-player-bar" onclick="startMusicEngine()" role="button" aria-label="Reprodutor de música Pagode">
-      <button class="music-arrow" onclick="changeSong(event, -1)" aria-label="Música anterior">❮</button>
-      <div class="music-info" id="musicTitleDisplay">🎵 Toque para Ligar o Som</div>
-      <button class="music-arrow" onclick="changeSong(event, 1)" aria-label="Próxima música">❯</button>
+    <div class="music-player-bar">
+      <span>🎵 App Otimizado & Leve</span>
     </div>
 
     <div id="screenSetup">
-      <div class="record-badge">🏆 Acessibilidade com Leitura Sequencial</div>
+      <div class="record-badge">🏆 Versão Fluida & Rápida</div>
 
-      <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
-      <div class="selection-card" onclick="openPicker('nivel')" role="button">
+      <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino:</p>
+      <div class="selection-card" onclick="openPicker('nivel')">
         <span id="labelNivel">Ensino Fundamental</span>
-        <span>❯</span>
-      </div>
-
-      <p style="font-weight: bold; margin-bottom: 6px;">2. Matéria Específica:</p>
-      <div class="selection-card" onclick="openPicker('materia')" role="button">
-        <span id="labelMateria">Todas as Matérias</span>
         <span>❯</span>
       </div>
 
@@ -315,27 +105,23 @@
 
     <div id="screenGame" style="display: none;">
       <div class="game-header">
-        <span id="progressIndicator">Questão 1 de 3</span>
+        <span id="progressIndicator">Questão 1 de 2</span>
         <span class="timer-badge" id="timerBadge">⏱️ 120s</span>
       </div>
 
-      <div id="librasContainer"></div>
-      <div id="imageContainer"></div>
-
-      <div class="question-box" id="questionText" tabindex="0">Carregando questão...</div>
-      
-      <div class="options-grid" id="optionsContainer" role="group" aria-label="Alternativas"></div>
+      <div class="question-box" id="questionText">Carregando...</div>
+      <div class="options-grid" id="optionsContainer"></div>
 
       <div class="game-footer">
         <span style="font-size: 0.85rem; font-weight: bold; color: #64748b;">Modo Sem Tempo:</span>
-        <button class="timer-toggle-bottom-btn" id="timerToggleBtn" onclick="toggleTimerMode()" title="Ativar/Desativar Tempo no Rodapé">⏱️</button>
+        <button class="timer-toggle-bottom-btn" id="timerToggleBtn" onclick="toggleTimerMode()">⏱️</button>
       </div>
     </div>
   </div>
 
   <div class="modal" id="pickerModal">
     <div class="modal-content">
-      <h3 id="pickerTitle" style="margin-top:0;">Selecione</h3>
+      <h3 style="margin-top:0;">Selecione o Nível</h3>
       <div class="picker-list" id="pickerContainer"></div>
       <button class="btn-main" onclick="closePicker()">Fechar</button>
     </div>
@@ -345,16 +131,8 @@
     <div class="modal-content">
       <h3 style="margin-top:0;">⚙️ Configurações</h3>
       <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Música de Fundo (Pagode):</span>
-        <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)">
-      </div>
-      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Alto Contraste:</span>
-        <input type="checkbox" id="chkContrast" onchange="document.body.classList.toggle('high-contrast')">
-      </div>
-      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Leitor de Tela (Deficiente Visual):</span>
-        <input type="checkbox" id="chkScreenReader" checked onchange="toggleScreenReader(this.checked)">
+        <span>Leitor de Voz:</span>
+        <input type="checkbox" id="chkScreenReader" checked onchange="isScreenReaderActive = this.checked">
       </div>
       <button class="btn-main" onclick="closeModal()">Fechar</button>
     </div>
@@ -363,44 +141,18 @@
   <script>
     var dbQuestoes = {
       "Ensino Fundamental": [
-        { materia: "Matemática", pergunta: "Quanto é 45 + 38?", libras: "Adição", imagem: null, opcoes: ["73", "83", "93", "72"], correta: 0 },
-        { materia: "Português", pergunta: "Qual é o sinônimo da palavra 'Feliz'?", libras: "Alegre", imagem: null, opcoes: ["Triste", "Contente", "Cansado", "Zangado"], correta: 1 },
-        { materia: "Ciências", pergunta: "Qual planeta do sistema solar é conhecido como Planeta Vermelho?", libras: "Planeta", imagem: null, opcoes: ["Vênus", "Marte", "Júpiter", "Saturno"], correta: 1 }
-      ],
-      "ENEM": [
-        { materia: "Matemática", pergunta: "ENEM: Calcule a área de uma praça circular com diâmetro de 20 metros (considere pi = 3,14).", libras: "Área e Círculo", imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=400&q=80", opcoes: ["314 metros quadrados", "628 metros quadrados", "157 metros quadrados", "100 metros quadrados"], correta: 0 },
-        { materia: "Linguagens", pergunta: "ENEM: Qual figura de linguagem está presente no trecho 'O vento beijou minha face'?", libras: "Poesia", imagem: null, opcoes: ["Metáfora", "Personificação ou Prosopopeia", "Hipérbole", "Antítese"], correta: 1 }
-      ],
-      "Concurso Público": [
-        { materia: "Português", pergunta: "Concurso: Assinale a alternativa em que a concordância verbal está inteiramente correta:", libras: "Regra Gramatical", imagem: null, opcoes: ["Faltou recursos para a obra.", "Devem haver muitas vagas.", "Fizeram-se necessários novos ajustes.", "Faz muitos anos que ocorrem."], correta: 2 },
-        { materia: "Informática", pergunta: "Concurso: Qual atalho de teclado é utilizado para copiar um item selecionado no Windows?", libras: "Computador", imagem: null, opcoes: ["Control + V", "Control + C", "Control + X", "Control + Z"], correta: 1 }
+        { pergunta: "Quanto é 45 + 38?", opcoes: ["73", "83", "93", "72"], correta: 0 },
+        { pergunta: "Qual é o sinônimo da palavra 'Feliz'?", opcoes: ["Triste", "Contente", "Cansado", "Zangado"], correta: 1 }
       ]
     };
 
-    var selectedNivel = "Ensino Fundamental";
-    var selectedMateria = "Todas as Matérias";
     var currentQuestIndex = 0;
     var currentTimer = null;
-    var timeLeft = 120; // 2 minutos para acessibilidade
+    var timeLeft = 120;
     var isTimerDisabled = false;
     var isScreenReaderActive = true;
     var selectedAnswerPending = null;
-
     var audioCtx = null;
-    var musicInterval = null;
-    var stepCount = 0;
-    var currentSongIdx = 4;
-    var isPlayingMusic = false;
-    var hasUserInteracted = false;
-
-    var songList = [
-      { name: "1. 👻 Terror Sombrio" },
-      { name: "2. 🦇 Mistério Noturno" },
-      { name: "3. 🌸 Leveza Suave" },
-      { name: "4. 🍃 Brisa Serena" },
-      { name: "5. 🪘 Pagode Suingado" },
-      { name: "6. 🥁 Pagode Raiz Acelerado" }
-    ];
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -418,148 +170,37 @@
       }
     }
 
-    function playCustomTone(freq, duration, type='sine', vol=0.04) {
-      try {
-        initAudio();
-        if (!audioCtx || audioCtx.state !== 'running') return;
-        var osc = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch(e){}
-    }
-
-    function playMusicLoop() {
-      if (!isPlayingMusic || !document.getElementById("chkMusic").checked) return;
-      var s = stepCount % 16;
-      var melodia = [261, 0, 330, 392, 0, 330, 261, 220];
-      if (s % 2 === 0 && melodia[(s/2) % melodia.length] > 0) {
-        playCustomTone(melodia[(s/2) % melodia.length], 0.18, 'triangle', 0.045);
-      }
-      if (s === 0 || s === 6 || s === 10 || s === 14) playCustomTone(110, 0.12, 'sine', 0.06);
-      if (s === 3 || s === 7 || s === 11 || s === 15) playCustomTone(440, 0.05, 'square', 0.02);
-      stepCount = (stepCount + 1) % 32;
-    }
-
-    function startMusicEngine() {
-      initAudio();
-      isPlayingMusic = true;
-      document.getElementById("chkMusic").checked = true;
-      if (musicInterval) clearInterval(musicInterval);
-      stepCount = 0;
-      musicInterval = setInterval(playMusicLoop, 320);
-      playMusicLoop();
-      updateSongDisplay();
-    }
-
-    function handleGlobalTouch() {
-      if (!hasUserInteracted) {
-        hasUserInteracted = true;
-        startMusicEngine();
-      }
-    }
-
-    function toggleMusic(enable) {
-      initAudio();
-      isPlayingMusic = enable;
-      if (enable) {
-        if (musicInterval) clearInterval(musicInterval);
-        musicInterval = setInterval(playMusicLoop, 320);
-      } else {
-        clearInterval(musicInterval);
-      }
-      updateSongDisplay();
-    }
-
-    function toggleScreenReader(enable) {
-      isScreenReaderActive = enable;
-      if (enable) {
-        speakText("Leitor de tela ativado.");
-      }
-    }
-
-    function changeSong(e, direction) {
-      e.stopPropagation();
-      initAudio();
-      currentSongIdx = (currentSongIdx + direction + songList.length) % songList.length;
-      startMusicEngine();
-    }
-
-    function updateSongDisplay() {
-      document.getElementById("musicTitleDisplay").textContent = (isPlayingMusic ? "▶ " : "⏸ ") + songList[currentSongIdx].name;
-    }
-
     function openPicker(type) {
       initAudio();
       var modal = document.getElementById("pickerModal");
       var container = document.getElementById("pickerContainer");
-      var title = document.getElementById("pickerTitle");
       container.innerHTML = "";
 
-      if (type === 'nivel') {
-        title.textContent = "Ensino / Prova";
-        ["Ensino Fundamental", "ENEM", "Concurso Público"].forEach(function(n) {
-          var item = document.createElement("div");
-          item.className = "selection-card";
-          item.textContent = n;
-          item.onclick = function() {
-            selectedNivel = n;
-            document.getElementById("labelNivel").textContent = selectedNivel;
-            speakText("Nível selecionado: " + n);
-            closePicker();
-          };
-          container.appendChild(item);
-        });
-      } else {
-        title.textContent = "Matéria Específica";
-        ["Todas as Matérias", "Matemática", "Português", "Ciências", "Informática", "Linguagens"].forEach(function(m) {
-          var item = document.createElement("div");
-          item.className = "selection-card";
-          item.textContent = m;
-          item.onclick = function() {
-            selectedMateria = m;
-            document.getElementById("labelMateria").textContent = selectedMateria;
-            speakText("Matéria selecionada: " + m);
-            closePicker();
-          };
-          container.appendChild(item);
-        });
-      }
+      ["Ensino Fundamental", "ENEM", "Concurso Público"].forEach(function(n) {
+        var item = document.createElement("div");
+        item.className = "selection-card";
+        item.textContent = n;
+        item.onclick = function() {
+          document.getElementById("labelNivel").textContent = n;
+          speakText("Nível: " + n);
+          closePicker();
+        };
+        container.appendChild(item);
+      });
       modal.style.display = "flex";
-      speakText("Janela de seleção aberta.");
+      speakText("Selecione um nível.");
     }
 
     function closePicker() { document.getElementById("pickerModal").style.display = "none"; }
-    function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; speakText("Menu de configurações aberto."); }
+    function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; }
     function closeModal() { document.getElementById("settingsModal").style.display = "none"; }
-
-    function getFilteredQuestions() {
-      var lista = dbQuestoes[selectedNivel] || dbQuestoes["Ensino Fundamental"];
-      if (selectedMateria === "Todas as Matérias") return lista;
-      return lista.filter(function(q) { return q.materia === selectedMateria; });
-    }
 
     function startQuiz() {
       initAudio();
       currentQuestIndex = 0;
-      var qList = getFilteredQuestions();
-      if (qList.length === 0) {
-        alert("Ainda não há questões cadastradas para esta matéria.");
-        speakText("Aviso: Não há questões para esta matéria.");
-        return;
-      }
       document.getElementById("screenSetup").style.display = 'none';
       document.getElementById("screenGame").style.display = 'block';
-      
-      // Aviso inicial completo orientando sobre o cronômetro de 2 min e o rodapé
-      speakText("Quiz iniciado com cronômetro de 2 minutos. Atenção: o botão para jogar sem tempo está localizado na parte inferior da tela.");
-      
+      speakText("Quiz iniciado com cronômetro de 2 minutos. O botão para jogar sem tempo está na parte inferior.");
       loadQuestion();
     }
 
@@ -573,30 +214,108 @@
         clearInterval(currentTimer);
         btn.textContent = "⏱️❌";
         badge.textContent = "♾️ Sem Tempo";
-        speakText("Modo sem tempo ativado com sucesso.");
+        speakText("Modo sem tempo ativado.");
       } else {
         btn.textContent = "⏱️";
         badge.textContent = "⏱️ 120s";
-        setupTimerForCurrentQuestion();
-        speakText("Modo com tempo de 2 minutos ativado.");
+        setupTimer();
+        speakText("Modo com tempo ativado.");
       }
     }
 
     function loadQuestion() {
-      var qList = getFilteredQuestions();
-      if (currentQuestIndex >= qList.length) {
-        alert("Parabéns! Você concluiu este bloco de questões.");
-        speakText("Parabéns! Bloco de questões concluído.");
+      var lista = dbQuestoes["Ensino Fundamental"];
+      if (currentQuestIndex >= lista.length) {
+        alert("Parabéns! Bloco concluído.");
+        speakText("Bloco concluído.");
         location.reload();
         return;
       }
 
-      selectedAnswerPending = null; 
-      var q = qList[currentQuestIndex];
-      document.getElementById("progressIndicator").textContent = "Questão " + (currentQuestIndex + 1) + " de " + qList.length;
-      document.getElementById("questionText").textContent = "Matéria " + q.materia + ". " + q.pergunta;
+      selectedAnswerPending = null;
+      var q = lista[currentQuestIndex];
+      document.getElementById("progressIndicator").textContent = "Questão " + (currentQuestIndex + 1) + " de " + lista.length;
+      document.getElementById("questionText").textContent = q.pergunta;
 
-      var librasBox = document.getElementById("librasContainer");
-      librasBox.innerHTML = q.libras ? '<div class="libras-badge"><span>Libras:</span> ' + q.libras + '</div>' : '';
+      var optContainer = document.getElementById("optionsContainer");
+      optContainer.innerHTML = "";
+      
+      var letras = ["A", "B", "C", "D"];
+      var textoLeitura = "Questão " + (currentQuestIndex + 1) + ". " + q.pergunta + ". Alternativas: ";
 
-     
+      q.opcoes.forEach(function(opt, idx) {
+        var letra = letras[idx];
+        var btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.id = "opt-btn-" + idx;
+        btn.textContent = letra + ") " + opt;
+        
+        btn.onclick = function() {
+          handleOptionClick(idx, letra, opt, q.correta);
+        };
+        optContainer.appendChild(btn);
+        textoLeitura += " Alternativa " + letra + ": " + opt + ".";
+      });
+
+      speakText(textoLeitura);
+      setupTimer();
+    }
+
+    function handleOptionClick(idx, letra, texto, correta) {
+      initAudio();
+      if (selectedAnswerPending === idx) {
+        selectedAnswerPending = null;
+        checkAnswer(idx, correta);
+      } else {
+        selectedAnswerPending = idx;
+        var buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(function(b) { b.classList.remove('pending-selection'); });
+        document.getElementById("opt-btn-" + idx).classList.add('pending-selection');
+        speakText("Alternativa " + letra + ". Você confirma e aceita a alternativa " + letra + "? Se sim, aperte mais uma vez.");
+      }
+    }
+
+    function setupTimer() {
+      clearInterval(currentTimer);
+      if (isTimerDisabled) return;
+
+      timeLeft = 120;
+      updateTimerDisplay();
+      currentTimer = setInterval(function() {
+        if (isTimerDisabled) return;
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(currentTimer);
+          alert("Tempo esgotado!");
+          speakText("Tempo esgotado.");
+          currentQuestIndex++;
+          loadQuestion();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      if (isTimerDisabled) return;
+      var mins = Math.floor(timeLeft / 60);
+      var secs = timeLeft % 60;
+      document.getElementById("timerBadge").textContent = "⏱️ " + (mins > 0 ? (mins + "m " + secs + "s") : (secs + "s"));
+    }
+
+    function checkAnswer(escolhida, correta) {
+      clearInterval(currentTimer);
+      if (escolhida === correta) {
+        alert("Resposta Correta!");
+        speakText("Resposta correta!");
+      } else {
+        alert("Errou!");
+        speakText("Resposta incorreta.");
+      }
+      currentQuestIndex++;
+      loadQuestion();
+    }
+  </script>
+</body>
+</html>
+<!-- App Link: https://app-quiz-estudos.github.io/QUIZ-ESTUDOS-/ -->
+
