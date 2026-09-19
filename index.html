@@ -1,3 +1,11 @@
+<!-- 
+  =============================================================================
+  PROJETO: Quiz de Estudos (Aplicativo Web PWA)
+  VERSÃO: 1.2.1 (Base, Navegação, Sintetizador de Áudio e Assinatura Final)
+  ATUALIZAÇÃO: Setembro de 2026
+  DESCRIÇÃO: Estrutura principal com 10 músicas customizadas e assinatura completa.
+  =============================================================================
+-->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -271,7 +279,6 @@
     <div class="owl-icon">🦉</div>
     <h1>Quiz de Estudos</h1>
 
-    <!-- Player de Música com 10 Faixas Totalmente Exclusivas -->
     <div class="music-player-bar" onclick="startMusicEngine()">
       <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
       <div class="music-info" id="musicTitleDisplay">
@@ -285,7 +292,6 @@
       <button class="tab-btn" id="tabCreate" onclick="switchTab('create')">Criar Pergunta</button>
     </div>
 
-    <!-- Tela Setup / Jogar -->
     <div id="screenSetup">
       <div class="record-badge" id="recordDisplay">🏆 Parte 1: Base Ativa</div>
 
@@ -304,7 +310,6 @@
       <button class="btn-main" onclick="startQuiz()">Testar Funcionalidades</button>
     </div>
 
-    <!-- Tela Criar Pergunta -->
     <div id="screenCreate" style="display: none;">
       <p style="font-weight: bold; margin-bottom: 6px;">Adicionar Nova Pergunta:</p>
       <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -316,7 +321,6 @@
       </div>
     </div>
 
-    <!-- Tela de Jogo / Teste -->
     <div id="screenGame" style="display: none;">
       <div class="game-header">
         <span>Status: <span id="scoreText">Pronto</span></span>
@@ -332,7 +336,6 @@
     </div>
   </div>
 
-  <!-- Modal de Seleção -->
   <div class="modal" id="pickerModal">
     <div class="modal-content">
       <h3 id="pickerTitle" style="margin-top:0;">Selecione</h3>
@@ -341,7 +344,6 @@
     </div>
   </div>
 
-  <!-- Configurações -->
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <h3 style="margin-top:0;">⚙️ Configurações</h3>
@@ -377,7 +379,6 @@
     var isPlayingMusic = false;
     var hasUserInteracted = false;
 
-    // 10 Músicas com identificações e estruturas independentes
     var songList = [
       { name: "1. 👻 Terror Sombrio", id: "terror1" },
       { name: "2. 🦇 Mistério Noturno", id: "terror2" },
@@ -417,14 +418,12 @@
       } catch(e){}
     }
 
-    // 10 Algoritmos de Ritmo Completamente Distintos
     function playMusicLoop() {
       if (!isPlayingMusic || !document.getElementById("chkMusic").checked) return;
       var songId = songList[currentSongIdx].id;
       var s = stepCount % 16;
 
       if (songId === "terror1") {
-        // Terror 1: Notas graves e dissonantes, clima tenso
         var notes = [130, 123, 0, 110, 146, 130, 98, 0];
         if (s % 2 === 0 && notes[(s/2) % notes.length] > 0) {
           playCustomTone(notes[(s/2) % notes.length], 0.4, 'sawtooth', 0.035);
@@ -432,7 +431,6 @@
         if (s === 0 || s === 10) playCustomTone(65, 0.7, 'sine', 0.05);
       } 
       else if (songId === "terror2") {
-        // Terror 2: Sinos macabros agudos e notas espaçadas
         var notes = [220, 0, 207, 0, 196, 0, 185, 0];
         if (notes[s % notes.length] > 0) {
           playCustomTone(notes[s % notes.length], 0.5, 'triangle', 0.03);
@@ -440,19 +438,16 @@
         if (s === 0 || s === 8) playCustomTone(55, 0.9, 'sawtooth', 0.04);
       }
       else if (songId === "leveza1") {
-        // Leveza 1: Arpejo suave e celestial ascendente
         var notes = [261, 329, 392, 523, 392, 329, 440, 349];
         playCustomTone(notes[s % notes.length], 0.6, 'sine', 0.025);
         if (s === 0) playCustomTone(130, 0.5, 'triangle', 0.015);
       } 
       else if (songId === "leveza2") {
-        // Leveza 2: Melodia doce em notas calmas e relaxantes
         var notes = [330, 392, 440, 493, 523, 493, 440, 392];
         playCustomTone(notes[s % notes.length], 0.55, 'sine', 0.025);
         if (s === 4 || s === 12) playCustomTone(164, 0.4, 'triangle', 0.015);
       }
       else if (songId === "pagode1") {
-        // Pagode 1: Cadência de cavaquinho e percussão leve
         var notes = [196, 164, 220, 174, 196, 246, 220, 196];
         if (s % 2 === 0) {
           playCustomTone(notes[(s/2) % notes.length], 0.15, 'triangle', 0.04);
@@ -460,7 +455,6 @@
         if (s % 4 === 2) playCustomTone(392, 0.08, 'square', 0.02);
       } 
       else if (songId === "pagode2") {
-        // Pagode 2: Ritmo suingado diferente com acentuação no contratempo
         var notes = [220, 196, 174, 164, 220, 261, 220, 196];
         if (s % 2 === 1) {
           playCustomTone(notes[s % notes.length], 0.18, 'triangle', 0.04);
@@ -468,25 +462,21 @@
         if (s % 4 === 0) playCustomTone(110, 0.12, 'square', 0.035);
       }
       else if (songId === "rock1") {
-        // Rock 1: Riff acelerado com distorção serrilhada
         var notes = [146, 146, 174, 196, 146, 130, 146, 220];
         playCustomTone(notes[s % notes.length], 0.25, 'sawtooth', 0.035);
         if (s % 4 === 0) playCustomTone(73, 0.2, 'square', 0.04);
       } 
       else if (songId === "rock2") {
-        // Rock 2: Rock pesado com progressão agressiva de acordes
         var notes = [110, 110, 130, 146, 110, 98, 110, 164];
         playCustomTone(notes[s % notes.length], 0.22, 'sawtooth', 0.04);
         if (s % 2 === 0) playCustomTone(55, 0.15, 'square', 0.045);
       }
       else if (songId === "eletronica1") {
-        // Eletrônica 1: Sintetizador rápido e cadenciado
         var notes = [220, 440, 330, 550, 293, 587, 392, 784];
         playCustomTone(notes[s % notes.length], 0.12, 'sawtooth', 0.025);
         if (s % 2 === 0) playCustomTone(110, 0.1, 'square', 0.04);
       }
       else if (songId === "eletronica2") {
-        // Eletrônica 2: Techno acelerado com graves marcantes
         var notes = [440, 330, 220, 330, 550, 440, 330, 220];
         playCustomTone(notes[s % notes.length], 0.1, 'sawtooth', 0.03);
         if (s % 4 === 0) playCustomTone(130, 0.12, 'square', 0.05);
@@ -620,3 +610,17 @@
     function startQuiz() {
       initAudio();
       document.getElementById("screenSetup").style.display = 'none';
+      document.getElementById("screenGame").style.display = 'block';
+    }
+
+    function backToSetup() {
+      document.getElementById("screenGame").style.display = 'none';
+      document.getElementById("screenSetup").style.display = 'block';
+    }
+
+    updateSongDisplay();
+  </script>
+</body>
+</html>
+<!-- FIM DO CÓDIGO - QUIZ DE ESTUDOS v1.2.1 -->
+
