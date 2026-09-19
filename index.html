@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Estudos - Parte 2 Completa</title>
+  <title>Quiz de Estudos - Parte 2 Ajustada</title>
   
   <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
   
@@ -81,7 +81,6 @@
     .modal-content { background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 350px; text-align: center; }
     .picker-list { max-height: 280px; overflow-y: auto; margin-top: 10px; text-align: left; }
     
-    /* Estilo do Card de Game Over Exclusivo */
     .gameover-box {
       background: #fef2f2;
       border: 2px solid var(--error-color);
@@ -113,7 +112,7 @@
     </div>
 
     <div id="screenSetup">
-      <div class="record-badge">🏆 Parte 2: Músicas, Voz e Acessibilidade</div>
+      <div class="record-badge">🏆 Parte 2: Configurações & Acessibilidade</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
       <div class="selection-card" onclick="openPicker()">
@@ -134,7 +133,10 @@
       <div class="options-grid" id="optionsContainer"></div>
 
       <div class="game-footer">
-        <span style="font-size: 0.85rem; font-weight: bold; color: #64748b;">Modo Sem Tempo:</span>
+        <div>
+          <span style="font-size: 0.85rem; font-weight: bold; display: block; color: var(--text-color);">Modo Sem Tempo:</span>
+          <span style="font-size: 0.75rem; color: #64748b;">Toque no relógio ao lado para cancelar o tempo</span>
+        </div>
         <button class="timer-toggle-bottom-btn" id="timerToggleBtn" onclick="toggleTimerMode()" title="Ativar/Desativar Tempo">⏱️</button>
       </div>
     </div>
@@ -159,9 +161,14 @@
     </div>
   </div>
 
+  <!-- Modal de Configurações Completo com o interruptor da música -->
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <h3 style="margin-top:0;">⚙️ Configurações</h3>
+      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
+        <span>Música de Fundo (Pagode):</span>
+        <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)">
+      </div>
       <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
         <span>Alto Contraste:</span>
         <input type="checkbox" id="chkContrast" onchange="document.body.classList.toggle('high-contrast')">
@@ -190,11 +197,10 @@
     var audioCtx = null;
     var musicInterval = null;
     var stepCount = 0;
-    var currentSongIdx = 4; // Começa no Pagode Suingado
+    var currentSongIdx = 4;
     var isPlayingMusic = false;
     var hasUserInteracted = false;
 
-    // 6 Trilhas sonoras com batidas e estilos totalmente diferenciados (Web Audio API)
     var songList = [
       { name: "1. 👻 Terror Sombrio (Grave Pesado)", type: "sawtooth", tempo: 500, baseFreq: 110 },
       { name: "2. 🦇 Mistério Noturno (Lento)", type: "sine", tempo: 600, baseFreq: 146 },
@@ -227,17 +233,15 @@
     }
 
     function playMusicLoop() {
-      if (!isPlayingMusic) return;
+      if (!isPlayingMusic || !document.getElementById("chkMusic").checked) return;
       var song = songList[currentSongIdx];
       var s = stepCount % 16;
       
-      // Melodia customizada para cada faixa
       var melodia = [song.baseFreq, 0, song.baseFreq * 1.25, song.baseFreq * 1.5, 0, song.baseFreq * 1.25, song.baseFreq, song.baseFreq * 0.8];
       if (s % 2 === 0 && melodia[(s/2) % melodia.length] > 0) {
         playCustomTone(melodia[(s/2) % melodia.length], 0.18, song.type, 0.045);
       }
       
-      // Batida de percussão / baixo de fundo
       if (s === 0 || s === 8) playCustomTone(song.baseFreq * 0.5, 0.15, 'sine', 0.06);
       
       stepCount = (stepCount + 1) % 32;
@@ -246,11 +250,26 @@
     function startMusicEngine() {
       initAudio();
       isPlayingMusic = true;
+      document.getElementById("chkMusic").checked = true;
       var song = songList[currentSongIdx];
       if (musicInterval) clearInterval(musicInterval);
       stepCount = 0;
       musicInterval = setInterval(playMusicLoop, song.tempo);
       playMusicLoop();
+      updateSongDisplay();
+    }
+
+    function toggleMusic(enable) {
+      initAudio();
+      isPlayingMusic = enable;
+      if (enable) {
+        var song = songList[currentSongIdx];
+        if (musicInterval) clearInterval(musicInterval);
+        musicInterval = setInterval(playMusicLoop, song.tempo);
+        playMusicLoop();
+      } else {
+        clearInterval(musicInterval);
+      }
       updateSongDisplay();
     }
 
@@ -269,7 +288,8 @@
     }
 
     function updateSongDisplay() {
-      document.getElementById("musicTitleDisplay").textContent = (isPlayingMusic ? "▶ " : "⏸ ") + songList[currentSongIdx].name;
+      var isChecked = document.getElementById("chkMusic").checked;
+      document.getElementById("musicTitleDisplay").textContent = (isPlayingMusic && isChecked ? "▶ " : "⏸ ") + songList[currentSongIdx].name;
     }
 
     function speakText(text) {
@@ -314,8 +334,8 @@
       document.getElementById("screenSetup").style.display = 'none';
       document.getElementById("screenGame").style.display = 'block';
       
-      // Aviso explícito e claro exigido sobre o relógio no rodapé e o cronômetro de 2 min
-      speakText("Quiz iniciado com cronômetro de 2 minutos. Atenção: o botão do relógio para jogar sem tempo está localizado no rodapé da questão.");
+      // Aviso explícito sobre o cronômetro de 2 min e o botão do relógio no rodapé
+      speakText("Quiz iniciado com cronômetro de 2 minutos. Atenção: o botão do relógio localizado no rodapé da tela desativa o cronômetro sem precisar de temporizador.");
       
       loadQuestion();
     }
