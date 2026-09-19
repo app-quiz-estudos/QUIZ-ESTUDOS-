@@ -263,7 +263,7 @@
       playMusicLoop();
       updateSongDisplay();
 
-      // Primeiro toque apenas destrava o som e a música em silêncio (sem falar texto gigante)
+      // Primeiro toque apenas destrava o som sem falar nada automático
       if (!hasUserStarted) {
         hasUserStarted = true;
       }
@@ -471,4 +471,4 @@
 
     function checkAnswer(escolhida, correta) {
       clearInterval(currentTimer);
- 
+      if (escolhida === 
