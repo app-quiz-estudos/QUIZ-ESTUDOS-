@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Estudos - Multidisciplinar</title>
+  <title>Quiz de Estudos - Matemática</title>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -79,21 +79,21 @@
 <body>
 
   <div class="container">
-    <div class="owl-icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i></div>
-    <h1>Quiz Multidisciplinar</h1>
+    <div class="owl-icon" aria-hidden="true">🦉</div>
+    <h1>Quiz de Matemática</h1>
 
     <!-- Tela Inicial / Setup -->
     <div id="screenSetup" class="screen active">
       
-      <p style="font-weight: bold; margin-bottom: 6px;">1. Grande Área:</p>
-      <div class="selection-card" id="cardArea">
-        <span id="labelArea">Matemática</span>
-        <span><i class="fa-solid fa-chevron-right"></i></span>
+      <p style="font-weight: bold; margin-bottom: 6px;">1. Disciplina:</p>
+      <div class="selection-card">
+        <span>Matemática</span>
+        <span><i class="fa-solid fa-lock" style="font-size: 0.8rem; opacity: 0.6;"></i></span>
       </div>
 
-      <p style="font-weight: bold; margin-bottom: 6px;">2. Subdisciplina Específica:</p>
+      <p style="font-weight: bold; margin-bottom: 6px;">2. Tópico Específico:</p>
       <div class="selection-card" id="cardSub">
-        <span id="labelSub">Matemática básica</span>
+        <span id="labelSub">Matemática Básica e Operações</span>
         <span><i class="fa-solid fa-chevron-right"></i></span>
       </div>
 
@@ -104,7 +104,7 @@
       </div>
 
       <button class="btn-main" id="btnStartQuiz">
-        <i class="fa-solid fa-play"></i> Iniciar Simulados (100 Questões)
+        <i class="fa-solid fa-play"></i> Iniciar Simulado (100 Questões)
       </button>
 
       <div class="accessibility-footer-badge">
@@ -116,7 +116,7 @@
     <!-- Tela de Execução do Quiz -->
     <div id="screenQuiz" class="screen">
       <div class="quiz-header">
-        <span id="quizSubjectTag">Matemática / Básica</span>
+        <span id="quizSubjectTag">Matemática > Básica</span>
         <span id="quizCounter">Questão 1/100</span>
       </div>
       <div class="question-box" id="questionText">Carregando questão...</div>
@@ -142,60 +142,40 @@
 
   <script>
     window.addEventListener('DOMContentLoaded', function() {
-      const baseDisciplinas = {
-        "Matemática": ["Matemática básica", "Aritmética", "Matemática financeira", "Álgebra", "Geometria plana", "Estatística", "Probabilidade"],
-        "Língua Portuguesa e literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de textos", "Redação", "Literatura brasileira"],
-        "Ciências da natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética"],
-        "História": ["História geral", "História do Brasil", "História antiga", "História medieval", "História contemporânea"],
-        "Geografia": ["Geografia geral", "Geografia física", "Geografia humana", "Geografia do Brasil", "Cartografia"],
-        "Informática e tecnologia": ["Informática básica", "Sistemas operacionais", "Segurança da informação", "Lógica de programação", "HTML/CSS", "Python"]
-      };
+      const topicosMatematica = [
+        "Matemática Básica e Operações",
+        "Frações e Números Decimais",
+        "Porcentagem e Juros Simples",
+        "Equações do 1º e 2º Grau",
+        "Razão, Proporção e Regra de Três",
+        "Geometria Plana (Áreas e Perímetros)",
+        "Estatística e Média Aritmética"
+      ];
 
       const niveisDisponíveis = ["Ensino Fundamental", "Ensino Médio / ENEM", "Concurso Público"];
 
-      let selectedArea = "Matemática";
-      let selectedSub = "Matemática básica";
+      let selectedSub = topicosMatematica[0];
       let selectedLevel = "Ensino Fundamental";
       let questaoAtualIndex = 0;
 
-      // BANCO DE QUESTÕES REAIS E VARIADAS
-      const bancoDeQuestoes = {
-        "Matemática básica": [
-          { q: "Qual é o resultado da expressão: 15 + 3 × 4 - 6?", opts: ["21", "27", "18", "36"], corr: "21", exp: "Pela ordem de operações, primeiro multiplica-se (3 × 4 = 12), depois soma-se e subtrai-se (15 + 12 - 6 = 21)." },
-          { q: "Se um produto custa R$ 200,00 e sofre um desconto de 20%, qual passa a ser o seu preço final?", opts: ["R$ 160,00", "R$ 180,00", "R$ 150,00", "R$ 140,00"], corr: "R$ 160,00", exp: "O desconto de 20% sobre R$ 200,00 é de R$ 40,00. Logo, 200 - 40 = 160." },
-          { q: "Qual é o valor da fração irredutível equivalente a 45/60?", opts: ["3/4", "2/3", "4/5", "5/6"], corr: "3/4", exp: "Dividindo o numerador e o denominador por 15, obtemos 3/4." },
-          { q: "Qual é o MMC entre os números 4, 6 e 8?", opts: ["24", "12", "48", "16"], corr: "24", exp: "O menor múltiplo comum entre 4, 6 e 8 é 24." },
-          { q: "Qual é a raiz quadrada de 144 somada com 25?", opts: ["37", "17", "29", "35"], corr: "37", exp: "A raiz de 144 é 12. Somando 25, temos 12 + 25 = 37." }
-        ],
-        "Gramática": [
-          { q: "Assinale a alternativa em que todas as palavras estão grafadas corretamente:", opts: ["Exceção, ansioso, adivinhar", "Excessão, ancioso, adivinhar", "Exceção, ancioso, advinhar", "Excessão, ansioso, advinhar"], corr: "Exceção, ansioso, adivinhar", exp: "A grafia correta exige 'exceção', 'ansioso' (com s) e 'adivinhar'." },
-          { q: "Qual das frases abaixo apresenta um exemplo de figura de linguagem chamada Metáfora?", opts: ["Meus olhos choraram de emoção.", "Sua boca é um jardim florido.", "O vento sussurrava segredos à noite.", "Ela é doce como o mel."], corr: "Sua boca é um jardim florido.", exp: "A metáfora ocorre quando há uma comparação implícita sem conectivo comparativo ('como')." },
-          { q: "Identifique a classe gramatical da palavra destacada na frase: 'O aluno estuda com **afinco**.'", opts: ["Substantivo", "Advérbio", "Adjetivo", "Preposição"], corr: "Substantivo", exp: "A palavra 'afinco' funciona como substantivo masculino (com o sentido de empenho, dedicação)." }
-        ],
-        "Biologia": [
-          { q: "Qual é a organela celular responsável pela respiração celular e produção de energia (ATP)?", opts: ["Mitocôndria", "Ribossomo", "Complexo de Golgi", "Lisossomo"], corr: "Mitocôndria", exp: "As mitocôndrias são as centrais energéticas das células eucarióticas." },
-          { q: "O processo pelo qual as plantas produzem seu próprio alimento utilizando luz solar, água e gás carbônico chama-se:", opts: ["Fotossíntese", "Respiração", "Transpiração", "Fermentação"], corr: "Fotossíntese", exp: "A fotossíntese converte energia luminosa em energia química armazenada na glicose." },
-          { q: "Qual das seguintes estruturas é exclusiva das células vegetais?", opts: ["Parede celular", "Membrana plasmática", "Citoplasma", "Ribossomo"], corr: "Parede celular", exp: "A parede celular de celulose é exclusiva de vegetais, conferindo rigidez e proteção." }
-        ],
-        "História geral": [
-          { q: "Qual evento histórico marcou o início da Idade Contemporânea em 1789?", opts: ["A Revolução Francesa", "A Queda do Império Romano", "A Descoberta da América", "A Revolução Industrial"], corr: "A Revolução Francesa", exp: "A Revolução Francesa iniciou-se em 1789, alterando profundamente a ordem política ocidental." },
-          { q: "O que foi a Guerra Fria?", opts: ["Um conflito direto com armas nucleares entre EUA e URSS.", "Uma disputa ideológica, política e tecnológica entre EUA e URSS.", "Uma guerra comercial entre a Europa e a Ásia no século XIX.", "A invasão da Rússia pelos exércitos de Napoleão."], corr: "Uma disputa ideológica, política e tecnológica entre EUA e URSS.", exp: "Foi um período de tensão geopolítica sem confronto militar direto entre as superpotências." }
-        ],
-        "Informática básica": [
-          { q: "Qual atalho de teclado é universalmente utilizado para copiar um texto ou arquivo selecionado no Windows?", opts: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"], corr: "Ctrl + C", exp: "Ctrl + C copia o item selecionado para a área de transferência." },
-          { q: "O que significa a sigla CPU em um computador?", opts: ["Central Processing Unit (Unidade Central de Processamento)", "Computer Personal Unit", "Control Program Utility", "Central Peripheral Under-system"], corr: "Central Processing Unit (Unidade Central de Processamento)", exp: "A CPU é o principal chip responsável por executar as instruções dos programas." }
-        ]
-      };
+      // BANCO EXCLUSIVO DE MATEMÁTICA COM 10 QUESTÕES VARIADAS REAIS
+      const bancoMatematica = [
+        { q: "Qual é o resultado da expressão numérica: 15 + 3 × 4 - 6?", opts: ["21", "27", "18", "36"], corr: "21", exp: "Pela ordem de operações, primeiro multiplica-se (3 × 4 = 12), depois soma-se e subtrai-se (15 + 12 - 6 = 21)." },
+        { q: "Se um produto custa R$ 200,00 e sofre um desconto de 20%, qual passa a ser o seu preço final?", opts: ["R$ 160,00", "R$ 180,00", "R$ 150,00", "R$ 140,00"], corr: "R$ 160,00", exp: "O desconto de 20% sobre R$ 200,00 é de R$ 40,00. Logo, 200 - 40 = 160." },
+        { q: "Qual é o valor da fração irredutível equivalente a 45/60?", opts: ["3/4", "2/3", "4/5", "5/6"], corr: "3/4", exp: "Dividindo o numerador e o denominador por 15, obtemos 3/4." },
+        { q: "Qual é o MMC entre os números 4, 6 e 8?", opts: ["24", "12", "48", "16"], corr: "24", exp: "O menor múltiplo comum entre 4, 6 e 8 é 24." },
+        { q: "Qual é a raiz quadrada de 144 somada com 25?", opts: ["37", "17", "29", "35"], corr: "37", exp: "A raiz de 144 é 12. Somando 25, temos 12 + 25 = 37." },
+        { q: "Resolva a equação do 1º grau: 3x - 5 = 16. Qual é o valor de x?", opts: ["7", "5", "8", "6"], corr: "7", exp: "Isolando o x: 3x = 16 + 5 => 3x = 21 => x = 7." },
+        { q: "Se 5 operários constroem um muro em 6 dias, quantos dias seriam necessários para 10 operários construírem o mesmo muro?", opts: ["3 dias", "12 dias", "5 dias", "4 dias"], corr: "3 dias", exp: "Grandezas inversamente proporcionais: dobrando o número de operários, o tempo cai pela metade (6 / 2 = 3)." },
+        { q: "Qual é a área de um retângulo que possui 8 metros de comprimento por 5 metros de largura?", opts: ["40 metros quadrados", "26 metros quadrados", "13 metros quadrados", "45 metros quadrados"], corr: "40 metros quadrados", exp: "A área do retângulo calcula-se multiplicando base por altura (8 × 5 = 40)." },
+        { q: "Qual é a média aritmética das notas: 7, 8, 9 e 6?", opts: ["7,5", "8,0", "7,0", "8,5"], corr: "7,5", exp: "Somando as notas (7+8+9+6 = 30) e dividindo por 4, temos 30 / 4 = 7,5." },
+        { q: "Quanto vale 15% de 300?", opts: ["45", "30", "60", "15"], corr: "45", exp: "Calcula-se multiplicando 300 por 0,15, o que resulta em 45." }
+      ];
 
-      function gerarQuestaoRobusta(sub, nivel, index) {
-        let lista = bancoDeQuestoes[sub] || bancoDeQuestoes["Matemática básica"];
-        let baseObj = lista[index % lista.length];
-        
+      function gerarQuestaoMatematica(sub, nivel, index) {
+        let baseObj = bancoMatematica[index % bancoMatematica.length];
         let num = index + 1;
-        let enunciadoFinal = `[Questão ${num}/100 - ${nivel}] ${baseObj.q}`;
-        if (index >= lista.length) {
-          enunciadoFinal = `[Questão ${num}/100 - ${nivel}] Considerando os fundamentos avançados de ${sub} (Caso ${num}): ${baseObj.q}`;
-        }
+        let enunciadoFinal = `[Questão ${num}/100 - ${nivel}] (${sub}): ${baseObj.q}`;
 
         let optsEmbaralhadas = [...baseObj.opts].sort(() => Math.random() - 0.5);
 
@@ -208,10 +188,10 @@
       }
 
       function carregarQuiz() {
-        document.getElementById("quizSubjectTag").textContent = `${selectedArea} > ${selectedSub}`;
+        document.getElementById("quizSubjectTag").textContent = `Matemática > ${selectedSub}`;
         document.getElementById("quizCounter").textContent = `Questão ${questaoAtualIndex + 1}/100`;
 
-        let q = gerarQuestaoRobusta(selectedSub, selectedLevel, questaoAtualIndex);
+        let q = gerarQuestaoMatematica(selectedSub, selectedLevel, questaoAtualIndex);
         document.getElementById("questionText").textContent = q.enunciado;
 
         let optContainer = document.getElementById("optionsContainer");
@@ -253,31 +233,10 @@
       const pickerTitle = document.getElementById("pickerTitle");
       const pickerContainer = document.getElementById("pickerContainer");
 
-      document.getElementById("cardArea").onclick = function() {
-        pickerTitle.textContent = "Selecione a Grande Área";
-        pickerContainer.innerHTML = "";
-        Object.keys(baseDisciplinas).forEach(function(area) {
-          let item = document.createElement("div");
-          item.className = "picker-item";
-          item.textContent = area;
-          item.onclick = function() {
-            selectedArea = area;
-            document.getElementById("labelArea").textContent = area;
-            let subs = baseDisciplinas[area];
-            selectedSub = subs[0];
-            document.getElementById("labelSub").textContent = selectedSub;
-            modal.style.display = "none";
-          };
-          pickerContainer.appendChild(item);
-        });
-        modal.style.display = "flex";
-      };
-
       document.getElementById("cardSub").onclick = function() {
-        pickerTitle.textContent = "Selecione a Subdisciplina";
+        pickerTitle.textContent = "Selecione o Tópico";
         pickerContainer.innerHTML = "";
-        let subs = baseDisciplinas[selectedArea] || ["Geral"];
-        subs.forEach(function(sub) {
+        topicosMatematica.forEach(function(sub) {
           let item = document.createElement("div");
           item.className = "picker-item";
           item.textContent = sub;
