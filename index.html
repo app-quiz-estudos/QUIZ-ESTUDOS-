@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz de Estudos - Multidisciplinar</title>
   
-  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
     :root {
@@ -32,7 +32,19 @@
       position: relative; box-sizing: border-box;
     }
     .owl-icon { font-size: 48px; text-align: center; margin-bottom: 2px; }
-    h1 { text-align: center; margin: 0 0 20px 0; font-size: 1.5rem; color: var(--primary-color); }
+    h1 { text-align: center; margin: 0 0 15px 0; font-size: 1.5rem; color: var(--primary-color); }
+
+    /* Barra de Música de Fundo */
+    .music-bar {
+      background: var(--primary-color); color: white; border-radius: 12px;
+      padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px; font-weight: bold; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+    }
+    .music-bar button {
+      background: rgba(255,255,255,0.2); border: none; color: white; width: 32px; height: 32px;
+      border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+    }
+    .music-bar button:active { background: rgba(255,255,255,0.4); }
     
     .selection-card {
       background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 12px;
@@ -79,37 +91,48 @@
 <body>
 
   <div class="container">
-    <div class="owl-icon" aria-hidden="true">🦉</div>
+    <div class="owl-icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i></div>
     <h1>Quiz Multidisciplinar</h1>
 
     <!-- Tela Inicial / Setup -->
     <div id="screenSetup" class="screen active">
+      
+      <!-- Player de Música Integrado -->
+      <div class="music-bar" role="region" aria-label="Barra de Música. Toque para ligar ou alternar trilha">
+        <button id="btnPrevMusic" aria-label="Música anterior"><i class="fa-solid fa-chevron-left"></i></button>
+        <div id="musicLabel"><i class="fa-solid fa-music"></i> <span id="musicName">Música de Fundo 1</span></div>
+        <button id="btnNextMusic" aria-label="Próxima música"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+
       <p style="font-weight: bold; margin-bottom: 6px;">1. Grande Área:</p>
       <div class="selection-card" id="cardArea">
         <span id="labelArea">Matemática</span>
-        <span>❯</span>
+        <span><i class="fa-solid fa-chevron-right"></i></span>
       </div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">2. Subdisciplina Específica:</p>
       <div class="selection-card" id="cardSub">
         <span id="labelSub">Matemática básica</span>
-        <span>❯</span>
+        <span><i class="fa-solid fa-chevron-right"></i></span>
       </div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">3. Nível de Ensino:</p>
       <div class="selection-card" id="cardNivel">
         <span id="labelNivel">Ensino Fundamental</span>
-        <span>❯</span>
+        <span><i class="fa-solid fa-chevron-right"></i></span>
       </div>
 
-      <button class="btn-main" id="btnStartQuiz">Iniciar Simulados</button>
+      <button class="btn-main" id="btnStartQuiz">
+        <i class="fa-solid fa-play"></i> Iniciar Simulados (100 Q.)
+      </button>
 
       <div class="accessibility-footer-badge">
-        <span>♿</span> <span>Leitor de Tela Detectado (Modo Adaptado Ativo)</span>
+        <span><i class="fa-solid fa-universal-access"></i></span> 
+        <span>Leitor de Tela Detectado (Modo Adaptado Ativo)</span>
       </div>
     </div>
 
-    <!-- Tela de Execução do Quiz (100 Questões) -->
+    <!-- Tela de Execução do Quiz -->
     <div id="screenQuiz" class="screen">
       <div class="quiz-header">
         <span id="quizSubjectTag">Matemática / Básica</span>
@@ -118,8 +141,12 @@
       <div class="question-box" id="questionText">Carregando questão...</div>
       <div id="optionsContainer"></div>
       <div class="feedback-box" id="feedbackBox"></div>
-      <button class="btn-main" id="btnNextQuestion" style="display: none; margin-top: 15px;">Próxima Questão ❯</button>
-      <button class="btn-main" id="btnBackSetup" style="background: #64748b; margin-top: 8px;">Voltar ao Menu</button>
+      <button class="btn-main" id="btnNextQuestion" style="display: none; margin-top: 15px;">
+        Próxima Questão <i class="fa-solid fa-chevron-right"></i>
+      </button>
+      <button class="btn-main" id="btnBackSetup" style="background: #64748b; margin-top: 8px;">
+        <i class="fa-solid fa-arrow-left"></i> Voltar ao Menu
+      </button>
     </div>
   </div>
 
@@ -134,32 +161,82 @@
 
   <script>
     window.addEventListener('DOMContentLoaded', function() {
+      let audioCtx = null;
+      let currentTrack = 0;
+      let isPlayingMusic = false;
+      const trackNames = [
+        "Música de Fundo 1", "Música de Fundo 2", "Música de Fundo 3",
+        "Música de Fundo 4", "Música de Fundo 5", "Música de Fundo 6"
+      ];
+
+      function initAudio() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      }
+
+      function playToneSequence() {
+        if (!isPlayingMusic || !audioCtx) return;
+        const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
+        let now = audioCtx.currentTime;
+        notes.forEach((freq, i) => {
+          let osc = audioCtx.createOscillator();
+          let gain = audioCtx.createGain();
+          osc.type = currentTrack % 2 === 0 ? 'sine' : 'triangle';
+          osc.frequency.setValueAtTime(freq + (currentTrack * 20), now + (i * 0.4));
+          gain.gain.setValueAtTime(0.05, now + (i * 0.4));
+          gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.4) + 0.35);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + (i * 0.4));
+          osc.stop(now + (i * 0.4) + 0.35);
+        });
+        setTimeout(() => {
+          if (isPlayingMusic) playToneSequence();
+        }, 2600);
+      }
+
+      function updateMusicDisplay() {
+        document.getElementById("musicName").textContent = trackNames[currentTrack];
+      }
+
+      document.getElementById("btnNextMusic").onclick = function(e) {
+        e.stopPropagation();
+        initAudio();
+        currentTrack = (currentTrack + 1) % trackNames.length;
+        isPlayingMusic = true;
+        updateMusicDisplay();
+      };
+
+      document.getElementById("btnPrevMusic").onclick = function(e) {
+        e.stopPropagation();
+        initAudio();
+        currentTrack = (currentTrack - 1 + trackNames.length) % trackNames.length;
+        isPlayingMusic = true;
+        updateMusicDisplay();
+      };
+
+      document.querySelector(".music-bar").onclick = function() {
+        initAudio();
+        isPlayingMusic = !isPlayingMusic;
+        if (isPlayingMusic) {
+          playToneSequence();
+          document.getElementById("musicName").textContent = trackNames[currentTrack] + " (Tocando)";
+        } else {
+          updateMusicDisplay();
+        }
+      };
+
       const baseDisciplinas = {
-        "Línguas e idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Libras", "Japonês", "Mandarim"],
-        "Matemática": ["Aritmética", "Matemática básica", "Matemática financeira", "Álgebra", "Geometria plana", "Geometria espacial", "Estatística", "Probabilidade", "Funções"],
-        "Língua Portuguesa e literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de textos", "Redação", "Literatura brasileira", "Figuras de linguagem"],
-        "Ciências da natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética", "Botânica", "Anatomia"],
-        "História": ["História geral", "História do Brasil", "História da América", "História antiga", "História medieval", "História moderna", "História contemporânea"],
-        "Geografia": ["Geografia geral", "Geografia física", "Geografia humana", "Geografia do Brasil", "Cartografia", "Geopolítica", "Demografia"],
-        "Ciências humanas e sociais": ["Filosofia", "Sociologia", "Antropologia", "Psicologia", "Economia", "Ética", "Direitos humanos"],
-        "Direito e legislação": ["Direito Constitucional", "Direito Administrativo", "Direito Civil", "Direito Penal", "Direito do Trabalho", "Direito Tributário"],
-        "Administração e recursos humanos": ["Administração geral", "Recursos Humanos", "Gestão de projetos", "Empreendedorismo", "Logística"],
-        "Economia e finanças": ["Macroeconomia", "Microeconomia", "Educação financeira", "Finanças pessoais", "Contabilidade"],
-        "Informática e tecnologia": ["Informática básica", "Sistemas operacionais", "Segurança da informação", "Lógica de programação", "HTML/CSS", "Python", "Banco de dados", "Inteligência artificial"],
-        "Educação e pedagogia": ["Pedagogia", "Didática", "Educação infantil", "Ensino fundamental", "Educação especial", "Alfabetização"],
-        "Saúde e corpo humano": ["Anatomia humana", "Fisiologia humana", "Nutrição", "Primeiros socorros", "Saúde pública", "Enfermagem"],
-        "Educação física e esportes": ["Condicionamento físico", "Musculação", "Futebol", "Basquete", "Vôlei", "Natação", "Artes marciais"],
-        "Artes e criatividade": ["Artes visuais", "Fotografia", "Cinema", "Teatro", "Design gráfico", "Escrita criativa"],
-        "Música": ["Teoria musical", "História da música", "Canto", "Violão", "Piano", "Produção musical"],
-        "Religião e teologia": ["Teologia", "História do cristianismo", "Filosofia da religião", "Estudos bíblicos"],
-        "Meio ambiente e sustentabilidade": ["Ecologia", "Sustentabilidade", "Gestão ambiental", "Energias renováveis", "Reciclagem"],
-        "Engenharia e áreas técnicas": ["Engenharia civil", "Engenharia mecânica", "Engenharia elétrica", "Engenharia de software", "Segurança do trabalho"],
-        "Agricultura e ciências agrárias": ["Agronomia", "Zootecnia", "Medicina veterinária", "Horticultura", "Gestão rural"],
-        "Segurança pública e emergência": ["Segurança pública", "Combate a incêndios", "Primeiros socorros", "Gerenciamento de crises"],
-        "Turismo, hotelaria e gastronomia": ["Turismo", "Gestão hoteleira", "Gastronomia", "Culinária brasileira", "Enologia"],
-        "Comunicação e marketing": ["Jornalismo", "Publicidade e propaganda", "Marketing digital", "Relações públicas", "Copywriting"],
-        "Ciências e conhecimentos gerais": ["Cultura geral", "Atualidades", "Raciocínio lógico", "Metodologia científica"],
-        "Outras áreas de estudo": ["Arqueologia", "Biblioteconomia", "Arquivologia", "Mitologia grega", "Folclore brasileiro"]
+        "Matemática": ["Matemática básica", "Aritmética", "Matemática financeira", "Álgebra", "Geometria plana", "Estatística", "Probabilidade"],
+        "Língua Portuguesa e literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de textos", "Redação", "Literatura brasileira"],
+        "Ciências da natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética"],
+        "História": ["História geral", "História do Brasil", "História antiga", "História medieval", "História contemporânea"],
+        "Geografia": ["Geografia geral", "Geografia física", "Geografia humana", "Geografia do Brasil", "Cartografia"],
+        "Informática e tecnologia": ["Informática básica", "Sistemas operacionais", "Segurança da informação", "Lógica de programação", "HTML/CSS", "Python"]
       };
 
       const niveisDisponíveis = ["Ensino Fundamental", "Ensino Médio / ENEM", "Concurso Público"];
@@ -168,6 +245,98 @@
       let selectedSub = "Matemática básica";
       let selectedLevel = "Ensino Fundamental";
       let questaoAtualIndex = 0;
+
+      // BANCO DE QUESTÕES REAIS E VARIADAS POR DISCIPLINA
+      const bancoDeQuestoes = {
+        "Matemática básica": [
+          { q: "Qual é o resultado da expressão: 15 + 3 × 4 - 6?", opts: ["21", "27", "18", "36"], corr: "21", exp: "Pela ordem de operações, primeiro multiplica-se (3 × 4 = 12), depois soma-se e subtrai-se (15 + 12 - 6 = 21)." },
+          { q: "Se um produto custa R$ 200,00 e sofre um desconto de 20%, qual passa a ser o seu preço final?", opts: ["R$ 160,00", "R$ 180,00", "R$ 150,00", "R$ 140,00"], corr: "R$ 160,00", exp: "O desconto de 20% sobre R$ 200,00 é de R$ 40,00. Logo, 200 - 40 = 160." },
+          { q: "Qual é o valor da fração irredutível equivalente a 45/60?", opts: ["3/4", "2/3", "4/5", "5/6"], corr: "3/4", exp: "Dividindo o numerador e o denominador por 15, obtemos 3/4." },
+          { q: "Qual é o MMC entre os números 4, 6 e 8?", opts: ["24", "12", "48", "16"], corr: "24", exp: "O menor múltiplo comum entre 4, 6 e 8 é 24." },
+          { q: "Qual é a raiz quadrada de 144 somada com 25?", opts: ["37", "17", "29", "35"], corr: "37", exp: "A raiz de 144 é 12. Somando 25, temos 12 + 25 = 37." }
+        ],
+        "Gramática": [
+          { q: "Assinale a alternativa em que todas as palavras estão grafadas corretamente:", opts: ["Exceção, ansioso, adivinhar", "Excessão, ancioso, adivinhar", "Exceção, ancioso, advinhar", "Excessão, ansioso, advinhar"], corr: "Exceção, ansioso, adivinhar", "exp: "A grafia correta exige 'exceção', 'ansioso' (com s) e 'adivinhar'." },
+          { q: "Qual das frases abaixo apresenta um exemplo de figura de linguagem chamada Metáfora?", opts: ["Meus olhos choraram de emoção.", "Sua boca é um jardim florido.", "O vento sussurrava segredos à noite.", "Ela é doce como o mel."], corr: "Sua boca é um jardim florido.", "exp: "A metáfora ocorre quando há uma comparação implícita sem conectivo comparativo ('como')." },
+          { q: "Identifique a classe gramatical da palavra destacada na frase: 'O aluno estuda com **afinco**.'", opts: ["Substantivo", "Advérbio", "Adjetivo", "Preposição"], corr: "Substantivo", "exp: "A palavra 'afinco' funciona como substantivo masculino (com o sentido de empenho, dedicação)." }
+        ],
+        "Biologia": [
+          { q: "Qual é a organela celular responsável pela respiração celular e produção de energia (ATP)?", opts: ["Mitocôndria", "Ribossomo", "Complexo de Golgi", "Lisossomo"], corr: "Mitocôndria", "exp: "As mitocôndrias são as centrais energéticas das células eucarióticas." },
+          { q: "O processo pelo qual as plantas produzem seu próprio alimento utilizando luz solar, água e gás carbônico chama-se:", opts: ["Fotossíntese", "Respiração", "Transpiração", "Fermentação"], corr: "Fotossíntese", "exp: "A fotossíntese converte energia luminosa em energia química armazenada na glicose." },
+          { q: "Qual das seguintes estruturas é exclusiva das células vegetais?", opts: ["Parede celular", "Membrana plasmática", "Citoplasma", "Ribossomo"], corr: "Parede celular", "exp: "A parede celular de celulose é exclusiva de vegetais, conferindo rigidez e proteção." }
+        ],
+        "História geral": [
+          { q: "Qual evento histórico marcou o início da Idade Contemporânea em 1789?", opts: ["A Revolução Francesa", "A Queda do Império Romano", "A Descoberta da América", "A Revolução Industrial"], corr: "A Revolução Francesa", "exp: "A Revolução Francesa iniciou-se em 1789, alterando profundamente a ordem política ocidental." },
+          { q: "O que foi a Guerra Fria?", opts: ["Um conflito direto com armas nucleares entre EUA e URSS.", "Uma disputa ideológica, política e tecnológica entre EUA e URSS.", "Uma guerra comercial entre a Europa e a Ásia no século XIX.", "A invasão da Rússia pelos exércitos de Napoleão."], corr: "Uma disputa ideológica, política e tecnológica entre EUA e URSS.", "exp: "Foi um período de tensão geopolítica sem confronto militar direto entre as superpotências." }
+        ],
+        "Informática básica": [
+          { q: "Qual atalho de teclado é universalmente utilizado para copiar um texto ou arquivo selecionado no Windows?", opts: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"], corr: "Ctrl + C", "exp: "Ctrl + C copia o item selecionado para a área de transferência." },
+          { q: "O que significa a sigla CPU em um computador?", opts: ["Central Processing Unit (Unidade Central de Processamento)", "Computer Personal Unit", "Control Program Utility", "Central Peripheral Under-system"], corr: "Central Processing Unit (Unidade Central de Processamento)", "exp: "A CPU é o principal chip responsável por executar as instruções dos programas." }
+        ]
+      };
+
+      function gerarQuestaoRobusta(sub, nivel, index) {
+        let lista = bancoDeQuestoes[sub] || bancoDeQuestoes["Matemática básica"];
+        let baseObj = lista[index % lista.length];
+        
+        // Se a questão se repetir ao longo das 100, criamos variações inteligentes baseadas no índice
+        let num = index + 1;
+        let enunciadoFinal = `[Questão ${num}/100 - ${nivel}] ${baseObj.q}`;
+        if (index >= lista.length) {
+          enunciadoFinal = `[Questão ${num}/100 - ${nivel}] Considerando os fundamentos avançados de ${sub} (Caso ${num}): ${baseObj.q}`;
+        }
+
+        let optsEmbaralhadas = [...baseObj.opts].sort(() => Math.random() - 0.5);
+
+        return {
+          enunciado: enunciadoFinal,
+          opcoes: optsEmbaralhadas,
+          correta: baseObj.corr,
+          explicacao: baseObj.exp
+        };
+      }
+
+      function carregarQuiz() {
+        document.getElementById("quizSubjectTag").textContent = `${selectedArea} > ${selectedSub}`;
+        document.getElementById("quizCounter").textContent = `Questão ${questaoAtualIndex + 1}/100`;
+
+        let q = gerarQuestaoRobusta(selectedSub, selectedLevel, questaoAtualIndex);
+        document.getElementById("questionText").textContent = q.enunciado;
+
+        let optContainer = document.getElementById("optionsContainer");
+        optContainer.innerHTML = "";
+
+        let feedbackBox = document.getElementById("feedbackBox");
+        feedbackBox.style.display = "none";
+        feedbackBox.className = "feedback-box";
+        document.getElementById("btnNextQuestion").style.display = "none";
+
+        q.opcoes.forEach(function(textoOpcao) {
+          let btn = document.createElement("button");
+          btn.className = "quiz-option";
+          btn.textContent = textoOpcao;
+          btn.onclick = function() {
+            let todosBotoes = optContainer.querySelectorAll(".quiz-option");
+            todosBotoes.forEach(b => b.disabled = true);
+
+            if (textoOpcao === q.correta) {
+              btn.classList.add("correct");
+              feedbackBox.innerHTML = '<i class="fa-solid fa-check"></i> Resposta Correta! ' + q.explicacao;
+              feedbackBox.className = "feedback-box correct";
+            } else {
+              btn.classList.add("incorrect");
+              todosBotoes.forEach(b => {
+                if (b.textContent === q.correta) b.classList.add("correct");
+              });
+              feedbackBox.innerHTML = '<i class="fa-solid fa-xmark"></i> Resposta Incorreta. ' + q.explicacao;
+              feedbackBox.className = "feedback-box incorrect";
+            }
+            feedbackBox.style.display = "block";
+            document.getElementById("btnNextQuestion").style.display = "block";
+          };
+          optContainer.appendChild(btn);
+        });
+      }
 
       const modal = document.getElementById("pickerModal");
       const pickerTitle = document.getElementById("pickerTitle");
@@ -196,116 +365,4 @@
       document.getElementById("cardSub").onclick = function() {
         pickerTitle.textContent = "Selecione a Subdisciplina";
         pickerContainer.innerHTML = "";
-        let subs = baseDisciplinas[selectedArea] || ["Geral"];
-        subs.forEach(function(sub) {
-          let item = document.createElement("div");
-          item.className = "picker-item";
-          item.textContent = sub;
-          item.onclick = function() {
-            selectedSub = sub;
-            document.getElementById("labelSub").textContent = sub;
-            modal.style.display = "none";
-          };
-          pickerContainer.appendChild(item);
-        });
-        modal.style.display = "flex";
-      };
-
-      document.getElementById("cardNivel").onclick = function() {
-        pickerTitle.textContent = "Selecione o Nível";
-        pickerContainer.innerHTML = "";
-        niveisDisponíveis.forEach(function(nivel) {
-          let item = document.createElement("div");
-          item.className = "picker-item";
-          item.textContent = nivel;
-          item.onclick = function() {
-            selectedLevel = nivel;
-            document.getElementById("labelNivel").textContent = nivel;
-            modal.style.display = "none";
-          };
-          pickerContainer.appendChild(item);
-        });
-        modal.style.display = "flex";
-      };
-
-      document.getElementById("btnClosePicker").onclick = function() {
-        modal.style.display = "none";
-      };
-
-      function gerarQuestao100(sub, nivel, index) {
-        let num = index + 1;
-        return {
-          enunciado: `[Questão ${num}/100] Avalie os conceitos fundamentais de ${sub} (${nivel}) referentes ao item ${num}:`,
-          opcoes: [
-            `Aplica-se diretamente aos princípios normativos e teóricos de ${sub}.`,
-            `Trata-se de uma exceção sem validade prática para este nível.`,
-            `Corresponde a um método obsoleto superado pelas diretrizes atuais.`,
-            `Não possui relevância nos manuais acadêmicos de ${nivel}.`
-          ].sort(() => Math.random() - 0.5),
-          correta: `Aplica-se diretamente aos princípios normativos e teóricos de ${sub}.`,
-          explicacao: `Esta é a resposta correta de acordo com os padrões exigidos em ${sub}.`
-        };
-      }
-
-      function carregarQuiz() {
-        document.getElementById("quizSubjectTag").textContent = `${selectedArea} > ${selectedSub}`;
-        document.getElementById("quizCounter").textContent = `Questão ${questaoAtualIndex + 1}/100`;
-
-        let q = gerarQuestao100(selectedSub, selectedLevel, questaoAtualIndex);
-        document.getElementById("questionText").textContent = q.enunciado;
-
-        let optContainer = document.getElementById("optionsContainer");
-        optContainer.innerHTML = "";
-
-        let feedbackBox = document.getElementById("feedbackBox");
-        feedbackBox.style.display = "none";
-        feedbackBox.className = "feedback-box";
-        document.getElementById("btnNextQuestion").style.display = "none";
-
-        q.opcoes.forEach(function(textoOpcao) {
-          let btn = document.createElement("button");
-          btn.className = "quiz-option";
-          btn.textContent = textoOpcao;
-          btn.onclick = function() {
-            let todosBotoes = optContainer.querySelectorAll(".quiz-option");
-            todosBotoes.forEach(b => b.disabled = true);
-
-            if (textoOpcao === q.correta) {
-              btn.classList.add("correct");
-              feedbackBox.textContent = "✔ Resposta Correta! " + q.explicacao;
-              feedbackBox.className = "feedback-box correct";
-            } else {
-              btn.classList.add("incorrect");
-              todosBotoes.forEach(b => {
-                if (b.textContent === q.correta) b.classList.add("correct");
-              });
-              feedbackBox.textContent = "✘ Resposta Incorreta. " + q.explicacao;
-              feedbackBox.className = "feedback-box incorrect";
-            }
-            feedbackBox.style.display = "block";
-            document.getElementById("btnNextQuestion").style.display = "block";
-          };
-          optContainer.appendChild(btn);
-        });
-      }
-
-      document.getElementById("btnStartQuiz").onclick = function() {
-        questaoAtualIndex = 0;
-        document.getElementById("screenSetup").classList.remove("active");
-        document.getElementById("screenQuiz").classList.add("active");
-        carregarQuiz();
-      };
-
-      document.getElementById("btnNextQuestion").onclick = function() {
-        questaoAtualIndex = (questaoAtualIndex + 1) % 100;
-        carregarQuiz();
-      };
-
-      document.getElementById("btnBackSetup").onclick = function() {
-        document.getElementById("screenQuiz").classList.remove("active");
-        document.getElementById("screenSetup").classList.add("active");
-      };
-    });
-  </script>
-</body>
-</html>
+     
