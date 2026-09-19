@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Estudos</title>
+  <title>Quiz de Estudos - Parte 2 (Relógio embaixo estilo config)</title>
   
   <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
   
@@ -107,11 +107,6 @@
       cursor: pointer;
       padding: 0 6px;
       line-height: 1;
-      transition: transform 0.1s ease;
-    }
-
-    .music-arrow:active {
-      transform: scale(1.25);
     }
 
     .music-info {
@@ -123,29 +118,6 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      letter-spacing: 0.3px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      background: #edf2f7;
-      color: var(--text-color);
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .tab-btn.active {
-      background: var(--primary-color);
-      color: #fff;
     }
 
     .record-badge {
@@ -169,8 +141,6 @@
       justify-content: space-between;
       align-items: center;
       font-weight: bold;
-      color: var(--text-color);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
     }
 
     .btn-main {
@@ -200,12 +170,13 @@
       color: #991b1b;
       padding: 6px 14px;
       border-radius: 20px;
+      font-size: 0.9rem;
     }
 
     .question-box {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       line-height: 1.4;
       background: #f8fafc;
       padding: 16px;
@@ -213,10 +184,33 @@
       border-left: 4px solid var(--primary-color);
     }
 
+    .libras-badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+    }
+
+    .question-image {
+      width: 100%;
+      max-height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      border: 1px solid #cbd5e1;
+    }
+
     .options-grid {
       display: flex;
       flex-direction: column;
       gap: 12px;
+      margin-bottom: 20px;
     }
 
     .option-btn {
@@ -229,6 +223,35 @@
       font-size: 0.95rem;
       cursor: pointer;
       font-weight: 500;
+    }
+
+    /* Rodapé do Jogo com o Botão de Relógio Estilo Configuração */
+    .game-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 14px;
+      margin-top: 10px;
+    }
+
+    .timer-toggle-bottom-btn {
+      background: #e2e8f0;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      transition: background 0.2s;
+    }
+
+    .timer-toggle-bottom-btn:hover {
+      background: #cbd5e1;
     }
 
     .modal {
@@ -247,13 +270,6 @@
       border-radius: 12px;
       width: 90%;
       max-width: 350px;
-    }
-
-    .setting-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
     }
 
     .picker-list {
@@ -279,51 +295,41 @@
       <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
     </div>
 
-    <div class="tabs">
-      <button class="tab-btn active" id="tabPlay" onclick="switchTab('play')">Jogar</button>
-      <button class="tab-btn" id="tabCreate" onclick="switchTab('create')">Criar Pergunta</button>
-    </div>
-
     <div id="screenSetup">
-      <div class="record-badge" id="recordDisplay">🏆 Pagode Suingado Ativo</div>
+      <div class="record-badge">🏆 Parte 2: Níveis e Relógio no Rodapé</div>
 
-      <p style="font-weight: bold; margin-bottom: 6px;">1. Categoria Selecionada:</p>
-      <div class="selection-card" onclick="openPicker('cat')">
-        <span id="labelCat">1. Geral e Base</span>
+      <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
+      <div class="selection-card" onclick="openPicker('nivel')">
+        <span id="labelNivel">Ensino Fundamental</span>
         <span>❯</span>
       </div>
 
-      <p style="font-weight: bold; margin-bottom: 6px;">2. Matéria / Disciplina:</p>
-      <div class="selection-card" onclick="openPicker('sub')">
-        <span id="labelSub">Menu Inicial e Aplicativos</span>
+      <p style="font-weight: bold; margin-bottom: 6px;">2. Matéria Específica:</p>
+      <div class="selection-card" onclick="openPicker('materia')">
+        <span id="labelMateria">Matemática e Português</span>
         <span>❯</span>
       </div>
 
-      <button class="btn-main" onclick="startQuiz()">Iniciar Teste</button>
-    </div>
-
-    <div id="screenCreate" style="display: none;">
-      <p style="font-weight: bold; margin-bottom: 6px;">Adicionar Nova Pergunta:</p>
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <input type="text" id="newQuestionText" placeholder="Digite a pergunta..." style="padding: 12px; border-radius: 8px; border: 2px solid #e2e8f0; font-size: 0.95rem;">
-        <input type="text" id="newOptCorrect" placeholder="Resposta Correta" style="padding: 12px; border-radius: 8px; border: 2px solid #22c55e; font-size: 0.95rem;">
-        <input type="text" id="newOpt2" placeholder="Opção Errada 1" style="padding: 12px; border-radius: 8px; border: 2px solid #e2e8f0; font-size: 0.95rem;">
-        <input type="text" id="newOpt3" placeholder="Opção Errada 2" style="padding: 12px; border-radius: 8px; border: 2px solid #e2e8f0; font-size: 0.95rem;">
-        <button class="btn-main" onclick="saveCustomQuestion()">Salvar Pergunta</button>
-      </div>
+      <button class="btn-main" onclick="startQuiz()">Iniciar Simulados</button>
     </div>
 
     <div id="screenGame" style="display: none;">
       <div class="game-header">
-        <span>Status: <span id="scoreText">Rodando</span></span>
-        <span class="timer-badge">🎵 Som Ativo</span>
+        <span id="progressIndicator">Questão 1/3</span>
+        <span class="timer-badge" id="timerBadge">⏱️ 60s</span>
       </div>
 
-      <div class="question-box" id="questionText">Tudo funcionando perfeitamente com o pagode no capricho!</div>
-      <div class="options-grid" id="optionsContainer">
-        <button class="option-btn" onclick="alert('Botão 1 funcionando!')">Testar Opção A</button>
-        <button class="option-btn" onclick="alert('Botão 2 funcionando!')">Testar Opção B</button>
-        <button class="btn-main" onclick="backToSetup()" style="margin-top: 10px;">Voltar ao Menu</button>
+      <div id="librasContainer"></div>
+      <div id="imageContainer"></div>
+
+      <div class="question-box" id="questionText">Carregando questão...</div>
+      
+      <div class="options-grid" id="optionsContainer"></div>
+
+      <!-- RODAPÉ COM O BOTÃO DE RELOGINHO ESTILO CONFIGURAÇÃO -->
+      <div class="game-footer">
+        <span style="font-size: 0.85rem; font-weight: bold; color: #64748b;">Modo Sem Tempo:</span>
+        <button class="timer-toggle-bottom-btn" id="timerToggleBtn" onclick="toggleTimerMode()" title="Ativar/Desativar Tempo">⏱️</button>
       </div>
     </div>
   </div>
@@ -339,15 +345,11 @@
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <h3 style="margin-top:0;">⚙️ Configurações</h3>
-      <div class="setting-item">
-        <span>Modo Fácil:</span>
-        <input type="checkbox" id="chkSpeech">
-      </div>
-      <div class="setting-item">
-        <span>Música de Fundo:</span>
+      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
+        <span>Música de Fundo (Pagode):</span>
         <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)">
       </div>
-      <div class="setting-item">
+      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
         <span>Alto Contraste:</span>
         <input type="checkbox" id="chkContrast" onchange="document.body.classList.toggle('high-contrast')">
       </div>
@@ -356,41 +358,78 @@
   </div>
 
   <script>
-    var catalogData = {
-      "1. Geral e Base": ["Menu Inicial e Aplicativos", "Configurações Gerais"],
-      "2. Utilitários": ["Criar Pergunta", "Gerir Músicas"]
+    var dbQuestoes = {
+      "Ensino Fundamental": [
+        {
+          pergunta: "Quanto é 45 + 38?",
+          libras: "👋 (Sinal em Libras para: Soma / Adição)",
+          imagem: null,
+          tempo: 60,
+          opcoes: ["73", "83", "93", "72"],
+          correta: 0
+        },
+        {
+          pergunta: "Qual alternativa apresenta corretamente um sinônimo da palavra 'Feliz'?",
+          libras: "🤟 (Sinal em Libras para: Alegre / Contente)",
+          imagem: null,
+          tempo: 60,
+          opcoes: ["Triste", "Contente", "Cansado", "Zangado"],
+          correta: 1
+        }
+      ],
+      "ENEM": [
+        {
+          pergunta: "ENEM 2018: Calcule a área da praça circular cuja praça possui diâmetro de 20 metros. (Use pi = 3,14)",
+          libras: "🖐️ (Sinal em Libras para: Área / Círculo / Matemática)",
+          imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=400&q=80",
+          tempo: 120,
+          opcoes: ["314 metros quadrados", "628 metros quadrados", "157 metros quadrados", "100 metros quadrados"],
+          correta: 0
+        }
+      ],
+      "Concurso Público": [
+        {
+          pergunta: "Concurso (FCC/2022): Assinale a alternativa em que a concordância verbal está inteiramente correta segundo a norma culta.",
+          libras: "👌 (Sinal em Libras para: Regra / Gramática / Correto)",
+          imagem: null,
+          tempo: 120,
+          opcoes: [
+            "Faltou recursos para concluir a obra pública.",
+            "Devem haver muitas vagas no próximo edital.",
+            "Fizeram-se necessários novos ajustes no orçamento.",
+            "Faz muitos anos que não ocorrem concursos aqui."
+          ],
+          correta: 2
+        }
+      ]
     };
 
-    var selectedCat = "1. Geral e Base";
-    var selectedSub = "Menu Inicial e Aplicativos";
+    var selectedNivel = "Ensino Fundamental";
+    var selectedMateria = "Geral";
+    var currentQuestIndex = 0;
+    var currentTimer = null;
+    var timeLeft = 60;
+    var isTimerDisabled = false;
 
     var audioCtx = null;
     var musicInterval = null;
     var stepCount = 0;
-    var currentSongIdx = 4; // Já inicia direto no Pagode Suingado!
+    var currentSongIdx = 4;
     var isPlayingMusic = false;
     var hasUserInteracted = false;
 
     var songList = [
-      { name: "1. 👻 Terror Sombrio", id: "terror1" },
-      { name: "2. 🦇 Mistério Noturno", id: "terror2" },
-      { name: "3. 🌸 Leveza Suave", id: "leveza1" },
-      { name: "4. 🍃 Brisa Serena", id: "leveza2" },
-      { name: "5. 🪘 Pagode Suingado", id: "pagode1" },
-      { name: "6. 🥁 Pagode Raiz Acelerado", id: "pagode2" },
-      { name: "7. 🎸 Rock Pesado", id: "rock1" },
-      { name: "8. ⚡ Rock Elétrico", id: "rock2" },
-      { name: "9. 🎧 Eletrônica Dance", id: "eletronica1" },
-      { name: "10. 🚀 Techno Futurista", id: "eletronica2" }
+      { name: "1. 👻 Terror Sombrio" },
+      { name: "2. 🦇 Mistério Noturno" },
+      { name: "3. 🌸 Leveza Suave" },
+      { name: "4. 🍃 Brisa Serena" },
+      { name: "5. 🪘 Pagode Suingado" },
+      { name: "6. 🥁 Pagode Raiz Acelerado" }
     ];
 
     function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function playCustomTone(freq, duration, type='sine', vol=0.04) {
@@ -412,81 +451,14 @@
 
     function playMusicLoop() {
       if (!isPlayingMusic || !document.getElementById("chkMusic").checked) return;
-      var songId = songList[currentSongIdx].id;
       var s = stepCount % 16;
-
-      if (songId === "terror1") {
-        var notes = [130, 123, 0, 110, 146, 130, 98, 0];
-        if (s % 2 === 0 && notes[(s/2) % notes.length] > 0) {
-          playCustomTone(notes[(s/2) % notes.length], 0.4, 'sawtooth', 0.035);
-        }
-        if (s === 0 || s === 10) playCustomTone(65, 0.7, 'sine', 0.05);
-      } 
-      else if (songId === "terror2") {
-        var notes = [220, 0, 207, 0, 196, 0, 185, 0];
-        if (notes[s % notes.length] > 0) {
-          playCustomTone(notes[s % notes.length], 0.5, 'triangle', 0.03);
-        }
-        if (s === 0 || s === 8) playCustomTone(55, 0.9, 'sawtooth', 0.04);
+      var melodia = [261, 0, 330, 392, 0, 330, 261, 220];
+      if (s % 2 === 0 && melodia[(s/2) % melodia.length] > 0) {
+        playCustomTone(melodia[(s/2) % melodia.length], 0.18, 'triangle', 0.045);
       }
-      else if (songId === "leveza1") {
-        var notes = [261, 329, 392, 523, 392, 329, 440, 349];
-        playCustomTone(notes[s % notes.length], 0.6, 'sine', 0.025);
-        if (s === 0) playCustomTone(130, 0.5, 'triangle', 0.015);
-      } 
-      else if (songId === "leveza2") {
-        var notes = [330, 392, 440, 493, 523, 493, 440, 392];
-        playCustomTone(notes[s % notes.length], 0.55, 'sine', 0.025);
-        if (s === 4 || s === 12) playCustomTone(164, 0.4, 'triangle', 0.015);
-      }
-      else if (songId === "pagode1") {
-        // O Pagode Suingado com o cavaco e repique ajustados no ponto certo!
-        var melodia = [261, 0, 330, 392, 0, 330, 261, 220];
-        if (s % 2 === 0 && melodia[(s/2) % melodia.length] > 0) {
-          playCustomTone(melodia[(s/2) % melodia.length], 0.18, 'triangle', 0.045);
-        }
-        if (s === 0 || s === 6 || s === 10 || s === 14) {
-          playCustomTone(110, 0.12, 'sine', 0.06);
-        }
-        if (s === 3 || s === 7 || s === 11 || s === 15) {
-          playCustomTone(440, 0.05, 'square', 0.02);
-        }
-      } 
-      else if (songId === "pagode2") {
-        var melodia2 = [330, 0, 392, 440, 392, 330, 294, 330];
-        if (s % 2 === 0 && melodia2[(s/2) % melodia2.length] > 0) {
-          playCustomTone(melodia2[(s/2) % melodia2.length], 0.15, 'sawtooth', 0.035);
-        }
-        if (s === 0 || s === 4 || s === 8 || s === 12) {
-          playCustomTone(98, 0.14, 'triangle', 0.06);
-        }
-        if (s === 2 || s === 6 || s === 10 || s === 14) {
-          playCustomTone(523, 0.04, 'square', 0.025);
-        }
-      }
-      else if (songId === "rock1") {
-        var notes = [146, 146, 174, 196, 146, 130, 146, 220];
-        playCustomTone(notes[s % notes.length], 0.25, 'sawtooth', 0.035);
-        if (s % 4 === 0) playCustomTone(73, 0.2, 'square', 0.04);
-      } 
-      else if (songId === "rock2") {
-        var notes = [110, 110, 130, 146, 110, 98, 110, 164];
-        playCustomTone(notes[s % notes.length], 0.22, 'sawtooth', 0.04);
-        if (s % 2 === 0) playCustomTone(55, 0.15, 'square', 0.045);
-      }
-      else if (songId === "eletronica1") {
-        var notes = [220, 440, 330, 550, 293, 587, 392, 784];
-        playCustomTone(notes[s % notes.length], 0.12, 'sawtooth', 0.025);
-        if (s % 2 === 0) playCustomTone(110, 0.1, 'square', 0.04);
-      }
-      else if (songId === "eletronica2") {
-        var notes = [440, 330, 220, 330, 550, 440, 330, 220];
-        playCustomTone(notes[s % notes.length], 0.1, 'sawtooth', 0.03);
-        if (s % 4 === 0) playCustomTone(130, 0.12, 'square', 0.05);
-      }
-
-      stepCount++;
-      if (stepCount >= 32) stepCount = 0;
+      if (s === 0 || s === 6 || s === 10 || s === 14) playCustomTone(110, 0.12, 'sine', 0.06);
+      if (s === 3 || s === 7 || s === 11 || s === 15) playCustomTone(440, 0.05, 'square', 0.02);
+      stepCount = (stepCount + 1) % 32;
     }
 
     function startMusicEngine() {
@@ -512,12 +484,9 @@
       isPlayingMusic = enable;
       if (enable) {
         if (musicInterval) clearInterval(musicInterval);
-        stepCount = 0;
         musicInterval = setInterval(playMusicLoop, 320);
-        playMusicLoop();
       } else {
         clearInterval(musicInterval);
-        musicInterval = null;
       }
       updateSongDisplay();
     }
@@ -526,42 +495,11 @@
       e.stopPropagation();
       initAudio();
       currentSongIdx = (currentSongIdx + direction + songList.length) % songList.length;
-      stepCount = 0;
       startMusicEngine();
     }
 
     function updateSongDisplay() {
-      var display = document.getElementById("musicTitleDisplay");
-      var status = isPlayingMusic ? "▶" : "⏸";
-      display.textContent = status + " " + songList[currentSongIdx].name;
-    }
-
-    function switchTab(tab) {
-      initAudio();
-      var tabPlay = document.getElementById("tabPlay");
-      var tabCreate = document.getElementById("tabCreate");
-      var screenSetup = document.getElementById("screenSetup");
-      var screenCreate = document.getElementById("screenCreate");
-      var screenGame = document.getElementById("screenGame");
-
-      screenGame.style.display = "none";
-
-      if (tab === 'play') {
-        tabPlay.classList.add("active");
-        tabCreate.classList.remove("active");
-        screenSetup.style.display = "block";
-        screenCreate.style.display = "none";
-      } else {
-        tabCreate.classList.add("active");
-        tabPlay.classList.remove("active");
-        screenSetup.style.display = "none";
-        screenCreate.style.display = "block";
-      }
-    }
-
-    function saveCustomQuestion() {
-      alert("Pergunta guardada com sucesso!");
-      switchTab('play');
+      document.getElementById("musicTitleDisplay").textContent = (isPlayingMusic ? "▶ " : "⏸ ") + songList[currentSongIdx].name;
     }
 
     function openPicker(type) {
@@ -571,33 +509,28 @@
       var title = document.getElementById("pickerTitle");
       container.innerHTML = "";
 
-      if (type === 'cat') {
-        title.textContent = "Escolha a Categoria";
-        for (var cat in catalogData) {
-          (function(c) {
-            var item = document.createElement("div");
-            item.className = "selection-card";
-            item.textContent = c;
-            item.onclick = function() {
-              selectedCat = c;
-              selectedSub = catalogData[c][0];
-              document.getElementById("labelCat").textContent = selectedCat;
-              document.getElementById("labelSub").textContent = selectedSub;
-              closePicker();
-            };
-            container.appendChild(item);
-          })(cat);
-        }
-      } else {
-        title.textContent = "Escolha a Matéria";
-        var subs = catalogData[selectedCat] || [];
-        subs.forEach(function(s) {
+      if (type === 'nivel') {
+        title.textContent = "Ensino / Prova";
+        ["Ensino Fundamental", "ENEM", "Concurso Público"].forEach(function(n) {
           var item = document.createElement("div");
           item.className = "selection-card";
-          item.textContent = s;
+          item.textContent = n;
           item.onclick = function() {
-            selectedSub = s;
-            document.getElementById("labelSub").textContent = selectedSub;
+            selectedNivel = n;
+            document.getElementById("labelNivel").textContent = selectedNivel;
+            closePicker();
+          };
+          container.appendChild(item);
+        });
+      } else {
+        title.textContent = "Matéria";
+        ["Matemática e Português", "Geral e Atualidades"].forEach(function(m) {
+          var item = document.createElement("div");
+          item.className = "selection-card";
+          item.textContent = m;
+          item.onclick = function() {
+            selectedMateria = m;
+            document.getElementById("labelMateria").textContent = selectedMateria;
             closePicker();
           };
           container.appendChild(item);
@@ -612,16 +545,107 @@
 
     function startQuiz() {
       initAudio();
+      currentQuestIndex = 0;
       document.getElementById("screenSetup").style.display = 'none';
       document.getElementById("screenGame").style.display = 'block';
+      loadQuestion();
     }
 
-    function backToSetup() {
-      document.getElementById("screenGame").style.display = 'none';
-      document.getElementById("screenSetup").style.display = 'block';
+    // Alternar o Modo Sem Tempo (Estilo botão redondo de config no rodapé)
+    function toggleTimerMode() {
+      initAudio();
+      isTimerDisabled = !isTimerDisabled;
+      var btn = document.getElementById("timerToggleBtn");
+      var badge = document.getElementById("timerBadge");
+
+      if (isTimerDisabled) {
+        clearInterval(currentTimer);
+        btn.textContent = "⏱️❌";
+        btn.style.background = "#fee2e2";
+        badge.textContent = "♾️ Sem Tempo";
+      } else {
+        btn.textContent = "⏱️";
+        btn.style.background = "#e2e8f0";
+        badge.style.background = "#fee2e2";
+        badge.style.color = "#991b1b";
+        setupTimerForCurrentQuestion();
+      }
+    }
+
+    function loadQuestion() {
+      var lista = dbQuestoes[selectedNivel] || dbQuestoes["Ensino Fundamental"];
+      if (currentQuestIndex >= lista.length) {
+        alert("Parabéns! Você concluiu este bloco.");
+        location.reload();
+        return;
+      }
+
+      var q = lista[currentQuestIndex];
+      document.getElementById("progressIndicator").textContent = "Questão " + (currentQuestIndex + 1) + "/" + lista.length;
+      document.getElementById("questionText").textContent = q.pergunta;
+
+      var librasBox = document.getElementById("librasContainer");
+      librasBox.innerHTML = q.libras ? '<div class="libras-badge"><span>Libras:</span> ' + q.libras + '</div>' : '';
+
+      var imgBox = document.getElementById("imageContainer");
+      imgBox.innerHTML = q.imagem ? '<img src="' + q.imagem + '" class="question-image" alt="Ilustração">' : '';
+
+      var optContainer = document.getElementById("optionsContainer");
+      optContainer.innerHTML = "";
+      q.opcoes.forEach(function(opt, idx) {
+        var btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = opt;
+        btn.onclick = function() { checkAnswer(idx, q.correta); };
+        optContainer.appendChild(btn);
+      });
+
+      setupTimerForCurrentQuestion();
+    }
+
+    function setupTimerForCurrentQuestion() {
+      var lista = dbQuestoes[selectedNivel] || dbQuestoes["Ensino Fundamental"];
+      var q = lista[currentQuestIndex];
+      
+      clearInterval(currentTimer);
+      if (isTimerDisabled) return;
+
+      timeLeft = q.tempo || 60;
+      updateTimerDisplay();
+      currentTimer = setInterval(function() {
+        if (isTimerDisabled) return;
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(currentTimer);
+          alert("⏰ Game Over! O tempo esgotou para esta questão.");
+          currentQuestIndex++;
+          loadQuestion();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      if (isTimerDisabled) return;
+      var mins = Math.floor(timeLeft / 60);
+      var secs = timeLeft % 60;
+      var text = mins > 0 ? (mins + "m " + (secs < 10 ? "0" : "") + secs + "s") : (secs + "s");
+      document.getElementById("timerBadge").textContent = "⏱️ " + text;
+    }
+
+    function checkAnswer(escolhida, correta) {
+      clearInterval(currentTimer);
+      if (escolhida === correta) {
+        alert("🎉 Resposta Correta!");
+      } else {
+        alert("❌ Game Over! Errou a resposta.");
+      }
+      currentQuestIndex++;
+      loadQuestion();
     }
 
     updateSongDisplay();
   </script>
 </body>
 </html>
+<!-- App Link: Https://app-quiz-estudos.github.io/QUIZ-ESTUDOS-/ -->
