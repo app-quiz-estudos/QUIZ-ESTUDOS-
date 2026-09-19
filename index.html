@@ -59,11 +59,13 @@
       padding: 14px 16px; margin-bottom: 12px; cursor: pointer; display: flex;
       justify-content: space-between; align-items: center; font-weight: bold;
     }
+    .selection-card.pending-selection { border-color: var(--primary-color); background: #eff6ff; }
     .btn-main {
       width: 100%; padding: 15px; background: var(--primary-color); color: white;
       border: none; border-radius: 10px; font-size: 1.05rem; font-weight: bold; cursor: pointer;
       margin-top: 10px;
     }
+    .btn-main.pending-selection { border: 3px solid #1e293b; background: #1d4ed8; }
     .btn-secondary {
       width: 100%; padding: 14px; background: #e2e8f0; color: var(--text-color);
       border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer;
@@ -77,6 +79,7 @@
       padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; background: var(--card-bg);
       color: var(--text-color); text-align: left; font-size: 0.95rem; cursor: pointer; font-weight: 500;
     }
+    .option-btn.pending-selection { border-color: var(--primary-color); background: #eff6ff; }
     .game-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 14px; margin-top: 10px; }
     .timer-toggle-bottom-btn {
       background: #e2e8f0; border: none; border-radius: 50%; width: 44px; height: 44px;
@@ -109,12 +112,12 @@
       <div class="record-badge">🏆 Parte 2: Acessibilidade Total</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
-      <div class="selection-card" id="cardNivel" onclick="openPicker()">
+      <div class="selection-card" id="cardNivel" onclick="handleNivelClick()">
         <span id="labelNivel">Ensino Fundamental</span>
         <span>❯</span>
       </div>
 
-      <button class="btn-main" id="btnIniciar" onclick="startQuiz()">Iniciar Simulados</button>
+      <button class="btn-main" id="btnIniciar" onclick="handleStartClick()">Iniciar Simulados</button>
     </div>
 
     <div id="screenGame" style="display: none;">
@@ -195,6 +198,9 @@
     var timeLeft = 120;
     var isTimerDisabled = false;
     var isScreenReaderActive = true;
+    var selectedAnswerPending = null;
+    var pendingNivelClick = false;
+    var pendingStartClick = false;
 
     var audioCtx = null;
     var musicInterval = null;
@@ -259,8 +265,7 @@
 
       if (!hasUserStarted) {
         hasUserStarted = true;
-        var nivelAtual = document.getElementById("labelNivel").textContent;
-        speakText("Bem-vindo ao Quiz de Estudos. Nível selecionado: " + nivelAtual + ". Toque em Iniciar Simulados para começar.");
+        speakText("Bem-vindo ao Quiz de Estudos. Nível de ensino atual: " + document.getElementById("labelNivel").textContent + ". Toque duas vezes em Iniciar Simulados para começar.");
       }
     }
 
@@ -307,6 +312,20 @@
       }
     }
 
+    function handleNivelClick() {
+      initAudio();
+      if (pendingNivelClick) {
+        pendingNivelClick = false;
+        document.getElementById("cardNivel").classList.remove("pending-selection");
+        openPicker();
+      } else {
+        pendingNivelClick = true;
+        document.getElementById("cardNivel").classList.add("pending-selection");
+        var nivelAtual = document.getElementById("labelNivel").textContent;
+        speakText("Nível de ensino: " + nivelAtual + ". Toque novamente para alterar.");
+      }
+    }
+
     function openPicker() {
       initAudio();
       var modal = document.getElementById("pickerModal");
@@ -326,19 +345,32 @@
         container.appendChild(item);
       });
       modal.style.display = "flex";
-      speakText("Selecione o Nível: Ensino Fundamental, ENEM ou Concurso Público.");
+      speakText("Janela de seleção aberta. Escolha entre Ensino Fundamental, ENEM ou Concurso Público.");
     }
 
     function closePicker() { document.getElementById("pickerModal").style.display = "none"; }
     function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; speakText("Configurações abertas."); }
     function closeModal() { document.getElementById("settingsModal").style.display = "none"; }
 
+    function handleStartClick() {
+      initAudio();
+      if (pendingStartClick) {
+        pendingStartClick = false;
+        document.getElementById("btnIniciar").classList.remove("pending-selection");
+        startQuiz();
+      } else {
+        pendingStartClick = true;
+        document.getElementById("btnIniciar").classList.add("pending-selection");
+        speakText("Iniciar Simulados. Toque novamente para confirmar e iniciar o quiz.");
+      }
+    }
+
     function startQuiz() {
       initAudio();
       currentQuestIndex = 0;
       document.getElementById("screenSetup").style.display = 'none';
       document.getElementById("screenGame").style.display = 'block';
-      speakText("Quiz iniciado.");
+      speakText("Quiz iniciado com cronômetro de 2 minutos.");
       loadQuestion();
     }
 
@@ -369,6 +401,7 @@
         return;
       }
 
+      selectedAnswerPending = null;
       var q = lista[currentQuestIndex];
       document.getElementById("progressIndicator").textContent = "Questão " + (currentQuestIndex + 1) + " de " + lista.length;
       document.getElementById("questionText").textContent = q.pergunta;
@@ -383,17 +416,33 @@
         var letra = letras[idx];
         var btn = document.createElement("button");
         btn.className = "option-btn";
+        btn.id = "opt-btn-" + idx;
         btn.textContent = letra + ") " + opt;
         
         btn.onclick = function() {
-          checkAnswer(idx, q.correta);
+          handleOptionClick(idx, letra, opt, q.correta);
         };
         optContainer.appendChild(btn);
         textoLeitura += " Alternativa " + letra + ": " + opt + ".";
       });
 
+      textoLeitura += " Lembre-se: há um relógio no rodapé da tela para desativar o cronômetro.";
       speakText(textoLeitura);
       setupTimer();
+    }
+
+    function handleOptionClick(idx, letra, texto, correta) {
+      initAudio();
+      if (selectedAnswerPending === idx) {
+        selectedAnswerPending = null;
+        checkAnswer(idx, correta);
+      } else {
+        selectedAnswerPending = idx;
+        var buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(function(b) { b.classList.remove('pending-selection'); });
+        document.getElementById("opt-btn-" + idx).classList.add('pending-selection');
+        speakText("Alternativa " + letra + ". Toque novamente para confirmar.");
+      }
     }
 
     function setupTimer() {
@@ -417,50 +466,4 @@
       if (isTimerDisabled) return;
       var mins = Math.floor(timeLeft / 60);
       var secs = timeLeft % 60;
-      document.getElementById("timerBadge").textContent = "⏱️ " + (mins > 0 ? (mins + "m " + secs + "s") : (secs + "s"));
-    }
-
-    function checkAnswer(escolhida, correta) {
-      clearInterval(currentTimer);
-      if (escolhida === correta) {
-        triggerSuccess();
-      } else {
-        triggerGameOver("Você escolheu a alternativa incorreta!");
-      }
-    }
-
-    function triggerSuccess() {
-      document.getElementById("successModal").style.display = "flex";
-      speakText("Resposta correta! Muito bem.");
-    }
-
-    function nextQuestionAfterSuccess() {
-      document.getElementById("successModal").style.display = "none";
-      currentQuestIndex++;
-      loadQuestion();
-    }
-
-    function triggerGameOver(motivo) {
-      document.getElementById("gameOverText").textContent = motivo;
-      document.getElementById("gameOverModal").style.display = "flex";
-      speakText("Game Over. " + motivo);
-    }
-
-    function restartGameAfterGameOver() {
-      document.getElementById("gameOverModal").style.display = "none";
-      loadQuestion();
-    }
-
-    function returnToMainMenu() {
-      document.getElementById("gameOverModal").style.display = "none";
-      document.getElementById("successModal").style.display = "none";
-      document.getElementById("screenGame").style.display = 'none';
-      document.getElementById("screenSetup").style.display = 'block';
-      currentQuestIndex = 0;
-      speakText("Retornado ao menu principal.");
-    }
-
-    updateSongDisplay();
-  </script>
-</body>
-</html>
+      document.getElementById("timerBadge").textContent = "⏱️ " + (mins > 0 ? (mins + "m " + secs + "s")
