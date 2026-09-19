@@ -263,9 +263,9 @@
       playMusicLoop();
       updateSongDisplay();
 
+      // Primeiro toque apenas destrava o som e a música em silêncio (sem falar texto gigante)
       if (!hasUserStarted) {
         hasUserStarted = true;
-        speakText("Bem-vindo ao Quiz de Estudos. Nível de ensino atual: " + document.getElementById("labelNivel").textContent + ". Toque duas vezes em Iniciar Simulados para começar.");
       }
     }
 
@@ -361,7 +361,7 @@
       } else {
         pendingStartClick = true;
         document.getElementById("btnIniciar").classList.add("pending-selection");
-        speakText("Iniciar Simulados. Toque novamente para confirmar e iniciar o quiz.");
+        speakText("Iniciar Simulados. Toque novamente para confirmar.");
       }
     }
 
@@ -466,4 +466,9 @@
       if (isTimerDisabled) return;
       var mins = Math.floor(timeLeft / 60);
       var secs = timeLeft % 60;
-      document.getElementById("timerBadge").textContent = "⏱️ " + (mins > 0 ? (mins + "m " + secs + "s")
+      document.getElementById("timerBadge").textContent = "⏱️ " + (mins > 0 ? (mins + "m " + secs + "s") : (secs + "s"));
+    }
+
+    function checkAnswer(escolhida, correta) {
+      clearInterval(currentTimer);
+ 
