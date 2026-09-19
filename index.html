@@ -215,7 +215,7 @@
       color: var(--error-color);
     }
 
-    /* Modal e Configurações Originais */
+    /* Modais e Configurações Originais */
     .modal {
       display: none;
       position: fixed;
@@ -241,7 +241,6 @@
       margin-bottom: 15px;
     }
 
-    /* Estilo do Seletor Modal */
     .picker-list {
       max-height: 280px;
       overflow-y: auto;
@@ -249,7 +248,7 @@
     }
   </style>
 </head>
-<body onclick="startMusicOnInteraction()">
+<body onclick="tryStartMusic()" ontouchstart="tryStartMusic()">
 
   <div class="container">
     <button class="settings-btn" onclick="openModal()">⚙️</button>
@@ -304,7 +303,7 @@
     </div>
   </div>
 
-  <!-- Modal de Seleção Bonita em Cartões -->
+  <!-- Modal de Seleção -->
   <div class="modal" id="pickerModal">
     <div class="modal-content">
       <h3 id="pickerTitle" style="margin-top:0;">Selecione</h3>
@@ -313,7 +312,7 @@
     </div>
   </div>
 
-  <!-- Configurações Padrão Originais -->
+  <!-- Configurações -->
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <h3 style="margin-top:0;">⚙️ Acessibilidade & Som</h3>
@@ -322,7 +321,7 @@
         <input type="checkbox" id="chkSpeech">
       </div>
       <div class="setting-item">
-        <span>Música de Fundo:</span>
+        <span>Música de Fundo (Calm Theme):</span>
         <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)">
       </div>
       <div class="setting-item">
@@ -352,20 +351,22 @@
 
     var audioCtx = null;
     var musicInterval = null;
-    var musicStarted = false;
+    var musicActive = true;
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    function playTone(freq, duration) {
+    function playTone(freq, duration, type='sine', vol=0.05) {
       try {
         initAudio();
         var osc = audioCtx.createOscillator();
         var gain = audioCtx.createGain();
+        osc.type = type;
         osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
@@ -373,25 +374,30 @@
       } catch(e){}
     }
 
+    // Estilo Calm Theme (Suave e relaxante)
+    function playCalmThemeStep() {
+      if (!document.getElementById("chkMusic").checked) return;
+      var calmNotes = [220.00, 261.63, 329.63, 392.00, 440.00, 329.63]; // Acordes calmos de piano/ambient
+      var note = calmNotes[Math.floor(Math.random() * calmNotes.length)];
+      playTone(note, 1.5, 'sine', 0.03);
+    }
+
     function toggleMusic(enable) {
       initAudio();
       if (enable) {
         if (musicInterval) clearInterval(musicInterval);
-        var notes = [261.63, 329.63, 392.00, 523.25];
-        var step = 0;
-        musicInterval = setInterval(function() {
-          playTone(notes[step % notes.length], 0.2);
-          step++;
-        }, 600);
+        musicInterval = setInterval(playCalmThemeStep, 3500);
+        playCalmThemeStep();
       } else {
         clearInterval(musicInterval);
         musicInterval = null;
       }
     }
 
-    function startMusicOnInteraction() {
-      if (!musicStarted) {
-        musicStarted = true;
+    function tryStartMusic() {
+      if (musicActive) {
+        musicActive = false;
+        initAudio();
         if (document.getElementById("chkMusic").checked) {
           toggleMusic(true);
         }
@@ -468,7 +474,6 @@
       }, 1000);
     }
 
-    // Carregamento de dados das perguntas do banco
     function fetchQuestionForSubject(sub) {
       if (sub === "Libras") {
         return {
@@ -487,8 +492,8 @@
         };
       } else {
         return {
-          q: "[" + sub + "] Pergunta sobre " + sub + ":",
-          options: ["Resposta Correta", "Opção Errada 1", "Opção Errada 2", "Opção Errada 3"],
+          q: "[" + sub + "] Pergunta essenciais sobre " + sub + ":",
+          options: ["Resposta Correta e Atualizada", "Opção Incorreta A", "Opção Incorreta B", "Opção Incorreta C"],
           correct: 0
         };
       }
@@ -527,7 +532,7 @@
 
       if (selectedIdx === currentQ.correct) {
         btn.classList.add("correct");
-        playTone(523.25, 0.2);
+        playTone(523.25, 0.2, 'sine', 0.08);
         score += 10;
         document.getElementById("scoreText").textContent = score;
         if (score > highScore) {
@@ -538,7 +543,7 @@
         setTimeout(nextQuestion, 1000);
       } else {
         btn.classList.add("wrong");
-        playTone(180, 0.4);
+        playTone(180, 0.4, 'sawtooth', 0.1);
         setTimeout(function() { triggerGameOver("Você errou a resposta!"); }, 1000);
       }
     }
@@ -557,6 +562,15 @@
     }
 
     document.getElementById("recordDisplay").textContent = "🏆 Seu Recorde: " + highScore + " pts";
+    
+    // Inicia a música suave ao carregar se o navegador permitir
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        if (document.getElementById("chkMusic").checked) {
+          toggleMusic(true);
+        }
+      }, 500);
+    });
   </script>
 </body>
 </html>
