@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Estudos - Parte 2 (Relógio embaixo estilo config)</title>
+  <title>Quiz de Estudos - Acessibilidade Sequencial</title>
   
   <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
   
@@ -128,6 +128,7 @@
       text-align: center;
       font-weight: bold;
       margin-bottom: 20px;
+      font-size: 0.9rem;
     }
 
     .selection-card {
@@ -223,9 +224,14 @@
       font-size: 0.95rem;
       cursor: pointer;
       font-weight: 500;
+      transition: border-color 0.2s;
     }
 
-    /* Rodapé do Jogo com o Botão de Relógio Estilo Configuração */
+    .option-btn.pending-selection {
+      border-color: var(--primary-color);
+      background: #eff6ff;
+    }
+
     .game-footer {
       display: flex;
       justify-content: space-between;
@@ -248,10 +254,6 @@
       justify-content: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       transition: background 0.2s;
-    }
-
-    .timer-toggle-bottom-btn:hover {
-      background: #cbd5e1;
     }
 
     .modal {
@@ -279,34 +281,32 @@
     }
   </style>
 </head>
-<body onclick="handleGlobalTouch()">
+<body onclick="handleGlobalTouch()" aria-live="polite">
 
   <div class="container" onclick="event.stopPropagation()">
-    <button class="settings-btn" onclick="openModal()" title="Configurações">⚙️</button>
+    <button class="settings-btn" onclick="openModal()" aria-label="Configurações e Acessibilidade" title="Configurações">⚙️</button>
 
-    <div class="owl-icon">🦉</div>
+    <div class="owl-icon" aria-hidden="true">🦉</div>
     <h1>Quiz de Estudos</h1>
 
-    <div class="music-player-bar" onclick="startMusicEngine()">
-      <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
-      <div class="music-info" id="musicTitleDisplay">
-        🎵 Toque para Ligar o Som
-      </div>
-      <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
+    <div class="music-player-bar" onclick="startMusicEngine()" role="button" aria-label="Reprodutor de música Pagode">
+      <button class="music-arrow" onclick="changeSong(event, -1)" aria-label="Música anterior">❮</button>
+      <div class="music-info" id="musicTitleDisplay">🎵 Toque para Ligar o Som</div>
+      <button class="music-arrow" onclick="changeSong(event, 1)" aria-label="Próxima música">❯</button>
     </div>
 
     <div id="screenSetup">
-      <div class="record-badge">🏆 Parte 2: Níveis e Relógio no Rodapé</div>
+      <div class="record-badge">🏆 Acessibilidade com Leitura Sequencial</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
-      <div class="selection-card" onclick="openPicker('nivel')">
+      <div class="selection-card" onclick="openPicker('nivel')" role="button">
         <span id="labelNivel">Ensino Fundamental</span>
         <span>❯</span>
       </div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">2. Matéria Específica:</p>
-      <div class="selection-card" onclick="openPicker('materia')">
-        <span id="labelMateria">Matemática e Português</span>
+      <div class="selection-card" onclick="openPicker('materia')" role="button">
+        <span id="labelMateria">Todas as Matérias</span>
         <span>❯</span>
       </div>
 
@@ -315,21 +315,20 @@
 
     <div id="screenGame" style="display: none;">
       <div class="game-header">
-        <span id="progressIndicator">Questão 1/3</span>
-        <span class="timer-badge" id="timerBadge">⏱️ 60s</span>
+        <span id="progressIndicator">Questão 1 de 3</span>
+        <span class="timer-badge" id="timerBadge">⏱️ 120s</span>
       </div>
 
       <div id="librasContainer"></div>
       <div id="imageContainer"></div>
 
-      <div class="question-box" id="questionText">Carregando questão...</div>
+      <div class="question-box" id="questionText" tabindex="0">Carregando questão...</div>
       
-      <div class="options-grid" id="optionsContainer"></div>
+      <div class="options-grid" id="optionsContainer" role="group" aria-label="Alternativas"></div>
 
-      <!-- RODAPÉ COM O BOTÃO DE RELOGINHO ESTILO CONFIGURAÇÃO -->
       <div class="game-footer">
         <span style="font-size: 0.85rem; font-weight: bold; color: #64748b;">Modo Sem Tempo:</span>
-        <button class="timer-toggle-bottom-btn" id="timerToggleBtn" onclick="toggleTimerMode()" title="Ativar/Desativar Tempo">⏱️</button>
+        <button class="timer-toggle-bottom-btn" id="timerToggleBtn" onclick="toggleTimerMode()" title="Ativar/Desativar Tempo no Rodapé">⏱️</button>
       </div>
     </div>
   </div>
@@ -353,6 +352,10 @@
         <span>Alto Contraste:</span>
         <input type="checkbox" id="chkContrast" onchange="document.body.classList.toggle('high-contrast')">
       </div>
+      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
+        <span>Leitor de Tela (Deficiente Visual):</span>
+        <input type="checkbox" id="chkScreenReader" checked onchange="toggleScreenReader(this.checked)">
+      </div>
       <button class="btn-main" onclick="closeModal()">Fechar</button>
     </div>
   </div>
@@ -360,56 +363,28 @@
   <script>
     var dbQuestoes = {
       "Ensino Fundamental": [
-        {
-          pergunta: "Quanto é 45 + 38?",
-          libras: "👋 (Sinal em Libras para: Soma / Adição)",
-          imagem: null,
-          tempo: 60,
-          opcoes: ["73", "83", "93", "72"],
-          correta: 0
-        },
-        {
-          pergunta: "Qual alternativa apresenta corretamente um sinônimo da palavra 'Feliz'?",
-          libras: "🤟 (Sinal em Libras para: Alegre / Contente)",
-          imagem: null,
-          tempo: 60,
-          opcoes: ["Triste", "Contente", "Cansado", "Zangado"],
-          correta: 1
-        }
+        { materia: "Matemática", pergunta: "Quanto é 45 + 38?", libras: "Adição", imagem: null, opcoes: ["73", "83", "93", "72"], correta: 0 },
+        { materia: "Português", pergunta: "Qual é o sinônimo da palavra 'Feliz'?", libras: "Alegre", imagem: null, opcoes: ["Triste", "Contente", "Cansado", "Zangado"], correta: 1 },
+        { materia: "Ciências", pergunta: "Qual planeta do sistema solar é conhecido como Planeta Vermelho?", libras: "Planeta", imagem: null, opcoes: ["Vênus", "Marte", "Júpiter", "Saturno"], correta: 1 }
       ],
       "ENEM": [
-        {
-          pergunta: "ENEM 2018: Calcule a área da praça circular cuja praça possui diâmetro de 20 metros. (Use pi = 3,14)",
-          libras: "🖐️ (Sinal em Libras para: Área / Círculo / Matemática)",
-          imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=400&q=80",
-          tempo: 120,
-          opcoes: ["314 metros quadrados", "628 metros quadrados", "157 metros quadrados", "100 metros quadrados"],
-          correta: 0
-        }
+        { materia: "Matemática", pergunta: "ENEM: Calcule a área de uma praça circular com diâmetro de 20 metros (considere pi = 3,14).", libras: "Área e Círculo", imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=400&q=80", opcoes: ["314 metros quadrados", "628 metros quadrados", "157 metros quadrados", "100 metros quadrados"], correta: 0 },
+        { materia: "Linguagens", pergunta: "ENEM: Qual figura de linguagem está presente no trecho 'O vento beijou minha face'?", libras: "Poesia", imagem: null, opcoes: ["Metáfora", "Personificação ou Prosopopeia", "Hipérbole", "Antítese"], correta: 1 }
       ],
       "Concurso Público": [
-        {
-          pergunta: "Concurso (FCC/2022): Assinale a alternativa em que a concordância verbal está inteiramente correta segundo a norma culta.",
-          libras: "👌 (Sinal em Libras para: Regra / Gramática / Correto)",
-          imagem: null,
-          tempo: 120,
-          opcoes: [
-            "Faltou recursos para concluir a obra pública.",
-            "Devem haver muitas vagas no próximo edital.",
-            "Fizeram-se necessários novos ajustes no orçamento.",
-            "Faz muitos anos que não ocorrem concursos aqui."
-          ],
-          correta: 2
-        }
+        { materia: "Português", pergunta: "Concurso: Assinale a alternativa em que a concordância verbal está inteiramente correta:", libras: "Regra Gramatical", imagem: null, opcoes: ["Faltou recursos para a obra.", "Devem haver muitas vagas.", "Fizeram-se necessários novos ajustes.", "Faz muitos anos que ocorrem."], correta: 2 },
+        { materia: "Informática", pergunta: "Concurso: Qual atalho de teclado é utilizado para copiar um item selecionado no Windows?", libras: "Computador", imagem: null, opcoes: ["Control + V", "Control + C", "Control + X", "Control + Z"], correta: 1 }
       ]
     };
 
     var selectedNivel = "Ensino Fundamental";
-    var selectedMateria = "Geral";
+    var selectedMateria = "Todas as Matérias";
     var currentQuestIndex = 0;
     var currentTimer = null;
-    var timeLeft = 60;
+    var timeLeft = 120; // 2 minutos para acessibilidade
     var isTimerDisabled = false;
+    var isScreenReaderActive = true;
+    var selectedAnswerPending = null;
 
     var audioCtx = null;
     var musicInterval = null;
@@ -430,6 +405,17 @@
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function speakText(text) {
+      if (!isScreenReaderActive) return;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'pt-BR';
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
     }
 
     function playCustomTone(freq, duration, type='sine', vol=0.04) {
@@ -491,6 +477,13 @@
       updateSongDisplay();
     }
 
+    function toggleScreenReader(enable) {
+      isScreenReaderActive = enable;
+      if (enable) {
+        speakText("Leitor de tela ativado.");
+      }
+    }
+
     function changeSong(e, direction) {
       e.stopPropagation();
       initAudio();
@@ -518,40 +511,58 @@
           item.onclick = function() {
             selectedNivel = n;
             document.getElementById("labelNivel").textContent = selectedNivel;
+            speakText("Nível selecionado: " + n);
             closePicker();
           };
           container.appendChild(item);
         });
       } else {
-        title.textContent = "Matéria";
-        ["Matemática e Português", "Geral e Atualidades"].forEach(function(m) {
+        title.textContent = "Matéria Específica";
+        ["Todas as Matérias", "Matemática", "Português", "Ciências", "Informática", "Linguagens"].forEach(function(m) {
           var item = document.createElement("div");
           item.className = "selection-card";
           item.textContent = m;
           item.onclick = function() {
             selectedMateria = m;
             document.getElementById("labelMateria").textContent = selectedMateria;
+            speakText("Matéria selecionada: " + m);
             closePicker();
           };
           container.appendChild(item);
         });
       }
       modal.style.display = "flex";
+      speakText("Janela de seleção aberta.");
     }
 
     function closePicker() { document.getElementById("pickerModal").style.display = "none"; }
-    function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; }
+    function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; speakText("Menu de configurações aberto."); }
     function closeModal() { document.getElementById("settingsModal").style.display = "none"; }
+
+    function getFilteredQuestions() {
+      var lista = dbQuestoes[selectedNivel] || dbQuestoes["Ensino Fundamental"];
+      if (selectedMateria === "Todas as Matérias") return lista;
+      return lista.filter(function(q) { return q.materia === selectedMateria; });
+    }
 
     function startQuiz() {
       initAudio();
       currentQuestIndex = 0;
+      var qList = getFilteredQuestions();
+      if (qList.length === 0) {
+        alert("Ainda não há questões cadastradas para esta matéria.");
+        speakText("Aviso: Não há questões para esta matéria.");
+        return;
+      }
       document.getElementById("screenSetup").style.display = 'none';
       document.getElementById("screenGame").style.display = 'block';
+      
+      // Aviso inicial completo orientando sobre o cronômetro de 2 min e o rodapé
+      speakText("Quiz iniciado com cronômetro de 2 minutos. Atenção: o botão para jogar sem tempo está localizado na parte inferior da tela.");
+      
       loadQuestion();
     }
 
-    // Alternar o Modo Sem Tempo (Estilo botão redondo de config no rodapé)
     function toggleTimerMode() {
       initAudio();
       isTimerDisabled = !isTimerDisabled;
@@ -561,91 +572,31 @@
       if (isTimerDisabled) {
         clearInterval(currentTimer);
         btn.textContent = "⏱️❌";
-        btn.style.background = "#fee2e2";
         badge.textContent = "♾️ Sem Tempo";
+        speakText("Modo sem tempo ativado com sucesso.");
       } else {
         btn.textContent = "⏱️";
-        btn.style.background = "#e2e8f0";
-        badge.style.background = "#fee2e2";
-        badge.style.color = "#991b1b";
+        badge.textContent = "⏱️ 120s";
         setupTimerForCurrentQuestion();
+        speakText("Modo com tempo de 2 minutos ativado.");
       }
     }
 
     function loadQuestion() {
-      var lista = dbQuestoes[selectedNivel] || dbQuestoes["Ensino Fundamental"];
-      if (currentQuestIndex >= lista.length) {
-        alert("Parabéns! Você concluiu este bloco.");
+      var qList = getFilteredQuestions();
+      if (currentQuestIndex >= qList.length) {
+        alert("Parabéns! Você concluiu este bloco de questões.");
+        speakText("Parabéns! Bloco de questões concluído.");
         location.reload();
         return;
       }
 
-      var q = lista[currentQuestIndex];
-      document.getElementById("progressIndicator").textContent = "Questão " + (currentQuestIndex + 1) + "/" + lista.length;
-      document.getElementById("questionText").textContent = q.pergunta;
+      selectedAnswerPending = null; 
+      var q = qList[currentQuestIndex];
+      document.getElementById("progressIndicator").textContent = "Questão " + (currentQuestIndex + 1) + " de " + qList.length;
+      document.getElementById("questionText").textContent = "Matéria " + q.materia + ". " + q.pergunta;
 
       var librasBox = document.getElementById("librasContainer");
       librasBox.innerHTML = q.libras ? '<div class="libras-badge"><span>Libras:</span> ' + q.libras + '</div>' : '';
 
-      var imgBox = document.getElementById("imageContainer");
-      imgBox.innerHTML = q.imagem ? '<img src="' + q.imagem + '" class="question-image" alt="Ilustração">' : '';
-
-      var optContainer = document.getElementById("optionsContainer");
-      optContainer.innerHTML = "";
-      q.opcoes.forEach(function(opt, idx) {
-        var btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.textContent = opt;
-        btn.onclick = function() { checkAnswer(idx, q.correta); };
-        optContainer.appendChild(btn);
-      });
-
-      setupTimerForCurrentQuestion();
-    }
-
-    function setupTimerForCurrentQuestion() {
-      var lista = dbQuestoes[selectedNivel] || dbQuestoes["Ensino Fundamental"];
-      var q = lista[currentQuestIndex];
-      
-      clearInterval(currentTimer);
-      if (isTimerDisabled) return;
-
-      timeLeft = q.tempo || 60;
-      updateTimerDisplay();
-      currentTimer = setInterval(function() {
-        if (isTimerDisabled) return;
-        timeLeft--;
-        updateTimerDisplay();
-        if (timeLeft <= 0) {
-          clearInterval(currentTimer);
-          alert("⏰ Game Over! O tempo esgotou para esta questão.");
-          currentQuestIndex++;
-          loadQuestion();
-        }
-      }, 1000);
-    }
-
-    function updateTimerDisplay() {
-      if (isTimerDisabled) return;
-      var mins = Math.floor(timeLeft / 60);
-      var secs = timeLeft % 60;
-      var text = mins > 0 ? (mins + "m " + (secs < 10 ? "0" : "") + secs + "s") : (secs + "s");
-      document.getElementById("timerBadge").textContent = "⏱️ " + text;
-    }
-
-    function checkAnswer(escolhida, correta) {
-      clearInterval(currentTimer);
-      if (escolhida === correta) {
-        alert("🎉 Resposta Correta!");
-      } else {
-        alert("❌ Game Over! Errou a resposta.");
-      }
-      currentQuestIndex++;
-      loadQuestion();
-    }
-
-    updateSongDisplay();
-  </script>
-</body>
-</html>
-<!-- App Link: Https://app-quiz-estudos.github.io/QUIZ-ESTUDOS-/ -->
+     
