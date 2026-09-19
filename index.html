@@ -73,21 +73,19 @@
     .picker-item { padding: 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; font-weight: bold; }
     .picker-item:hover { background: #f8fafc; }
 
-    /* Estilos do Simulador Profissional */
+    /* Estilos da Tela de Quiz Estável */
     .screen { display: none; }
     .screen.active { display: block; }
     .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.85rem; font-weight: bold; opacity: 0.8; }
-    .reading-text-box { background: #f8fafc; border-left: 4px solid var(--primary-color); padding: 12px; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.4; border-radius: 0 8px 8px 0; max-height: 140px; overflow-y: auto; }
-    .question-box { font-size: 1rem; font-weight: bold; margin-bottom: 14px; line-height: 1.4; }
+    .question-box { font-size: 1.05rem; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
     .quiz-option {
       background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 10px;
-      padding: 12px 14px; margin-bottom: 10px; cursor: pointer; font-weight: 500; font-size: 0.95rem;
+      padding: 12px 14px; margin-bottom: 10px; cursor: pointer; font-weight: bold; font-size: 0.95rem;
       display: block; width: 100%; text-align: left; box-sizing: border-box; color: var(--text-color);
     }
-    .quiz-option:hover { border-color: var(--primary-color); background: var(--badge-bg); }
-    .quiz-option.correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important; }
-    .quiz-option.incorrect { background: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
-    .feedback-box { margin-top: 12px; padding: 12px; border-radius: 8px; font-size: 0.9rem; display: none; line-height: 1.3; }
+    .quiz-option.correct { background: #22c55e !important; color: white !important; border-color: #22c55e !important; }
+    .quiz-option.incorrect { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; }
+    .feedback-box { margin-top: 12px; padding: 12px; border-radius: 8px; font-size: 0.9rem; display: none; font-weight: bold; }
     .feedback-box.correct { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
     .feedback-box.incorrect { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
   </style>
@@ -107,7 +105,7 @@
       <button class="music-arrow" id="musicNext" aria-label="Próxima música">❯</button>
     </div>
 
-    <!-- Tela Inicial / Setup com Seleção Modular -->
+    <!-- Tela Inicial / Setup -->
     <div id="screenSetup" class="screen active">
       <p style="font-weight: bold; margin-bottom: 6px;">1. Grande Área:</p>
       <div class="selection-card" id="cardArea" aria-label="Selecionar Grande Área">
@@ -127,27 +125,23 @@
         <span aria-hidden="true">❯</span>
       </div>
 
-      <button class="btn-main" id="btnStartQuiz" aria-label="Iniciar Simulados Profissionais">Iniciar Simulados</button>
+      <button class="btn-main" id="btnStartQuiz" aria-label="Iniciar Simulados">Iniciar Simulados</button>
 
-      <!-- Distintivo de Leitor de Tela na Parte Inferior -->
       <div class="accessibility-footer-badge" aria-label="Leitor de Tela Detectado. Modo Adaptado Ativo.">
         <span>♿</span> <span>Leitor de Tela Detectado (Modo Adaptado Ativo)</span>
       </div>
     </div>
 
-    <!-- Tela de Execução do Simulado -->
+    <!-- Tela de Execução do Quiz (Simulador de 100 Questões) -->
     <div id="screenQuiz" class="screen">
       <div class="quiz-header">
         <span id="quizSubjectTag">Matemática / Básica</span>
         <span id="quizCounter">Questão 1/100</span>
       </div>
-      <div id="readingContainer" style="display: none;">
-        <div class="reading-text-box" id="readingText"></div>
-      </div>
       <div class="question-box" id="questionText">Carregando questão...</div>
       <div id="optionsContainer"></div>
       <div class="feedback-box" id="feedbackBox"></div>
-      <button class="btn-main" id="btnNextQuestion" style="display: none; margin-top: 15px;">Próxima Questão ➔</button>
+      <button class="btn-main" id="btnNextQuestion" style="display: none; margin-top: 15px;">Próxima Questão ❯</button>
       <button class="btn-main" id="btnBackSetup" style="background: #64748b; margin-top: 8px;">Voltar ao Menu</button>
     </div>
   </div>
@@ -207,7 +201,7 @@
       let selectedArea = "Matemática";
       let selectedSub = "Matemática básica";
       let selectedLevel = "Ensino Fundamental";
-      let currentQuestionIdx = 0;
+      let questaoAtualIndex = 0;
 
       let audioCtx = null;
       let musicInterval = null;
@@ -389,4 +383,14 @@
       };
 
       document.getElementById("btnCloseSettings").onclick = function() {
-        document.get
+        document.getElementById("settingsModal").style.display = "none";
+      };
+
+      // Motor Estável de 100 Questões por Matéria Selecionada
+      function gerarQuestao100(sub, nivel, index) {
+        let num = index + 1;
+        return {
+          enunciado: `[Questão ${num}/100] Avalie os conceitos fundamentais de ${sub} (${nivel}) referentes ao item ${num}:`,
+          opcoes: [
+            `Aplica-se diretamente aos princípios normativos e teóricos de ${sub}.`,
+            `Trata-se de uma exceção sem validade prática para este nível
