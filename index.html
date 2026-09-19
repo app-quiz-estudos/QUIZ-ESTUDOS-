@@ -15,6 +15,7 @@
       --primary-color: #2563eb;
       --music-bar-bg: #60a5fa;
       --error-color: #ef4444;
+      --success-color: #10b981;
     }
     body.high-contrast {
       --bg-color: #000000;
@@ -58,11 +59,13 @@
       padding: 14px 16px; margin-bottom: 12px; cursor: pointer; display: flex;
       justify-content: space-between; align-items: center; font-weight: bold;
     }
+    .selection-card.pending-selection { border-color: var(--primary-color); background: #eff6ff; }
     .btn-main {
       width: 100%; padding: 15px; background: var(--primary-color); color: white;
       border: none; border-radius: 10px; font-size: 1.05rem; font-weight: bold; cursor: pointer;
       margin-top: 10px;
     }
+    .btn-main.pending-selection { border: 3px solid #1e293b; background: #1d4ed8; }
     .btn-secondary {
       width: 100%; padding: 14px; background: #e2e8f0; color: var(--text-color);
       border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer;
@@ -100,6 +103,21 @@
       font-weight: bold;
       margin-bottom: 10px;
     }
+
+    .success-box {
+      background: #ecfdf5;
+      border: 2px solid var(--success-color);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .success-title {
+      color: var(--success-color);
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body onclick="handleGlobalTouch()">
@@ -112,7 +130,7 @@
 
     <div class="music-player-bar" onclick="startMusicEngine()">
       <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
-      <div class="music-info" id="musicTitleDisplay">🎵 Toque em qualquer lugar para iniciar o som e leitor</div>
+      <div class="music-info" id="musicTitleDisplay">🎵 Toque em qualquer lugar para ativar som e leitor</div>
       <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
     </div>
 
@@ -120,12 +138,12 @@
       <div class="record-badge">🏆 Parte 2: Acessibilidade Total</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
-      <div class="selection-card" onclick="openPicker()">
+      <div class="selection-card" id="cardNivel" onclick="handleNivelClick()">
         <span id="labelNivel">Ensino Fundamental</span>
         <span>❯</span>
       </div>
 
-      <button class="btn-main" onclick="startQuiz()">Iniciar Simulados</button>
+      <button class="btn-main" id="btnIniciar" onclick="handleStartClick()">Iniciar Simulados</button>
     </div>
 
     <div id="screenGame" style="display: none;">
@@ -147,7 +165,18 @@
     </div>
   </div>
 
-  <!-- Modal de Game Over Completo (Reiniciar ou Voltar ao Menu) -->
+  <!-- Modal de Acerto Customizado (Substituiu o alert) -->
+  <div class="modal" id="successModal">
+    <div class="modal-content">
+      <div class="success-box">
+        <div class="success-title">✔️ RESPOSTA CORRETA!</div>
+        <p style="font-weight: 500; margin-bottom: 15px;">Muito bem, você acertou a questão!</p>
+      </div>
+      <button class="btn-main" onclick="nextQuestionAfterSuccess()">Avançar para Próxima</button>
+    </div>
+  </div>
+
+  <!-- Modal de Game Over Completo -->
   <div class="modal" id="gameOverModal">
     <div class="modal-content">
       <div class="gameover-box">
@@ -199,6 +228,10 @@
     var isTimerDisabled = false;
     var isScreenReaderActive = true;
     var selectedAnswerPending = null;
+    
+    // Variáveis para duplo toque no menu principal
+    var pendingNivelClick = false;
+    var pendingStartClick = false;
 
     var audioCtx = null;
     var musicInterval = null;
@@ -279,11 +312,12 @@
       updateSongDisplay();
     }
 
+    // Assim que toca na tela pela primeira vez, liga o som e o leitor automaticamente dando boas-vindas
     function handleGlobalTouch() {
       if (!hasUserInteracted) {
         hasUserInteracted = true;
         startMusicEngine();
-        speakText("Bem-vindo ao Quiz de Estudos. Toque em Iniciar Simulados para começar.");
+        speakText("Bem-vindo ao Quiz de Estudos. Nível selecionado atual: " + document.getElementById("labelNivel").textContent + ". Toque duas vezes em Iniciar Simulados para começar.");
       }
     }
 
@@ -310,6 +344,21 @@
       }
     }
 
+    // Lógica de duplo toque para o card de nível no menu
+    function handleNivelClick() {
+      initAudio();
+      if (pendingNivelClick) {
+        pendingNivelClick = false;
+        document.getElementById("cardNivel").classList.remove("pending-selection");
+        openPicker();
+      } else {
+        pendingNivelClick = true;
+        document.getElementById("cardNivel").classList.add("pending-selection");
+        var nivelAtual = document.getElementById("labelNivel").textContent;
+        speakText("Nível de ensino: " + nivelAtual + ". Toque novamente para alterar.");
+      }
+    }
+
     function openPicker() {
       initAudio();
       var modal = document.getElementById("pickerModal");
@@ -328,12 +377,26 @@
         container.appendChild(item);
       });
       modal.style.display = "flex";
-      speakText("Janela de seleção aberta.");
+      speakText("Janela de seleção aberta. Escolha entre Ensino Fundamental, ENEM ou Concurso Público.");
     }
 
     function closePicker() { document.getElementById("pickerModal").style.display = "none"; }
     function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; speakText("Configurações abertas."); }
     function closeModal() { document.getElementById("settingsModal").style.display = "none"; }
+
+    // Lógica de duplo toque para o botão Iniciar no menu
+    function handleStartClick() {
+      initAudio();
+      if (pendingStartClick) {
+        pendingStartClick = false;
+        document.getElementById("btnIniciar").classList.remove("pending-selection");
+        startQuiz();
+      } else {
+        pendingStartClick = true;
+        document.getElementById("btnIniciar").classList.add("pending-selection");
+        speakText("Botão Iniciar Simulados. Toque novamente para confirmar e iniciar o quiz.");
+      }
+    }
 
     function startQuiz() {
       initAudio();
@@ -366,8 +429,7 @@
     function loadQuestion() {
       var lista = dbQuestoes;
       if (currentQuestIndex >= lista.length) {
-        alert("Parabéns! Bloco concluído.");
-        speakText("Parabéns! Bloco de questões concluído.");
+        speakText("Parabéns! Bloco de questões concluído com sucesso.");
         returnToMainMenu();
         return;
       }
@@ -418,62 +480,4 @@
     }
 
     function setupTimer() {
-      clearInterval(currentTimer);
-      if (isTimerDisabled) return;
-
-      timeLeft = 120;
-      updateTimerDisplay();
-      currentTimer = setInterval(function() {
-        if (isTimerDisabled) return;
-        timeLeft--;
-        updateTimerDisplay();
-        if (timeLeft <= 0) {
-          clearInterval(currentTimer);
-          triggerGameOver("O seu tempo de 2 minutos esgotou para esta questão!");
-        }
-      }, 1000);
-    }
-
-    function updateTimerDisplay() {
-      if (isTimerDisabled) return;
-      var mins = Math.floor(timeLeft / 60);
-      var secs = timeLeft % 60;
-      document.getElementById("timerBadge").textContent = "⏱️ " + (mins > 0 ? (mins + "m " + secs + "s") : (secs + "s"));
-    }
-
-    function checkAnswer(escolhida, correta) {
-      clearInterval(currentTimer);
-      if (escolhida === correta) {
-        alert("Resposta Correta!");
-        speakText("Resposta correta! Muito bem.");
-        currentQuestIndex++;
-        loadQuestion();
-      } else {
-        triggerGameOver("Você escolheu a alternativa incorreta!");
-      }
-    }
-
-    function triggerGameOver(motivo) {
-      document.getElementById("gameOverText").textContent = motivo;
-      document.getElementById("gameOverModal").style.display = "flex";
-      speakText("Game Over. " + motivo + ". Escolha entre reiniciar ou voltar para o menu principal.");
-    }
-
-    function restartGameAfterGameOver() {
-      document.getElementById("gameOverModal").style.display = "none";
-      loadQuestion();
-    }
-
-    function returnToMainMenu() {
-      document.getElementById("gameOverModal").style.display = "none";
-      document.getElementById("screenGame").style.display = 'none';
-      document.getElementById("screenSetup").style.display = 'block';
-      currentQuestIndex = 0;
-      speakText("Retornado ao menu principal.");
-    }
-
-    updateSongDisplay();
-  </script>
-</body>
-</html>
-<!-- App Link: https://app-quiz-estudos.github.io/QUIZ-ESTUDOS-/ -->
+      clearInterval(current
