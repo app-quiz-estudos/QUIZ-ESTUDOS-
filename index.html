@@ -100,7 +100,7 @@
     .success-title { color: var(--success-color); font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
   </style>
 </head>
-<body id="bodyRoot">
+<body>
 
   <div class="container">
     <button class="settings-btn" onclick="openModal()" title="Configurações">⚙️</button>
@@ -217,7 +217,6 @@
     var stepCount = 0;
     var currentSongIdx = 4;
     var isPlayingMusic = false;
-    var hasWelcomed = false;
 
     var songList = [
       { name: "1. 👻 Terror Sombrio", type: "sawtooth", tempo: 500, baseFreq: 110 },
@@ -275,20 +274,8 @@
       musicInterval = setInterval(playMusicLoop, song.tempo);
       playMusicLoop();
       updateSongDisplay();
-
-      // Fala as boas vindas automática no primeiro toque geral na página
-      if (!hasWelcomed) {
-        hasWelcomed = true;
-        speakText("Bem-vindo ao Quiz de Estudos. Nível selecionado atual: " + document.getElementById("labelNivel").textContent + ". Toque duas vezes no botão Iniciar Simulados para começar.");
-      }
+      speakText("Música ativada. Bem-vindo ao Quiz de Estudos.");
     }
-
-    // Ativa o ouvinte de boas-vindas no primeiro toque em qualquer ponto da tela
-    document.body.addEventListener('click', function() {
-      if (!hasWelcomed) {
-        startMusicEngine();
-      }
-    }, { once: true });
 
     function toggleMusic(enable) {
       initAudio();
@@ -473,4 +460,20 @@
         updateTimerDisplay();
         if (timeLeft <= 0) {
           clearInterval(currentTimer);
+          triggerGameOver("O seu tempo de 2 minutos esgotou para esta questão!");
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      if (isTimerDisabled) return;
+      var mins = Math.floor(timeLeft / 60);
+      var secs = timeLeft % 60;
+      document.getElementById("timerBadge").textContent = "⏱️ " + (mins > 0 ? (mins + "m " + secs + "s") : (secs + "s"));
+    }
+
+    function checkAnswer(escolhida, correta) {
+      clearInterval(currentTimer);
+      if (escolhida === correta) {
+        triggerSuccess();
      
