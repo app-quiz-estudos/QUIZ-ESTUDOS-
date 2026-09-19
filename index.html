@@ -109,7 +109,6 @@
       margin-bottom: 20px;
     }
 
-    /* Cartões de Seleção Interna */
     .selection-card {
       background: #ffffff;
       border: 2px solid #e2e8f0;
@@ -215,7 +214,6 @@
       color: var(--error-color);
     }
 
-    /* Modais e Configurações Originais */
     .modal {
       display: none;
       position: fixed;
@@ -321,7 +319,7 @@
         <input type="checkbox" id="chkSpeech">
       </div>
       <div class="setting-item">
-        <span>Música de Fundo (Calm Theme):</span>
+        <span>Música de Fundo (Estilo Genius):</span>
         <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)">
       </div>
       <div class="setting-item">
@@ -352,13 +350,14 @@
     var audioCtx = null;
     var musicInterval = null;
     var musicActive = true;
+    var beatStep = 0;
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    function playTone(freq, duration, type='sine', vol=0.05) {
+    function playTone(freq, duration, type='sine', vol=0.04) {
       try {
         initAudio();
         var osc = audioCtx.createOscillator();
@@ -374,20 +373,35 @@
       } catch(e){}
     }
 
-    // Estilo Calm Theme (Suave e relaxante)
-    function playCalmThemeStep() {
+    function playGeniusVibeStep() {
       if (!document.getElementById("chkMusic").checked) return;
-      var calmNotes = [220.00, 261.63, 329.63, 392.00, 440.00, 329.63]; // Acordes calmos de piano/ambient
-      var note = calmNotes[Math.floor(Math.random() * calmNotes.length)];
-      playTone(note, 1.5, 'sine', 0.03);
+      
+      var chordNotes = [
+        [196.00, 246.94, 293.66],
+        [174.61, 220.00, 261.63],
+        [164.81, 207.65, 246.94],
+        [130.81, 164.81, 196.00]
+      ];
+
+      var currentChord = chordNotes[Math.floor(beatStep / 4) % chordNotes.length];
+      var noteToPlay = currentChord[beatStep % currentChord.length];
+      
+      playTone(noteToPlay, 0.8, 'triangle', 0.035);
+      
+      if (beatStep % 2 === 0) {
+        playTone(90, 0.15, 'sine', 0.03);
+      }
+
+      beatStep = (beatStep + 1) % 16;
     }
 
     function toggleMusic(enable) {
       initAudio();
       if (enable) {
         if (musicInterval) clearInterval(musicInterval);
-        musicInterval = setInterval(playCalmThemeStep, 3500);
-        playCalmThemeStep();
+        beatStep = 0;
+        musicInterval = setInterval(playGeniusVibeStep, 600);
+        playGeniusVibeStep();
       } else {
         clearInterval(musicInterval);
         musicInterval = null;
@@ -562,15 +576,6 @@
     }
 
     document.getElementById("recordDisplay").textContent = "🏆 Seu Recorde: " + highScore + " pts";
-    
-    // Inicia a música suave ao carregar se o navegador permitir
-    window.addEventListener('load', function() {
-      setTimeout(function() {
-        if (document.getElementById("chkMusic").checked) {
-          toggleMusic(true);
-        }
-      }, 500);
-    });
   </script>
 </body>
 </html>
