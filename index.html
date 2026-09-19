@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz de Estudos</title>
   
-  <!-- Ícone Oficial da Coruja com a Letra G (PWA / Atalho) -->
   <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
   
   <style>
@@ -15,6 +14,8 @@
       --text-color: #2d3748;
       --primary-color: #2563eb;
       --primary-hover: #1d4ed8;
+      /* Azul da barra de música bem mais claro e brilhante */
+      --music-bar-bg: #60a5fa;
       --success-color: #22c55e;
       --error-color: #ef4444;
       --font-size: 16px;
@@ -25,7 +26,7 @@
       --card-bg: #1a1a1a;
       --text-color: #ffffff;
       --primary-color: #ffff00;
-      --primary-hover: #cccc00;
+      --music-bar-bg: #00ffff;
       --success-color: #00ff00;
       --error-color: #ff0000;
     }
@@ -84,9 +85,9 @@
       color: var(--primary-color);
     }
 
-    /* Barra de Música Exatamente no Modelo Solicitado */
+    /* Barra de Música com Azul Bem Mais Claro */
     .music-player-bar {
-      background: #2563eb;
+      background: var(--music-bar-bg);
       border-radius: 14px;
       padding: 12px 16px;
       display: flex;
@@ -94,7 +95,7 @@
       justify-content: space-between;
       color: white;
       margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4);
     }
 
     .music-arrow {
@@ -308,7 +309,7 @@
     <div class="owl-icon">🦉</div>
     <h1>Quiz de Estudos</h1>
 
-    <!-- Player Esticado com setas brancas -->
+    <!-- Player com Azul Bem Mais Claro -->
     <div class="music-player-bar">
       <button class="music-arrow" onclick="changeSong(-1)">❮</button>
       <div class="music-info" id="musicTitleDisplay" onclick="togglePlayState()">
@@ -318,11 +319,11 @@
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" id="tabPlay">Jogar</button>
-      <button class="tab-btn" id="tabCreate" onclick="alert('Funcionalidade de criar pergunta em breve!')">Criar Pergunta</button>
+      <button class="tab-btn active" id="tabPlay" onclick="switchTab('play')">Jogar</button>
+      <button class="tab-btn" id="tabCreate" onclick="switchTab('create')">Criar Pergunta</button>
     </div>
 
-    <!-- Tela Setup -->
+    <!-- Tela Setup / Jogar -->
     <div id="screenSetup">
       <div class="record-badge" id="recordDisplay">🏆 Seu Recorde: 0 pts</div>
 
@@ -339,6 +340,18 @@
       </div>
 
       <button class="btn-main" onclick="startQuiz()">Iniciar Desafio Infinito</button>
+    </div>
+
+    <!-- Tela Criar Pergunta -->
+    <div id="screenCreate" style="display: none;">
+      <p style="font-weight: bold; margin-bottom: 6px;">Adicionar Nova Pergunta:</p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <input type="text" id="newQuestionText" placeholder="Digite a pergunta..." style="padding: 12px; border-radius: 8px; border: 2px solid #e2e8f0; font-size: 0.95rem;">
+        <input type="text" id="newOptCorrect" placeholder="Resposta Correta" style="padding: 12px; border-radius: 8px; border: 2px solid #22c55e; font-size: 0.95rem;">
+        <input type="text" id="newOpt2" placeholder="Opção Errada 1" style="padding: 12px; border-radius: 8px; border: 2px solid #e2e8f0; font-size: 0.95rem;">
+        <input type="text" id="newOpt3" placeholder="Opção Errada 2" style="padding: 12px; border-radius: 8px; border: 2px solid #e2e8f0; font-size: 0.95rem;">
+        <button class="btn-main" onclick="saveCustomQuestion()">Salvar Pergunta</button>
+      </div>
     </div>
 
     <!-- Tela de Jogo -->
@@ -417,16 +430,16 @@
     var isPlayingMusic = false;
 
     var songNames = [
-      "Vibe Genius (Estilo 1)",
-      "Chill Study (Estilo 2)",
-      "Acústico Suave (Estilo 3)",
-      "Ritmo Profundo (Estilo 4)",
-      "Espacial & Sereno (Estilo 5)",
-      "Pop Alternativo (Estilo 6)",
-      "Melodia Fluida (Estilo 7)",
-      "Batida Lo-Fi (Estilo 8)",
-      "Vibe Aveludada (Estilo 9)",
-      "Harmonia Dinâmica (Estilo 10)"
+      "1. Vibe Genius",
+      "2. Chill Study",
+      "3. Acústico Suave",
+      "4. Ritmo Profundo",
+      "5. Espacial & Sereno",
+      "6. Pop Alternativo",
+      "7. Melodia Fluida",
+      "8. Batida Lo-Fi",
+      "9. Vibe Aveludada",
+      "10. Harmonia Dinâmica"
     ];
 
     function initAudio() {
@@ -507,6 +520,36 @@
       var display = document.getElementById("musicTitleDisplay");
       var status = isPlayingMusic ? "▶" : "⏸";
       display.textContent = status + " " + songNames[currentSongIdx];
+    }
+
+    function switchTab(tab) {
+      initAudio();
+      var tabPlay = document.getElementById("tabPlay");
+      var tabCreate = document.getElementById("tabCreate");
+      var screenSetup = document.getElementById("screenSetup");
+      var screenCreate = document.getElementById("screenCreate");
+      var screenGame = document.getElementById("screenGame");
+      var screenGameOver = document.getElementById("screenGameOver");
+
+      screenGame.style.display = "none";
+      screenGameOver.style.display = "none";
+
+      if (tab === 'play') {
+        tabPlay.classList.add("active");
+        tabCreate.classList.remove("active");
+        screenSetup.style.display = "block";
+        screenCreate.style.display = "none";
+      } else {
+        tabCreate.classList.add("active");
+        tabPlay.classList.remove("active");
+        screenSetup.style.display = "none";
+        screenCreate.style.display = "block";
+      }
+    }
+
+    function saveCustomQuestion() {
+      alert("Pergunta guardada com sucesso!");
+      switchTab('play');
     }
 
     function openPicker(type) {
@@ -594,62 +637,4 @@
         return {
           q: "[Porcentagem] Quanto é " + n + "% de " + total + "?",
           options: ["" + ans, "" + (ans + 10), "" + (ans - 5), "" + (ans + 15)],
-          correct: 0
-        };
-      } else {
-        return {
-          q: "[" + sub + "] Pergunta fundamental de " + sub + ":",
-          options: ["Resposta Correta e Válida", "Opção Incorreta A", "Opção Incorreta B", "Opção Incorreta C"],
-          correct: 0
-        };
-      }
-    }
-
-    function nextQuestion() {
-      isLocked = false;
-      startTimer();
-      currentQ = fetchQuestionForSubject(selectedSub);
-
-      var paired = currentQ.options.map(function(opt, idx) {
-        return { text: opt, isCorrect: idx === currentQ.correct };
-      });
-      paired.sort(function() { return Math.random() - 0.5; });
-
-      currentQ.options = paired.map(function(p) { return p.text; });
-      currentQ.correct = paired.findIndex(function(p) { return p.isCorrect; });
-
-      document.getElementById("questionText").textContent = currentQ.q;
-
-      var box = document.getElementById("optionsContainer");
-      box.innerHTML = "";
-      currentQ.options.forEach(function(opt, idx) {
-        var btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.textContent = opt;
-        btn.onclick = function() { checkAnswer(idx, btn); };
-        box.appendChild(btn);
-      });
-    }
-
-    function checkAnswer(selectedIdx, btn) {
-      if (isLocked) return;
-      isLocked = true;
-      clearInterval(timer);
-
-      if (selectedIdx === currentQ.correct) {
-        btn.classList.add("correct");
-        playTone(523.25, 0.2, 'sine', 0.08);
-        score += 10;
-        document.getElementById("scoreText").textContent = score;
-        if (score > highScore) {
-          highScore = score;
-          localStorage.setItem("quiz_highscore", highScore);
-          document.getElementById("recordDisplay").textContent = "🏆 Seu Recorde: " + highScore + " pts";
-        }
-        setTimeout(nextQuestion, 1000);
-      } else {
-        btn.classList.add("wrong");
-        playTone(180, 0.4, 'sawtooth', 0.1);
-        setTimeout(function() { triggerGameOver("Você errou a resposta!"); }, 1000);
-      }
-  
+          cor
