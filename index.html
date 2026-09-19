@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Estudos - Simples e Funcional</title>
+  <title>Quiz de Estudos - Multidisciplinar</title>
   
   <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
   
@@ -16,13 +16,6 @@
       --music-bar-bg: #60a5fa;
       --error-color: #ef4444;
       --success-color: #10b981;
-    }
-    body.high-contrast {
-      --bg-color: #000000;
-      --card-bg: #1a1a1a;
-      --text-color: #ffffff;
-      --primary-color: #ffff00;
-      --music-bar-bg: #00ffff;
     }
     body {
       margin: 0; padding: 20px 10px;
@@ -94,10 +87,10 @@
 <body id="pageBody">
 
   <div class="container">
-    <button class="settings-btn" onclick="openModal()" title="Configurações" aria-label="Abrir Configurações">⚙️</button>
+    <button class="settings-btn" onclick="openModal()" aria-label="Abrir Configurações" title="Configurações">⚙️</button>
 
     <div class="owl-icon" aria-hidden="true">🦉</div>
-    <h1>Quiz de Estudos</h1>
+    <h1>Quiz Multidisciplinar</h1>
 
     <!-- Player de Música -->
     <div class="music-player-bar" onclick="startMusicEngine()" aria-label="Barra de Música. Toque para ligar ou alternar trilha">
@@ -106,23 +99,35 @@
       <button class="music-arrow" onclick="changeSong(event, 1)" aria-label="Próxima música">❯</button>
     </div>
 
-    <!-- Tela Inicial / Setup -->
+    <!-- Tela Inicial / Setup com Seleção Modular -->
     <div id="screenSetup">
-      <div class="record-badge" id="accessibilityStatusBadge">🏆 Modo Normal Ativo</div>
+      <div class="record-badge" id="accessibilityStatusBadge">🏆 Parte 3: Áreas e Questões Infinitas</div>
 
-      <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
-      <div class="selection-card" id="cardNivel" onclick="openPicker()" aria-label="Selecionar Nível de Ensino">
+      <p style="font-weight: bold; margin-bottom: 6px;">1. Grande Área:</p>
+      <div class="selection-card" id="cardArea" onclick="openAreaPicker()" aria-label="Selecionar Grande Área">
+        <span id="labelArea">Matemática</span>
+        <span aria-hidden="true">❯</span>
+      </div>
+
+      <p style="font-weight: bold; margin-bottom: 6px;">2. Subdisciplina Específica:</p>
+      <div class="selection-card" id="cardSub" onclick="openSubPicker()" aria-label="Selecionar Subdisciplina">
+        <span id="labelSub">Matemática básica</span>
+        <span aria-hidden="true">❯</span>
+      </div>
+
+      <p style="font-weight: bold; margin-bottom: 6px;">3. Nível de Ensino:</p>
+      <div class="selection-card" id="cardNivel" onclick="openLevelPicker()" aria-label="Selecionar Nível de Ensino">
         <span id="labelNivel">Ensino Fundamental</span>
         <span aria-hidden="true">❯</span>
       </div>
 
-      <button class="btn-main" onclick="startQuiz()" aria-label="Iniciar Simulados">Iniciar Simulados</button>
+      <button class="btn-main" onclick="startQuiz()" aria-label="Iniciar Simulados Infinitos">Iniciar Simulados</button>
     </div>
 
     <!-- Tela do Jogo -->
     <div id="screenGame" style="display: none;">
       <div class="game-header">
-        <span id="progressIndicator">Questão 1 de 2</span>
+        <span id="progressIndicator">Questão 1 (Modo Infinito)</span>
         <span class="timer-badge" id="timerBadge" aria-label="Tempo restante: 120 segundos">⏱️ 120s</span>
       </div>
 
@@ -144,7 +149,7 @@
     <div class="modal-content">
       <div class="success-box">
         <div class="success-title">✔️ RESPOSTA CORRETA!</div>
-        <p style="font-weight: 500; margin-bottom: 15px;">Muito bem, você acertou a questão!</p>
+        <p style="font-weight: 500; margin-bottom: 15px;">Muito bem! Vamos para a próxima questão infinita.</p>
       </div>
       <button class="btn-main" onclick="nextQuestionAfterSuccess()" aria-label="Avançar para a próxima questão">Avançar para Próxima</button>
     </div>
@@ -153,17 +158,17 @@
   <div class="modal" id="gameOverModal" role="dialog" aria-modal="true">
     <div class="modal-content">
       <div class="gameover-box">
-        <div class="gameover-title">❌ GAME OVER</div>
+        <div class="gameover-title">❌ RESPOSTA INCORRETA</div>
         <p id="gameOverText" style="font-weight: 500; margin-bottom: 15px;">Você errou ou o tempo esgotou!</p>
       </div>
-      <button class="btn-main" onclick="restartGameAfterGameOver()" aria-label="Reiniciar questão">Reiniciar Questão / Bloco</button>
-      <button class="btn-secondary" onclick="returnToMainMenu()" aria-label="Voltar para o menu principal">Voltar para o Menu Principal</button>
+      <button class="btn-main" onclick="restartGameAfterGameOver()" aria-label="Tentar nova questão">Nova Questão</button>
+      <button class="btn-secondary" onclick="returnToMainMenu()" aria-label="Voltar para o menu principal">Voltar para o Menu</button>
     </div>
   </div>
 
   <div class="modal" id="pickerModal" role="dialog" aria-modal="true">
     <div class="modal-content">
-      <h3 style="margin-top:0;">Selecione o Nível</h3>
+      <h3 id="pickerTitle" style="margin-top:0;">Selecione</h3>
       <div class="picker-list" id="pickerContainer"></div>
       <button class="btn-main" onclick="closePicker()" aria-label="Fechar seletor">Fechar</button>
     </div>
@@ -176,19 +181,45 @@
         <span>Música de Fundo:</span>
         <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)" aria-label="Ligar ou desligar música de fundo">
       </div>
-      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Alto Contraste:</span>
-        <input type="checkbox" id="chkContrast" onchange="document.body.classList.toggle('high-contrast')" aria-label="Ativar alto contraste">
-      </div>
       <button class="btn-main" onclick="closeModal()" aria-label="Fechar configurações">Fechar</button>
     </div>
   </div>
 
   <script>
-    var dbQuestoes = [
-      { pergunta: "Quanto é 45 + 38?", opcoes: ["73", "83", "93", "72"], correta: 0 },
-      { pergunta: "Qual é o sinônimo da palavra 'Feliz'?", opcoes: ["Triste", "Contente", "Cansado", "Zangado"], correta: 1 }
-    ];
+    // Base completa estruturada com as 25 Áreas e suas Subdisciplinas
+    var baseDisciplinas = {
+      "Línguas e idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Libras", "Japonês", "Mandarim"],
+      "Matemática": ["Aritmética", "Matemática básica", "Matemática financeira", "Álgebra", "Geometria plana", "Geometria espacial", "Estatística", "Probabilidade", "Funções"],
+      "Língua Portuguesa e literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de textos", "Redação", "Literatura brasileira", "Figuras de linguagem"],
+      "Ciências da natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética", "Botânica", "Anatomia"],
+      "História": ["História geral", "História do Brasil", "História da América", "História antiga", "História medieval", "História moderna", "História contemporânea"],
+      "Geografia": ["Geografia geral", "Geografia física", "Geografia humana", "Geografia do Brasil", "Cartografia", "Geopolítica", "Demografia"],
+      "Ciências humanas e sociais": ["Filosofia", "Sociologia", "Antropologia", "Psicologia", "Economia", "Ética", "Direitos humanos"],
+      "Direito e legislação": ["Direito Constitucional", "Direito Administrativo", "Direito Civil", "Direito Penal", "Direito do Trabalho", "Direito Tributário"],
+      "Administração e recursos humanos": ["Administração geral", "Recursos Humanos", "Gestão de projetos", "Empreendedorismo", "Logística"],
+      "Economia e finanças": ["Macroeconomia", "Microeconomia", "Educação financeira", "Finanças pessoais", "Contabilidade"],
+      "Informática e tecnologia": ["Informática básica", "Sistemas operacionais", "Segurança da informação", "Lógica de programação", "HTML/CSS", "Python", "Banco de dados", "Inteligência artificial"],
+      "Educação e pedagogia": ["Pedagogia", "Didática", "Educação infantil", "Ensino fundamental", "Educação especial", "Alfabetização"],
+      "Saúde e corpo humano": ["Anatomia humana", "Fisiologia humana", "Nutrição", "Primeiros socorros", "Saúde pública", "Enfermagem"],
+      "Educação física e esportes": ["Condicionamento físico", "Musculação", "Futebol", "Basquete", "Vôlei", "Natação", "Artes marciais"],
+      "Artes e criatividade": ["Artes visuais", "Fotografia", "Cinema", "Teatro", "Design gráfico", "Escrita criativa"],
+      "Música": ["Teoria musical", "História da música", "Canto", "Violão", "Piano", "Produção musical"],
+      "Religião e teologia": ["Teologia", "História do cristianismo", "Filosofia da religião", "Estudos bíblicos"],
+      "Meio ambiente e sustentabilidade": ["Ecologia", "Sustentabilidade", "Gestão ambiental", "Energias renováveis", "Reciclagem"],
+      "Engenharia e áreas técnicas": ["Engenharia civil", "Engenharia mecânica", "Engenharia elétrica", "Engenharia de software", "Segurança do trabalho"],
+      "Agricultura e ciências agrárias": ["Agronomia", "Zootecnia", "Medicina veterinária", "Horticultura", "Gestão rural"],
+      "Segurança pública e emergência": ["Segurança pública", "Combate a incêndios", "Primeiros socorros", "Gerenciamento de crises"],
+      "Turismo, hotelaria e gastronomia": ["Turismo", "Gestão hoteleira", "Gastronomia", "Culinária brasileira", "Enologia"],
+      "Comunicação e marketing": ["Jornalismo", "Publicidade e propaganda", "Marketing digital", "Relações públicas", "Copywriting"],
+      "Ciências e conhecimentos gerais": ["Cultura geral", "Atualidades", "Raciocínio lógico", "Metodologia científica"],
+      "Outras áreas de estudo": ["Arqueologia", "Biblioteconomia", "Arquivologia", "Mitologia grega", "Folclore brasileiro"]
+    };
+
+    var niveisDisponíveis = ["Ensino Fundamental", "Ensino Médio / ENEM", "Concurso Público"];
+
+    var selectedArea = "Matemática";
+    var selectedSub = "Matemática básica";
+    var selectedLevel = "Ensino Fundamental";
 
     var currentQuestIndex = 0;
     var currentTimer = null;
@@ -210,20 +241,6 @@
       { name: "5. 🪘 Pagode Suingado", type: "triangle", tempo: 320, baseFreq: 220 },
       { name: "6. 🥁 Pagode Raiz", type: "square", tempo: 220, baseFreq: 196 }
     ];
-
-    // Detecção Automática do Leitor de Tela (TalkBack / VoiceOver)
-    window.addEventListener('DOMContentLoaded', function() {
-      // Verifica se o navegador indica tecnologias assistivas ativas
-      var screenReaderDetected = window.matchMedia('(forced-colors: active)').matches || 
-                                 navigator.maxTouchPoints > 0 && (navigator.userAgent.includes('Android') || navigator.userAgent.includes('iPhone'));
-      
-      var badge = document.getElementById("accessibilityStatusBadge");
-      if (screenReaderDetected) {
-        badge.textContent = "♿ Leitor de Tela Detectado (Modo Adaptado Ativo)";
-        badge.style.background = "#dbeafe";
-        badge.style.color = "#1e40af";
-      }
-    });
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -271,7 +288,6 @@
       updateSongDisplay();
     }
 
-    // Inicia música e libera a página no primeiro toque de qualquer usuário
     document.addEventListener('click', function() {
       if (!hasUserStarted) {
         hasUserStarted = true;
@@ -305,20 +321,26 @@
       document.getElementById("musicTitleDisplay").textContent = (isPlayingMusic && isChecked ? "▶ " : "⏸ ") + songList[currentSongIdx].name;
     }
 
-    function openPicker() {
+    // Seletas em Cascata Acessíveis
+    function openAreaPicker() {
       initAudio();
       var modal = document.getElementById("pickerModal");
+      document.getElementById("pickerTitle").textContent = "Selecione a Grande Área";
       var container = document.getElementById("pickerContainer");
       container.innerHTML = "";
 
-      ["Ensino Fundamental", "ENEM", "Concurso Público"].forEach(function(n) {
+      Object.keys(baseDisciplinas).forEach(function(area) {
         var item = document.createElement("div");
         item.className = "selection-card";
-        item.textContent = n;
-        item.setAttribute("aria-label", "Selecionar " + n);
+        item.textContent = area;
+        item.setAttribute("aria-label", "Selecionar área " + area);
         item.onclick = function(e) {
           e.stopPropagation();
-          document.getElementById("labelNivel").textContent = n;
+          selectedArea = area;
+          document.getElementById("labelArea").textContent = area;
+          var subs = baseDisciplinas[area];
+          selectedSub = subs[0];
+          document.getElementById("labelSub").textContent = selectedSub;
           closePicker();
         };
         container.appendChild(item);
@@ -326,130 +348,39 @@
       modal.style.display = "flex";
     }
 
-    function closePicker() { document.getElementById("pickerModal").style.display = "none"; }
-    function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; }
-    function closeModal() { document.getElementById("settingsModal").style.display = "none"; }
-
-    function startQuiz() {
+    function openSubPicker() {
       initAudio();
-      currentQuestIndex = 0;
-      document.getElementById("screenSetup").style.display = 'none';
-      document.getElementById("screenGame").style.display = 'block';
-      loadQuestion();
-    }
+      var modal = document.getElementById("pickerModal");
+      document.getElementById("pickerTitle").textContent = "Selecione a Subdisciplina";
+      var container = document.getElementById("pickerContainer");
+      container.innerHTML = "";
 
-    function toggleTimerMode() {
-      initAudio();
-      isTimerDisabled = !isTimerDisabled;
-      var btn = document.getElementById("timerToggleBtn");
-      var badge = document.getElementById("timerBadge");
-
-      if (isTimerDisabled) {
-        clearInterval(currentTimer);
-        btn.textContent = "⏱️❌";
-        badge.textContent = "♾️ Sem Tempo";
-        badge.setAttribute("aria-label", "Modo sem tempo ativado");
-      } else {
-        btn.textContent = "⏱️";
-        badge.textContent = "⏱️ 120s";
-        setupTimer();
-        badge.setAttribute("aria-label", "Tempo restante: 120 segundos");
-      }
-    }
-
-    function loadQuestion() {
-      var lista = dbQuestoes;
-      if (currentQuestIndex >= lista.length) {
-        returnToMainMenu();
-        return;
-      }
-
-      var q = lista[currentQuestIndex];
-      document.getElementById("progressIndicator").textContent = "Questão " + (currentQuestIndex + 1) + " de " + lista.length;
-      
-      var qBox = document.getElementById("questionText");
-      qBox.textContent = q.pergunta;
-      qBox.focus(); // Joga o foco do leitor de tela automaticamente para a nova pergunta
-
-      var optContainer = document.getElementById("optionsContainer");
-      optContainer.innerHTML = "";
-      
-      var letras = ["A", "B", "C", "D"];
-
-      q.opcoes.forEach(function(opt, idx) {
-        var letra = letras[idx];
-        var btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.textContent = letra + ") " + opt;
-        btn.setAttribute("aria-label", "Alternativa " + letra + ": " + opt);
-        
-        btn.onclick = function() {
-          checkAnswer(idx, q.correta);
+      var subs = baseDisciplinas[selectedArea] || ["Geral"];
+      subs.forEach(function(sub) {
+        var item = document.createElement("div");
+        item.className = "selection-card";
+        item.textContent = sub;
+        item.setAttribute("aria-label", "Selecionar subdisciplina " + sub);
+        item.onclick = function(e) {
+          e.stopPropagation();
+          selectedSub = sub;
+          document.getElementById("labelSub").textContent = sub;
+          closePicker();
         };
-        optContainer.appendChild(btn);
+        container.appendChild(item);
       });
-
-      setupTimer();
+      modal.style.display = "flex";
     }
 
-    function setupTimer() {
-      clearInterval(currentTimer);
-      if (isTimerDisabled) return;
+    function openLevelPicker() {
+      initAudio();
+      var modal = document.getElementById("pickerModal");
+      document.getElementById("pickerTitle").textContent = "Selecione o Nível";
+      var container = document.getElementById("pickerContainer");
+      container.innerHTML = "";
 
-      timeLeft = 120;
-      updateTimerDisplay();
-      currentTimer = setInterval(function() {
-        if (isTimerDisabled) return;
-        timeLeft--;
-        updateTimerDisplay();
-        if (timeLeft <= 0) {
-          clearInterval(currentTimer);
-          triggerGameOver("O seu tempo de 2 minutos esgotou para esta questão!");
-        }
-      }, 1000);
-    }
-
-    function updateTimerDisplay() {
-      if (isTimerDisabled) return;
-      var mins = Math.floor(timeLeft / 60);
-      var secs = timeLeft % 60;
-      document.getElementById("timerBadge").textContent = "⏱️ " + (mins > 0 ? (mins + "m " + secs + "s") : (secs + "s"));
-    }
-
-    function checkAnswer(escolhida, correta) {
-      clearInterval(currentTimer);
-      if (escolhida === correta) {
-        document.getElementById("successModal").style.display = "flex";
-      } else {
-        triggerGameOver("Você escolheu a alternativa incorreta!");
-      }
-    }
-
-    function nextQuestionAfterSuccess() {
-      document.getElementById("successModal").style.display = "none";
-      currentQuestIndex++;
-      loadQuestion();
-    }
-
-    function triggerGameOver(motivo) {
-      document.getElementById("gameOverText").textContent = motivo;
-      document.getElementById("gameOverModal").style.display = "flex";
-    }
-
-    function restartGameAfterGameOver() {
-      document.getElementById("gameOverModal").style.display = "none";
-      loadQuestion();
-    }
-
-    function returnToMainMenu() {
-      document.getElementById("gameOverModal").style.display = "none";
-      document.getElementById("successModal").style.display = "none";
-      document.getElementById("screenGame").style.display = 'none';
-      document.getElementById("screenSetup").style.display = 'block';
-      currentQuestIndex = 0;
-    }
-
-    updateSongDisplay();
-  </script>
-</body>
-</html>
+      niveisDisponíveis.forEach(function(nivel) {
+        var item = document.createElement("div");
+        item.className = "selection-card";
+        item.textContent = nivel;
+        item.setAttribute("aria-label", "Selec
