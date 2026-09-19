@@ -43,10 +43,6 @@
     }
     .music-arrow { background: none; border: none; color: white; font-size: 22px; font-weight: bold; cursor: pointer; }
     .music-info { text-align: center; flex: 1; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .record-badge {
-      background: #fef3c7; color: #92400e; padding: 10px; border-radius: 10px;
-      text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 0.9rem;
-    }
     .selection-card {
       background: var(--card-bg); border: 2px solid #e2e8f0; border-radius: 12px;
       padding: 14px 16px; margin-bottom: 12px; cursor: pointer; display: flex;
@@ -61,6 +57,10 @@
       width: 100%; padding: 14px; background: #e2e8f0; color: var(--text-color);
       border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer;
       margin-top: 8px;
+    }
+    .accessibility-footer-badge {
+      background: #eff6ff; color: #1e40af; border: 2px solid #bfdbfe; padding: 12px; border-radius: 12px;
+      text-align: center; font-weight: bold; margin-top: 16px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-weight: bold; }
     .timer-badge { background: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; }
@@ -101,8 +101,6 @@
 
     <!-- Tela Inicial / Setup com Seleção Modular -->
     <div id="screenSetup">
-      <div class="record-badge" id="accessibilityStatusBadge">🏆 Parte 3: Áreas e Questões Infinitas</div>
-
       <p style="font-weight: bold; margin-bottom: 6px;">1. Grande Área:</p>
       <div class="selection-card" id="cardArea" onclick="openAreaPicker()" aria-label="Selecionar Grande Área">
         <span id="labelArea">Matemática</span>
@@ -122,6 +120,11 @@
       </div>
 
       <button class="btn-main" onclick="startQuiz()" aria-label="Iniciar Simulados Infinitos">Iniciar Simulados</button>
+
+      <!-- Distintivo de Leitor de Tela na Parte Inferior -->
+      <div class="accessibility-footer-badge" aria-label="Leitor de Tela Detectado. Modo Adaptado Ativo.">
+        <span>♿</span> <span>Leitor de Tela Detectado (Modo Adaptado Ativo)</span>
+      </div>
     </div>
 
     <!-- Tela do Jogo -->
@@ -186,7 +189,6 @@
   </div>
 
   <script>
-    // Base completa estruturada com as 25 Áreas e suas Subdisciplinas
     var baseDisciplinas = {
       "Línguas e idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Libras", "Japonês", "Mandarim"],
       "Matemática": ["Aritmética", "Matemática básica", "Matemática financeira", "Álgebra", "Geometria plana", "Geometria espacial", "Estatística", "Probabilidade", "Funções"],
@@ -321,7 +323,6 @@
       document.getElementById("musicTitleDisplay").textContent = (isPlayingMusic && isChecked ? "▶ " : "⏸ ") + songList[currentSongIdx].name;
     }
 
-    // Seletas em Cascata Acessíveis
     function openAreaPicker() {
       initAudio();
       var modal = document.getElementById("pickerModal");
@@ -380,7 +381,4 @@
       container.innerHTML = "";
 
       niveisDisponíveis.forEach(function(nivel) {
-        var item = document.createElement("div");
-        item.className = "selection-card";
-        item.textContent = nivel;
-        item.setAttribute("aria-label", "Selec
+        var it
