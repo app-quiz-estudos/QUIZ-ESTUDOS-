@@ -39,7 +39,7 @@
     .settings-btn {
       background: #e2e8f0; border: none; border-radius: 50%; width: 40px; height: 40px;
       font-size: 20px; cursor: pointer; position: absolute; right: 20px; top: 20px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: center; justify-content: center; z-index: 10;
     }
     .owl-icon { font-size: 48px; text-align: center; margin-bottom: 2px; }
     h1 { text-align: center; margin: 0 0 16px 0; font-size: 1.5rem; color: var(--primary-color); }
@@ -90,39 +90,19 @@
     .picker-list { max-height: 280px; overflow-y: auto; margin-top: 10px; text-align: left; }
     
     .gameover-box {
-      background: #fef2f2;
-      border: 2px solid var(--error-color);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 20px;
+      background: #fef2f2; border: 2px solid var(--error-color); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;
     }
-    .gameover-title {
-      color: var(--error-color);
-      font-size: 1.4rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
+    .gameover-title { color: var(--error-color); font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
 
     .success-box {
-      background: #ecfdf5;
-      border: 2px solid var(--success-color);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 20px;
+      background: #ecfdf5; border: 2px solid var(--success-color); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;
     }
-    .success-title {
-      color: var(--success-color);
-      font-size: 1.4rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
+    .success-title { color: var(--success-color); font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
   </style>
 </head>
-<body onclick="handleGlobalTouch()">
+<body id="bodyRoot">
 
-  <div class="container" onclick="event.stopPropagation()">
+  <div class="container">
     <button class="settings-btn" onclick="openModal()" title="Configurações">⚙️</button>
 
     <div class="owl-icon">🦉</div>
@@ -130,7 +110,7 @@
 
     <div class="music-player-bar" onclick="startMusicEngine()">
       <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
-      <div class="music-info" id="musicTitleDisplay">🎵 Toque em qualquer lugar para ativar som e leitor</div>
+      <div class="music-info" id="musicTitleDisplay">🎵 Toque aqui para ligar o som</div>
       <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
     </div>
 
@@ -165,7 +145,7 @@
     </div>
   </div>
 
-  <!-- Modal de Acerto Customizado (Substituiu o alert) -->
+  <!-- Modal de Acerto -->
   <div class="modal" id="successModal">
     <div class="modal-content">
       <div class="success-box">
@@ -176,7 +156,7 @@
     </div>
   </div>
 
-  <!-- Modal de Game Over Completo -->
+  <!-- Modal de Game Over -->
   <div class="modal" id="gameOverModal">
     <div class="modal-content">
       <div class="gameover-box">
@@ -229,7 +209,6 @@
     var isScreenReaderActive = true;
     var selectedAnswerPending = null;
     
-    // Variáveis para duplo toque no menu principal
     var pendingNivelClick = false;
     var pendingStartClick = false;
 
@@ -238,15 +217,15 @@
     var stepCount = 0;
     var currentSongIdx = 4;
     var isPlayingMusic = false;
-    var hasUserInteracted = false;
+    var hasWelcomed = false;
 
     var songList = [
-      { name: "1. 👻 Terror Sombrio (Grave Pesado)", type: "sawtooth", tempo: 500, baseFreq: 110 },
-      { name: "2. 🦇 Mistério Noturno (Lento)", type: "sine", tempo: 600, baseFreq: 146 },
-      { name: "3. 🌸 Leveza Suave (Claro)", type: "triangle", tempo: 400, baseFreq: 330 },
-      { name: "4. 🍃 Brisa Serena (Calmo)", type: "sine", tempo: 450, baseFreq: 261 },
-      { name: "5. 🪘 Pagode Suingado (Balanceado)", type: "triangle", tempo: 320, baseFreq: 220 },
-      { name: "6. 🥁 Pagode Raiz Acelerado", type: "square", tempo: 220, baseFreq: 196 }
+      { name: "1. 👻 Terror Sombrio", type: "sawtooth", tempo: 500, baseFreq: 110 },
+      { name: "2. 🦇 Mistério Noturno", type: "sine", tempo: 600, baseFreq: 146 },
+      { name: "3. 🌸 Leveza Suave", type: "triangle", tempo: 400, baseFreq: 330 },
+      { name: "4. 🍃 Brisa Serena", type: "sine", tempo: 450, baseFreq: 261 },
+      { name: "5. 🪘 Pagode Suingado", type: "triangle", tempo: 320, baseFreq: 220 },
+      { name: "6. 🥁 Pagode Raiz", type: "square", tempo: 220, baseFreq: 196 }
     ];
 
     function initAudio() {
@@ -296,7 +275,20 @@
       musicInterval = setInterval(playMusicLoop, song.tempo);
       playMusicLoop();
       updateSongDisplay();
+
+      // Fala as boas vindas automática no primeiro toque geral na página
+      if (!hasWelcomed) {
+        hasWelcomed = true;
+        speakText("Bem-vindo ao Quiz de Estudos. Nível selecionado atual: " + document.getElementById("labelNivel").textContent + ". Toque duas vezes no botão Iniciar Simulados para começar.");
+      }
     }
+
+    // Ativa o ouvinte de boas-vindas no primeiro toque em qualquer ponto da tela
+    document.body.addEventListener('click', function() {
+      if (!hasWelcomed) {
+        startMusicEngine();
+      }
+    }, { once: true });
 
     function toggleMusic(enable) {
       initAudio();
@@ -310,15 +302,6 @@
         clearInterval(musicInterval);
       }
       updateSongDisplay();
-    }
-
-    // Assim que toca na tela pela primeira vez, liga o som e o leitor automaticamente dando boas-vindas
-    function handleGlobalTouch() {
-      if (!hasUserInteracted) {
-        hasUserInteracted = true;
-        startMusicEngine();
-        speakText("Bem-vindo ao Quiz de Estudos. Nível selecionado atual: " + document.getElementById("labelNivel").textContent + ". Toque duas vezes em Iniciar Simulados para começar.");
-      }
     }
 
     function changeSong(e, direction) {
@@ -344,7 +327,6 @@
       }
     }
 
-    // Lógica de duplo toque para o card de nível no menu
     function handleNivelClick() {
       initAudio();
       if (pendingNivelClick) {
@@ -369,7 +351,8 @@
         var item = document.createElement("div");
         item.className = "selection-card";
         item.textContent = n;
-        item.onclick = function() {
+        item.onclick = function(e) {
+          e.stopPropagation();
           document.getElementById("labelNivel").textContent = n;
           speakText("Nível selecionado: " + n);
           closePicker();
@@ -384,7 +367,6 @@
     function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; speakText("Configurações abertas."); }
     function closeModal() { document.getElementById("settingsModal").style.display = "none"; }
 
-    // Lógica de duplo toque para o botão Iniciar no menu
     function handleStartClick() {
       initAudio();
       if (pendingStartClick) {
@@ -480,4 +462,15 @@
     }
 
     function setupTimer() {
-      clearInterval(current
+      clearInterval(currentTimer);
+      if (isTimerDisabled) return;
+
+      timeLeft = 120;
+      updateTimerDisplay();
+      currentTimer = setInterval(function() {
+        if (isTimerDisabled) return;
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(currentTimer);
+     
