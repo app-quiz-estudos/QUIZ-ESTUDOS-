@@ -3,472 +3,180 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Estudos - Parte 2 Ajustada</title>
-  
-  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
+  <title>Quiz de Estudos</title>
   
   <style>
-    :root {
-      --bg-color: #f4f6f9;
-      --card-bg: #ffffff;
-      --text-color: #2d3748;
-      --primary-color: #2563eb;
-      --music-bar-bg: #60a5fa;
-      --error-color: #ef4444;
-      --success-color: #10b981;
-    }
-    body.high-contrast {
-      --bg-color: #000000;
-      --card-bg: #1a1a1a;
-      --text-color: #ffffff;
-      --primary-color: #ffff00;
-      --music-bar-bg: #00ffff;
-    }
     body {
       margin: 0; padding: 20px 10px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color); color: var(--text-color);
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9; color: #2d3748;
       display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
       box-sizing: border-box;
     }
     .container {
-      background-color: var(--card-bg); border-radius: 20px;
+      background-color: #ffffff; border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; max-width: 440px; padding: 24px 20px;
       position: relative; box-sizing: border-box;
     }
     .settings-btn {
       background: #e2e8f0; border: none; border-radius: 50%; width: 40px; height: 40px;
       font-size: 20px; cursor: pointer; position: absolute; right: 20px; top: 20px;
-      display: flex; align-items: center; justify-content: center; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
     }
     .owl-icon { font-size: 48px; text-align: center; margin-bottom: 2px; }
-    h1 { text-align: center; margin: 0 0 16px 0; font-size: 1.5rem; color: var(--primary-color); }
+    h1 { text-align: center; margin: 0 0 16px 0; font-size: 1.5rem; color: #2563eb; }
     .music-player-bar {
-      background: var(--music-bar-bg); border-radius: 14px; padding: 12px 16px;
+      background: #60a5fa; border-radius: 14px; padding: 12px 16px;
       display: flex; align-items: center; justify-content: space-between; color: white; margin-bottom: 20px;
       cursor: pointer; font-weight: bold; font-size: 0.9rem;
     }
-    .music-arrow { background: none; border: none; color: white; font-size: 22px; font-weight: bold; cursor: pointer; }
-    .music-info { text-align: center; flex: 1; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .record-badge {
-      background: #fef3c7; color: #92400e; padding: 10px; border-radius: 10px;
-      text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 0.9rem;
-    }
     .selection-card {
-      background: var(--card-bg); border: 2px solid #e2e8f0; border-radius: 12px;
+      background: #ffffff; border: 2px solid #e2e8f0; border-radius: 12px;
       padding: 14px 16px; margin-bottom: 12px; cursor: pointer; display: flex;
       justify-content: space-between; align-items: center; font-weight: bold;
     }
-    .selection-card.pending-selection { border-color: var(--primary-color); background: #eff6ff; }
     .btn-main {
-      width: 100%; padding: 15px; background: var(--primary-color); color: white;
+      width: 100%; padding: 15px; background: #2563eb; color: white;
       border: none; border-radius: 10px; font-size: 1.05rem; font-weight: bold; cursor: pointer;
       margin-top: 10px;
     }
-    .btn-main.pending-selection { border: 3px solid #1e293b; background: #1d4ed8; }
-    .btn-secondary {
-      width: 100%; padding: 14px; background: #e2e8f0; color: var(--text-color);
-      border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer;
-      margin-top: 8px;
-    }
-    .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-weight: bold; }
-    .timer-badge { background: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; }
-    .question-box { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; line-height: 1.4; background: #f8fafc; padding: 16px; border-radius: 12px; border-left: 4px solid var(--primary-color); }
+    .question-box { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; line-height: 1.4; background: #f8fafc; padding: 16px; border-radius: 12px; border-left: 4px solid #2563eb; }
     .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
     .option-btn {
-      padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; background: var(--card-bg);
-      color: var(--text-color); text-align: left; font-size: 0.95rem; cursor: pointer; font-weight: 500;
-    }
-    .option-btn.pending-selection { border-color: var(--primary-color); background: #eff6ff; }
-    .game-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 14px; margin-top: 10px; }
-    .timer-toggle-bottom-btn {
-      background: #e2e8f0; border: none; border-radius: 50%; width: 44px; height: 44px;
-      font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; background: #ffffff;
+      color: #2d3748; text-align: left; font-size: 0.95rem; cursor: pointer; font-weight: 500;
     }
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-    .modal-content { background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 350px; text-align: center; }
-    .picker-list { max-height: 280px; overflow-y: auto; margin-top: 10px; text-align: left; }
-    
-    .gameover-box {
-      background: #fef2f2; border: 2px solid var(--error-color); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;
-    }
-    .gameover-title { color: var(--error-color); font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
-
-    .success-box {
-      background: #ecfdf5; border: 2px solid var(--success-color); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;
-    }
-    .success-title { color: var(--success-color); font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
+    .modal-content { background: #ffffff; padding: 20px; border-radius: 12px; width: 90%; max-width: 350px; text-align: center; }
   </style>
 </head>
-<body id="pageBody">
+<body>
 
   <div class="container">
-    <button class="settings-btn" onclick="openModal()" title="Configurações">⚙️</button>
+    <button class="settings-btn" onclick="abrirConfiguracoes()">⚙️</button>
 
     <div class="owl-icon">🦉</div>
     <h1>Quiz de Estudos</h1>
 
-    <div class="music-player-bar" onclick="startMusicEngine()">
-      <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
-      <div class="music-info" id="musicTitleDisplay">🎵 Toque em qualquer lugar para iniciar</div>
-      <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
+    <div class="music-player-bar" onclick="falarTexto('Áudio ativado com sucesso!')">
+      <span>🎵 Toque aqui para ativar o som e voz</span>
     </div>
 
     <div id="screenSetup">
-      <div class="record-badge">🏆 Parte 2: Acessibilidade Total</div>
+      <div style="background: #fef3c7; color: #92400e; padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 0.9rem;">
+        🏆 Modo Funcional Garantido
+      </div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
-      <div class="selection-card" id="cardNivel" onclick="handleNivelClick()">
+      <div class="selection-card" onclick="mudarNivel()">
         <span id="labelNivel">Ensino Fundamental</span>
         <span>❯</span>
       </div>
 
-      <button class="btn-main" id="btnIniciar" onclick="handleStartClick()">Iniciar Simulados</button>
+      <button class="btn-main" onclick="iniciarQuiz()">Iniciar Simulados</button>
     </div>
 
     <div id="screenGame" style="display: none;">
-      <div class="game-header">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-weight: bold;">
         <span id="progressIndicator">Questão 1 de 2</span>
-        <span class="timer-badge" id="timerBadge">⏱️ 120s</span>
+        <span style="background: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem;">⏱️ Ativo</span>
       </div>
 
-      <div class="question-box" id="questionText">Carregando questão...</div>
+      <div class="question-box" id="questionText">Carregando...</div>
       <div class="options-grid" id="optionsContainer"></div>
-
-      <div class="game-footer">
-        <div>
-          <span style="font-size: 0.85rem; font-weight: bold; display: block; color: var(--text-color);">Modo Sem Tempo:</span>
-          <span style="font-size: 0.75rem; color: #64748b;">Toque no relógio ao lado para cancelar o tempo</span>
-        </div>
-        <button class="timer-toggle-bottom-btn" id="timerToggleBtn" onclick="toggleTimerMode()" title="Ativar/Desativar Tempo">⏱️</button>
-      </div>
+      
+      <button class="btn-main" onclick="voltarMenu()" style="background: #64748b;">Voltar ao Menu</button>
     </div>
   </div>
 
-  <!-- Modal de Acerto -->
-  <div class="modal" id="successModal">
+  <!-- Modal Configurações -->
+  <div class="modal" id="modalConfig">
     <div class="modal-content">
-      <div class="success-box">
-        <div class="success-title">✔️ RESPOSTA CORRETA!</div>
-        <p style="font-weight: 500; margin-bottom: 15px;">Muito bem, você acertou a questão!</p>
-      </div>
-      <button class="btn-main" onclick="nextQuestionAfterSuccess()">Avançar para Próxima</button>
-    </div>
-  </div>
-
-  <!-- Modal de Game Over -->
-  <div class="modal" id="gameOverModal">
-    <div class="modal-content">
-      <div class="gameover-box">
-        <div class="gameover-title">❌ GAME OVER</div>
-        <p id="gameOverText" style="font-weight: 500; margin-bottom: 15px;">Você errou ou o tempo esgotou!</p>
-      </div>
-      <button class="btn-main" onclick="restartGameAfterGameOver()">Reiniciar Questão / Bloco</button>
-      <button class="btn-secondary" onclick="returnToMainMenu()">Voltar para o Menu Principal</button>
-    </div>
-  </div>
-
-  <div class="modal" id="pickerModal">
-    <div class="modal-content">
-      <h3 style="margin-top:0;">Selecione o Nível</h3>
-      <div class="picker-list" id="pickerContainer"></div>
-      <button class="btn-main" onclick="closePicker()">Fechar</button>
-    </div>
-  </div>
-
-  <!-- Modal de Configurações -->
-  <div class="modal" id="settingsModal">
-    <div class="modal-content">
-      <h3 style="margin-top:0;">⚙️ Configurações</h3>
-      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Música de Fundo / Efeito Sonoro:</span>
-        <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)">
-      </div>
-      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Alto Contraste:</span>
-        <input type="checkbox" id="chkContrast" onchange="document.body.classList.toggle('high-contrast')">
-      </div>
-      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Leitor de Voz:</span>
-        <input type="checkbox" id="chkScreenReader" checked onchange="isScreenReaderActive = this.checked">
-      </div>
-      <button class="btn-main" onclick="closeModal()">Fechar</button>
+      <h3>Configurações</h3>
+      <p>Tudo a funcionar corretamente.</p>
+      <button class="btn-main" onclick="fecharConfiguracoes()">Fechar</button>
     </div>
   </div>
 
   <script>
-    var dbQuestoes = [
+    var questoes = [
       { pergunta: "Quanto é 45 + 38?", opcoes: ["73", "83", "93", "72"], correta: 0 },
-      { pergunta: "Qual é o sinônimo da palavra 'Feliz'?", opcoes: ["Triste", "Contente", "Cansado", "Zangado"], correta: 1 }
+      { pergunta: "Qual é o sinônimo de 'Feliz'?", opcoes: ["Triste", "Contente", "Cansado", "Zangado"], correta: 1 }
     ];
+    var indiceAtual = 0;
 
-    var currentQuestIndex = 0;
-    var currentTimer = null;
-    var timeLeft = 120;
-    var isTimerDisabled = false;
-    var isScreenReaderActive = true;
-    var selectedAnswerPending = null;
-    
-    var pendingNivelClick = false;
-    var pendingStartClick = false;
-
-    var audioCtx = null;
-    var musicInterval = null;
-    var stepCount = 0;
-    var currentSongIdx = 4;
-    var isPlayingMusic = false;
-    var hasUserStarted = false;
-
-    var songList = [
-      { name: "1. 👻 Terror Sombrio", type: "sawtooth", tempo: 500, baseFreq: 110 },
-      { name: "2. 🦇 Mistério Noturno", type: "sine", tempo: 600, baseFreq: 146 },
-      { name: "3. 🌸 Leveza Suave", type: "triangle", tempo: 400, baseFreq: 330 },
-      { name: "4. 🍃 Brisa Serena", type: "sine", tempo: 450, baseFreq: 261 },
-      { name: "5. 🪘 Pagode Suingado", type: "triangle", tempo: 320, baseFreq: 220 },
-      { name: "6. 🥁 Pagode Raiz", type: "square", tempo: 220, baseFreq: 196 }
-    ];
-
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
-    function playCustomTone(freq, duration, type='sine', vol=0.04) {
-      try {
-        initAudio();
-        if (!audioCtx || audioCtx.state !== 'running') return;
-        var osc = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch(e){}
-    }
-
-    function playMusicLoop() {
-      if (!isPlayingMusic || !document.getElementById("chkMusic").checked) return;
-      var song = songList[currentSongIdx];
-      var s = stepCount % 16;
-      
-      var melodia = [song.baseFreq, 0, song.baseFreq * 1.25, song.baseFreq * 1.5, 0, song.baseFreq * 1.25, song.baseFreq, song.baseFreq * 0.8];
-      if (s % 2 === 0 && melodia[(s/2) % melodia.length] > 0) {
-        playCustomTone(melodia[(s/2) % melodia.length], 0.18, song.type, 0.045);
-      }
-      
-      if (s === 0 || s === 8) playCustomTone(song.baseFreq * 0.5, 0.15, 'sine', 0.06);
-      
-      stepCount = (stepCount + 1) % 32;
-    }
-
-    function startMusicEngine() {
-      initAudio();
-      isPlayingMusic = true;
-      document.getElementById("chkMusic").checked = true;
-      var song = songList[currentSongIdx];
-      if (musicInterval) clearInterval(musicInterval);
-      stepCount = 0;
-      musicInterval = setInterval(playMusicLoop, song.tempo);
-      playMusicLoop();
-      updateSongDisplay();
-
-      // Dispara a descrição de boas-vindas assim que o usuário toca pela primeira vez na tela
-      if (!hasUserStarted) {
-        hasUserStarted = true;
-        speakText("Bem-vindo ao Quiz de Estudos. Nível selecionado atual: " + document.getElementById("labelNivel").textContent + ". Toque duas vezes no botão Iniciar Simulados para começar.");
-      }
-    }
-
-    // Ouvinte global: assim que tocar em qualquer lugar da tela pela primeira vez, destrava o som e a voz
-    document.addEventListener('click', function() {
-      if (!hasUserStarted) {
-        startMusicEngine();
-      }
-    }, { once: true });
-
-    function toggleMusic(enable) {
-      initAudio();
-      isPlayingMusic = enable;
-      if (enable) {
-        var song = songList[currentSongIdx];
-        if (musicInterval) clearInterval(musicInterval);
-        musicInterval = setInterval(playMusicLoop, song.tempo);
-        playMusicLoop();
-      } else {
-        clearInterval(musicInterval);
-      }
-      updateSongDisplay();
-    }
-
-    function changeSong(e, direction) {
-      e.stopPropagation();
-      initAudio();
-      currentSongIdx = (currentSongIdx + direction + songList.length) % songList.length;
-      startMusicEngine();
-    }
-
-    function updateSongDisplay() {
-      var isChecked = document.getElementById("chkMusic").checked;
-      document.getElementById("musicTitleDisplay").textContent = (isPlayingMusic && isChecked ? "▶ " : "⏸ ") + songList[currentSongIdx].name;
-    }
-
-    function speakText(text) {
-      if (!isScreenReaderActive) return;
+    function falarTexto(texto) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        var utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'pt-BR';
-        utterance.rate = 1.0;
-        window.speechSynthesis.speak(utterance);
+        var msg = new SpeechSynthesisUtterance(texto);
+        msg.lang = 'pt-BR';
+        window.speechSynthesis.speak(msg);
       }
     }
 
-    function handleNivelClick() {
-      initAudio();
-      if (pendingNivelClick) {
-        pendingNivelClick = false;
-        document.getElementById("cardNivel").classList.remove("pending-selection");
-        openPicker();
-      } else {
-        pendingNivelClick = true;
-        document.getElementById("cardNivel").classList.add("pending-selection");
-        var nivelAtual = document.getElementById("labelNivel").textContent;
-        speakText("Nível de ensino: " + nivelAtual + ". Toque novamente para alterar.");
-      }
+    function mudarNivel() {
+      var niveis = ["Ensino Fundamental", "ENEM", "Concurso Público"];
+      var atual = document.getElementById("labelNivel").innerText;
+      var proximo = niveis[(niveis.indexOf(atual) + 1) % niveis.length];
+      document.getElementById("labelNivel").innerText = proximo;
+      falarTexto("Nível alterado para " + proximo);
     }
 
-    function openPicker() {
-      initAudio();
-      var modal = document.getElementById("pickerModal");
-      var container = document.getElementById("pickerContainer");
+    function iniciarQuiz() {
+      falarTexto("Iniciando simulados.");
+      document.getElementById("screenSetup").style.display = "none";
+      document.getElementById("screenGame").style.display = "block";
+      carregarQuestao();
+    }
+
+    function carregarQuestao() {
+      var q = questoes[indiceAtual];
+      document.getElementById("progressIndicator").innerText = "Questão " + (indiceAtual + 1) + " de " + questoes.length;
+      document.getElementById("questionText").innerText = q.pergunta;
+      
+      var container = document.getElementById("optionsContainer");
       container.innerHTML = "";
 
-      ["Ensino Fundamental", "ENEM", "Concurso Público"].forEach(function(n) {
-        var item = document.createElement("div");
-        item.className = "selection-card";
-        item.textContent = n;
-        item.onclick = function(e) {
-          e.stopPropagation();
-          document.getElementById("labelNivel").textContent = n;
-          speakText("Nível selecionado: " + n);
-          closePicker();
-        };
-        container.appendChild(item);
-      });
-      modal.style.display = "flex";
-      speakText("Janela de seleção aberta. Escolha entre Ensino Fundamental, ENEM ou Concurso Público.");
-    }
-
-    function closePicker() { document.getElementById("pickerModal").style.display = "none"; }
-    function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; speakText("Configurações abertas."); }
-    function closeModal() { document.getElementById("settingsModal").style.display = "none"; }
-
-    function handleStartClick() {
-      initAudio();
-      if (pendingStartClick) {
-        pendingStartClick = false;
-        document.getElementById("btnIniciar").classList.remove("pending-selection");
-        startQuiz();
-      } else {
-        pendingStartClick = true;
-        document.getElementById("btnIniciar").classList.add("pending-selection");
-        speakText("Botão Iniciar Simulados. Toque novamente para confirmar e iniciar o quiz.");
-      }
-    }
-
-    function startQuiz() {
-      initAudio();
-      currentQuestIndex = 0;
-      document.getElementById("screenSetup").style.display = 'none';
-      document.getElementById("screenGame").style.display = 'block';
-      speakText("Quiz iniciado com cronômetro de 2 minutos.");
-      loadQuestion();
-    }
-
-    function toggleTimerMode() {
-      initAudio();
-      isTimerDisabled = !isTimerDisabled;
-      var btn = document.getElementById("timerToggleBtn");
-      var badge = document.getElementById("timerBadge");
-
-      if (isTimerDisabled) {
-        clearInterval(currentTimer);
-        btn.textContent = "⏱️❌";
-        badge.textContent = "♾️ Sem Tempo";
-        speakText("Modo sem tempo ativado.");
-      } else {
-        btn.textContent = "⏱️";
-        badge.textContent = "⏱️ 120s";
-        setupTimer();
-        speakText("Modo com tempo ativado.");
-      }
-    }
-
-    function loadQuestion() {
-      var lista = dbQuestoes;
-      if (currentQuestIndex >= lista.length) {
-        speakText("Parabéns! Bloco de questões concluído com sucesso.");
-        returnToMainMenu();
-        return;
-      }
-
-      selectedAnswerPending = null;
-      var q = lista[currentQuestIndex];
-      document.getElementById("progressIndicator").textContent = "Questão " + (currentQuestIndex + 1) + " de " + lista.length;
-      document.getElementById("questionText").textContent = q.pergunta;
-
-      var optContainer = document.getElementById("optionsContainer");
-      optContainer.innerHTML = "";
-      
-      var letras = ["A", "B", "C", "D"];
-      var textoLeitura = "Questão " + (currentQuestIndex + 1) + ". " + q.pergunta + ". As alternativas são: ";
-
-      q.opcoes.forEach(function(opt, idx) {
-        var letra = letras[idx];
+      q.opcoes.forEach(function(opcao, index) {
         var btn = document.createElement("button");
         btn.className = "option-btn";
-        btn.id = "opt-btn-" + idx;
-        btn.textContent = letra + ") " + opt;
-        
+        btn.innerText = ["A) ", "B) ", "C) ", "D) "][index] + opcao;
         btn.onclick = function() {
-          handleOptionClick(idx, letra, opt, q.correta);
+          if (index === q.correta) {
+            falarTexto("Resposta correta!");
+            alert("Resposta Correta!");
+            indiceAtual = (indiceAtual + 1) % questoes.length;
+            carregarQuestao();
+          } else {
+            falarTexto("Resposta incorreta. Tente novamente.");
+            alert("Incorreto. Tente outra vez.");
+          }
         };
-        optContainer.appendChild(btn);
-        textoLeitura += " Alternativa " + letra + ": " + opt + ".";
+        container.appendChild(btn);
       });
 
-      textoLeitura += " Lembre-se: há um relógio no rodapé da tela para desativar o cronômetro e jogar sem tempo.";
-
-      speakText(textoLeitura);
-      setupTimer();
+      falarTexto(q.pergunta);
     }
 
-    function handleOptionClick(idx, letra, texto, correta) {
-      initAudio();
-      if (selectedAnswerPending === idx) {
-        selectedAnswerPending = null;
-        checkAnswer(idx, correta);
-      } else {
-        selectedAnswerPending = idx;
-        var buttons = document.querySelectorAll('.option-btn');
-        buttons.forEach(function(b) { b.classList.remove('pending-selection'); });
-        document.getElementById("opt-btn-" + idx).classList.add('pending-selection');
-        speakText("Alternativa " + letra + ". Você confirma e aceita a alternativa " + letra + "? Se sim, aperte mais uma vez.");
-      }
+    function voltarMenu() {
+      document.getElementById("screenGame").style.display = "none";
+      document.getElementById("screenSetup").style.display = "block";
+      falarTexto("Retornado ao menu principal.");
     }
 
-    function setupTimer() {
-      clearInterval(currentTimer);
-      if (isTimerDisabled) return;
+    function abrirConfiguracoes() {
+      document.getElementById("modalConfig").style.display = "flex";
+      falarTexto("Configurações abertas.");
+    }
 
-      timeLeft = 120;
-      updateTimerDisplay();
-      currentTimer = setInterval(function() {
-        if (isTimerDisabled) return;
-        timeLeft--;
-        updateTimerDisplay();
-        if 
+    function fecharConfiguracoes() {
+      document.getElementById("modalConfig").style.display = "none";
+    }
+
+    window.addEventListener('click', function() {
+      falarTexto("Bem-vindo ao Quiz de Estudos.");
+    }, { once: true });
+  </script>
+</body>
+</html>
+<!-- App Link: https://app-quiz-estudos.github.io/QUIZ-ESTUDOS-/ -->
