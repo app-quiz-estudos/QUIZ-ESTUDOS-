@@ -285,7 +285,7 @@
     </div>
 
     <div id="screenSetup">
-      <div class="record-badge" id="recordDisplay">🏆 Sistema Estável</div>
+      <div class="record-badge" id="recordDisplay">🏆 Pagode Suingado Ativo</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Categoria Selecionada:</p>
       <div class="selection-card" onclick="openPicker('cat')">
@@ -316,10 +316,10 @@
     <div id="screenGame" style="display: none;">
       <div class="game-header">
         <span>Status: <span id="scoreText">Rodando</span></span>
-        <span class="timer-badge">🎵 Áudio OK</span>
+        <span class="timer-badge">🎵 Som Ativo</span>
       </div>
 
-      <div class="question-box" id="questionText">Tudo funcionando perfeitamente! Pronto para seguir.</div>
+      <div class="question-box" id="questionText">Tudo funcionando perfeitamente com o pagode no capricho!</div>
       <div class="options-grid" id="optionsContainer">
         <button class="option-btn" onclick="alert('Botão 1 funcionando!')">Testar Opção A</button>
         <button class="option-btn" onclick="alert('Botão 2 funcionando!')">Testar Opção B</button>
@@ -367,7 +367,7 @@
     var audioCtx = null;
     var musicInterval = null;
     var stepCount = 0;
-    var currentSongIdx = 0;
+    var currentSongIdx = 4; // Já inicia direto no Pagode Suingado!
     var isPlayingMusic = false;
     var hasUserInteracted = false;
 
@@ -440,6 +440,7 @@
         if (s === 4 || s === 12) playCustomTone(164, 0.4, 'triangle', 0.015);
       }
       else if (songId === "pagode1") {
+        // O Pagode Suingado com o cavaco e repique ajustados no ponto certo!
         var melodia = [261, 0, 330, 392, 0, 330, 261, 220];
         if (s % 2 === 0 && melodia[(s/2) % melodia.length] > 0) {
           playCustomTone(melodia[(s/2) % melodia.length], 0.18, 'triangle', 0.045);
@@ -624,4 +625,3 @@
   </script>
 </body>
 </html>
-
