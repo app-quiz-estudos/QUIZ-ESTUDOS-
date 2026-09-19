@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Multidisciplinar</title>
+  <title>Quiz de Estudos - Multidisciplinar</title>
   
   <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
   
@@ -72,22 +72,6 @@
     .picker-list { max-height: 280px; overflow-y: auto; margin-top: 10px; text-align: left; }
     .picker-item { padding: 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; font-weight: bold; }
     .picker-item:hover { background: #f8fafc; }
-
-    .screen { display: none; }
-    .screen.active { display: block; }
-    .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.85rem; font-weight: bold; opacity: 0.8; }
-    .question-box { font-size: 1.05rem; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
-    .quiz-option {
-      background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 10px;
-      padding: 12px 14px; margin-bottom: 10px; cursor: pointer; font-weight: 500; font-size: 0.95rem;
-      display: block; width: 100%; text-align: left; box-sizing: border-box; color: var(--text-color);
-    }
-    .quiz-option:hover { border-color: var(--primary-color); background: var(--badge-bg); }
-    .quiz-option.correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important; }
-    .quiz-option.incorrect { background: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
-    .feedback-box { margin-top: 15px; padding: 12px; border-radius: 8px; font-size: 0.9rem; display: none; line-height: 1.3; }
-    .feedback-box.correct { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-    .feedback-box.incorrect { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
   </style>
 </head>
 <body>
@@ -99,79 +83,89 @@
     <h1>Quiz Multidisciplinar</h1>
 
     <!-- Player de Música -->
-    <div class="music-player-bar" id="musicBar">
-      <button class="music-arrow" id="musicPrev">❮</button>
+    <div class="music-player-bar" id="musicBar" aria-label="Barra de Música. Toque para ligar ou alternar trilha">
+      <button class="music-arrow" id="musicPrev" aria-label="Música anterior">❮</button>
       <div class="music-info" id="musicTitleDisplay">🎵 Música de Fundo</div>
-      <button class="music-arrow" id="musicNext">❯</button>
+      <button class="music-arrow" id="musicNext" aria-label="Próxima música">❯</button>
     </div>
 
-    <!-- Tela Inicial / Setup -->
-    <div id="screenSetup" class="screen active">
+    <!-- Tela Inicial / Setup com Seleção Modular -->
+    <div id="screenSetup">
       <p style="font-weight: bold; margin-bottom: 6px;">1. Grande Área:</p>
-      <div class="selection-card" id="cardArea">
+      <div class="selection-card" id="cardArea" aria-label="Selecionar Grande Área">
         <span id="labelArea">Matemática</span>
-        <span>❯</span>
+        <span aria-hidden="true">❯</span>
       </div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">2. Subdisciplina Específica:</p>
-      <div class="selection-card" id="cardSub">
+      <div class="selection-card" id="cardSub" aria-label="Selecionar Subdisciplina">
         <span id="labelSub">Matemática básica</span>
-        <span>❯</span>
+        <span aria-hidden="true">❯</span>
       </div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">3. Nível de Ensino:</p>
-      <div class="selection-card" id="cardNivel">
+      <div class="selection-card" id="cardNivel" aria-label="Selecionar Nível de Ensino">
         <span id="labelNivel">Ensino Fundamental</span>
-        <span>❯</span>
+        <span aria-hidden="true">❯</span>
       </div>
 
-      <button class="btn-main" id="btnStartQuiz">Iniciar Simulados</button>
+      <button class="btn-main" id="btnStartQuiz" aria-label="Iniciar Simulados Infinitos">Iniciar Simulados</button>
 
-      <div class="accessibility-footer-badge">
+      <!-- Distintivo de Leitor de Tela na Parte Inferior -->
+      <div class="accessibility-footer-badge" aria-label="Leitor de Tela Detectado. Modo Adaptado Ativo.">
         <span>♿</span> <span>Leitor de Tela Detectado (Modo Adaptado Ativo)</span>
       </div>
-    </div>
-
-    <!-- Tela de Execução do Quiz -->
-    <div id="screenQuiz" class="screen">
-      <div class="quiz-header">
-        <span id="quizSubjectTag">Matemática / Básica</span>
-        <span id="quizCounter">Questão 1</span>
-      </div>
-      <div class="question-box" id="questionText">Carregando questão...</div>
-      <div id="optionsContainer"></div>
-      <div class="feedback-box" id="feedbackBox"></div>
-      <button class="btn-main" id="btnNextQuestion" style="display: none; margin-top: 15px;">Próxima Questão ➔</button>
-      <button class="btn-main" id="btnBackSetup" style="background: #64748b; margin-top: 8px;">Voltar ao Menu</button>
     </div>
   </div>
 
   <!-- Modais -->
-  <div class="modal" id="pickerModal">
+  <div class="modal" id="pickerModal" role="dialog" aria-modal="true">
     <div class="modal-content">
       <h3 id="pickerTitle" style="margin-top:0;">Selecione</h3>
       <div class="picker-list" id="pickerContainer"></div>
-      <button class="btn-main" id="btnClosePicker" style="margin-top:15px;">Fechar</button>
+      <button class="btn-main" id="btnClosePicker" style="margin-top:15px;" aria-label="Fechar seletor">Fechar</button>
     </div>
   </div>
 
-  <div class="modal" id="settingsModal">
+  <div class="modal" id="settingsModal" role="dialog" aria-modal="true">
     <div class="modal-content">
       <h3 style="margin-top:0;">⚙️ Configurações</h3>
       <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
         <span>Música de Fundo:</span>
-        <input type="checkbox" id="chkMusic" checked style="width: 20px; height: 20px; cursor: pointer;">
+        <input type="checkbox" id="chkMusic" checked aria-label="Ligar ou desligar música de fundo" style="width: 20px; height: 20px; cursor: pointer;">
       </div>
-      <button class="btn-main" id="btnCloseSettings">Fechar</button>
+      <button class="btn-main" id="btnCloseSettings" aria-label="Fechar configurações">Fechar</button>
     </div>
   </div>
 
   <script>
     window.addEventListener('DOMContentLoaded', function() {
       const baseDisciplinas = {
-        "Matemática": ["Matemática básica", "Álgebra", "Geometria", "Estatística"],
-        "Língua Portuguesa": ["Gramática", "Ortografia", "Interpretação de textos", "Literatura"],
-        "Ciências da natureza": ["Biologia", "Física", "Química"]
+        "Línguas e idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Libras", "Japonês", "Mandarim"],
+        "Matemática": ["Aritmética", "Matemática básica", "Matemática financeira", "Álgebra", "Geometria plana", "Geometria espacial", "Estatística", "Probabilidade", "Funções"],
+        "Língua Portuguesa e literatura": ["Gramática", "Ortografia", "Sintaxe", "Interpretação de textos", "Redação", "Literatura brasileira", "Figuras de linguagem"],
+        "Ciências da natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética", "Botânica", "Anatomia"],
+        "História": ["História geral", "História do Brasil", "História da América", "História antiga", "História medieval", "História moderna", "História contemporânea"],
+        "Geografia": ["Geografia geral", "Geografia física", "Geografia humana", "Geografia do Brasil", "Cartografia", "Geopolítica", "Demografia"],
+        "Ciências humanas e sociais": ["Filosofia", "Sociologia", "Antropologia", "Psicologia", "Economia", "Ética", "Direitos humanos"],
+        "Direito e legislação": ["Direito Constitucional", "Direito Administrativo", "Direito Civil", "Direito Penal", "Direito do Trabalho", "Direito Tributário"],
+        "Administração e recursos humanos": ["Administração geral", "Recursos Humanos", "Gestão de projetos", "Empreendedorismo", "Logística"],
+        "Economia e finanças": ["Macroeconomia", "Microeconomia", "Educação financeira", "Finanças pessoais", "Contabilidade"],
+        "Informática e tecnologia": ["Informática básica", "Sistemas operacionais", "Segurança da informação", "Lógica de programação", "HTML/CSS", "Python", "Banco de dados", "Inteligência artificial"],
+        "Educação e pedagogia": ["Pedagogia", "Didática", "Educação infantil", "Ensino fundamental", "Educação especial", "Alfabetização"],
+        "Saúde e corpo humano": ["Anatomia humana", "Fisiologia humana", "Nutrição", "Primeiros socorros", "Saúde pública", "Enfermagem"],
+        "Educação física e esportes": ["Condicionamento físico", "Musculação", "Futebol", "Basquete", "Vôlei", "Natação", "Artes marciais"],
+        "Artes e criatividade": ["Artes visuais", "Fotografia", "Cinema", "Teatro", "Design gráfico", "Escrita criativa"],
+        "Música": ["Teoria musical", "História da música", "Canto", "Violão", "Piano", "Produção musical"],
+        "Religião e teologia": ["Teologia", "História do cristianismo", "Filosofia da religião", "Estudos bíblicos"],
+        "Meio ambiente e sustentabilidade": ["Ecologia", "Sustentabilidade", "Gestão ambiental", "Energias renováveis", "Reciclagem"],
+        "Engenharia e áreas técnicas": ["Engenharia civil", "Engenharia mecânica", "Engenharia elétrica", "Engenharia de software", "Segurança do trabalho"],
+        "Agricultura e ciências agrárias": ["Agronomia", "Zootecnia", "Medicina veterinária", "Horticultura", "Gestão rural"],
+        "Segurança pública e emergência": ["Segurança pública", "Combate a incêndios", "Primeiros socorros", "Gerenciamento de crises"],
+        "Turismo, hotelaria e gastronomia": ["Turismo", "Gestão hoteleira", "Gastronomia", "Culinária brasileira", "Enologia"],
+        "Comunicação e marketing": ["Jornalismo", "Publicidade e propaganda", "Marketing digital", "Relações públicas", "Copywriting"],
+        "Ciências e conhecimentos gerais": ["Cultura geral", "Atualidades", "Raciocínio lógico", "Metodologia científica"],
+        "Outras áreas de estudo": ["Arqueologia", "Biblioteconomia", "Arquivologia", "Mitologia grega", "Folclore brasileiro"]
       };
 
       const niveisDisponíveis = ["Ensino Fundamental", "Ensino Médio / ENEM", "Concurso Público"];
@@ -179,18 +173,21 @@
       let selectedArea = "Matemática";
       let selectedSub = "Matemática básica";
       let selectedLevel = "Ensino Fundamental";
-      let questionCounter = 0;
 
       let audioCtx = null;
       let musicInterval = null;
       let stepCount = 0;
-      let currentSongIdx = 0;
+      let currentSongIdx = 4;
       let isPlayingMusic = false;
       let hasUserStarted = false;
 
       const songList = [
-        { name: "🎵 Música de Fundo 1", type: "sine", tempo: 450, baseFreq: 261 },
-        { name: "🎵 Música de Fundo 2", type: "triangle", tempo: 400, baseFreq: 330 }
+        { name: "1. 👻 Terror Sombrio", type: "sawtooth", tempo: 500, baseFreq: 110 },
+        { name: "2. 🦇 Mistério Noturno", type: "sine", tempo: 600, baseFreq: 146 },
+        { name: "3. 🌸 Leveza Suave", type: "triangle", tempo: 400, baseFreq: 330 },
+        { name: "4. 🍃 Brisa Serena", type: "sine", tempo: 450, baseFreq: 261 },
+        { name: "5. 🪘 Pagode Suingado", type: "triangle", tempo: 320, baseFreq: 220 },
+        { name: "6. 🥁 Pagode Raiz", type: "square", tempo: 220, baseFreq: 196 }
       ];
 
       function initAudio() {
@@ -219,10 +216,13 @@
         let chk = document.getElementById("chkMusic");
         if (!isPlayingMusic || !chk || !chk.checked) return;
         let song = songList[currentSongIdx];
-        let s = stepCount % 8;
-        let melodia = [song.baseFreq, song.baseFreq * 1.25, song.baseFreq * 1.5, song.baseFreq * 1.25];
-        playCustomTone(melodia[s % melodia.length], 0.18, song.type, 0.04);
-        stepCount = (stepCount + 1) % 16;
+        let s = stepCount % 16;
+        let melodia = [song.baseFreq, 0, song.baseFreq * 1.25, song.baseFreq * 1.5, 0, song.baseFreq * 1.25, song.baseFreq, song.baseFreq * 0.8];
+        if (s % 2 === 0 && melodia[(s/2) % melodia.length] > 0) {
+          playCustomTone(melodia[(s/2) % melodia.length], 0.18, song.type, 0.045);
+        }
+        if (s === 0 || s === 8) playCustomTone(song.baseFreq * 0.5, 0.15, 'sine', 0.06);
+        stepCount = (stepCount + 1) % 32;
       }
 
       function startMusicEngine() {
@@ -255,16 +255,19 @@
       document.getElementById("musicBar").onclick = function() { startMusicEngine(); };
       document.getElementById("musicPrev").onclick = function(e) {
         e.stopPropagation();
+        initAudio();
         currentSongIdx = (currentSongIdx - 1 + songList.length) % songList.length;
         startMusicEngine();
       };
       document.getElementById("musicNext").onclick = function(e) {
         e.stopPropagation();
+        initAudio();
         currentSongIdx = (currentSongIdx + 1) % songList.length;
         startMusicEngine();
       };
 
       document.getElementById("chkMusic").onchange = function(e) {
+        initAudio();
         isPlayingMusic = e.target.checked;
         if (isPlayingMusic) {
           if (musicInterval) clearInterval(musicInterval);
@@ -281,8 +284,10 @@
       const pickerContainer = document.getElementById("pickerContainer");
 
       document.getElementById("cardArea").onclick = function() {
+        initAudio();
         pickerTitle.textContent = "Selecione a Grande Área";
         pickerContainer.innerHTML = "";
+
         Object.keys(baseDisciplinas).forEach(function(area) {
           let item = document.createElement("div");
           item.className = "picker-item";
@@ -301,8 +306,10 @@
       };
 
       document.getElementById("cardSub").onclick = function() {
+        initAudio();
         pickerTitle.textContent = "Selecione a Subdisciplina";
         pickerContainer.innerHTML = "";
+
         let subs = baseDisciplinas[selectedArea] || ["Geral"];
         subs.forEach(function(sub) {
           let item = document.createElement("div");
@@ -319,8 +326,10 @@
       };
 
       document.getElementById("cardNivel").onclick = function() {
+        initAudio();
         pickerTitle.textContent = "Selecione o Nível";
         pickerContainer.innerHTML = "";
+
         niveisDisponíveis.forEach(function(nivel) {
           let item = document.createElement("div");
           item.className = "picker-item";
@@ -335,66 +344,22 @@
         modal.style.display = "flex";
       };
 
-      document.getElementById("btnClosePicker").onclick = function() { modal.style.display = "none"; };
-      document.getElementById("btnSettings").onclick = function() { document.getElementById("settingsModal").style.display = "flex"; };
-      document.getElementById("btnCloseSettings").onclick = function() { document.getElementById("settingsModal").style.display = "none"; };
+      document.getElementById("btnClosePicker").onclick = function() {
+        modal.style.display = "none";
+      };
 
-      function carregarNovaQuestao() {
-        questionCounter++;
-        document.getElementById("quizSubjectTag").textContent = `${selectedArea} / ${selectedSub}`;
-        document.getElementById("quizCounter").textContent = `Questão ${questionCounter}`;
-        
-        document.getElementById("questionText").textContent = `Questão gerada para ${selectedArea} (${selectedSub}) no nível ${selectedLevel}: Quanto é 10 + ${questionCounter} * 2?`;
-        
-        let optContainer = document.getElementById("optionsContainer");
-        optContainer.innerHTML = "";
-        
-        let feedbackBox = document.getElementById("feedbackBox");
-        feedbackBox.style.display = "none";
-        document.getElementById("btnNextQuestion").style.display = "none";
+      document.getElementById("btnSettings").onclick = function() {
+        initAudio();
+        document.getElementById("settingsModal").style.display = "flex";
+      };
 
-        let respCorreta = (10 + questionCounter * 2).toString();
-        let opcoes = [respCorreta, (parseInt(respCorreta) + 2).toString(), (parseInt(respCorreta) - 1).toString(), (parseInt(respCorreta) + 5).toString()];
-        opcoes.sort(() => Math.random() - 0.5);
-
-        opcoes.forEach(function(textoOpcao) {
-          let btn = document.createElement("button");
-          btn.className = "quiz-option";
-          btn.textContent = textoOpcao;
-          btn.onclick = function() {
-            let todosBotoes = optContainer.querySelectorAll(".quiz-option");
-            todosBotoes.forEach(b => b.disabled = true);
-
-            if (textoOpcao === respCorreta) {
-              btn.classList.add("correct");
-              feedbackBox.textContent = "✔ Resposta Correta!";
-              feedbackBox.className = "feedback-box correct";
-            } else {
-              btn.classList.add("incorrect");
-              feedbackBox.textContent = "✘ Resposta Incorreta. A correta era: " + respCorreta;
-              feedbackBox.className = "feedback-box incorrect";
-            }
-            feedbackBox.style.display = "block";
-            document.getElementById("btnNextQuestion").style.display = "block";
-          };
-          optContainer.appendChild(btn);
-        });
-      }
+      document.getElementById("btnCloseSettings").onclick = function() {
+        document.getElementById("settingsModal").style.display = "none";
+      };
 
       document.getElementById("btnStartQuiz").onclick = function() {
-        questionCounter = 0;
-        document.getElementById("screenSetup").classList.remove("active");
-        document.getElementById("screenQuiz").classList.add("active");
-        carregarNovaQuestao();
-      };
-
-      document.getElementById("btnNextQuestion").onclick = function() {
-        carregarNovaQuestao();
-      };
-
-      document.getElementById("btnBackSetup").onclick = function() {
-        document.getElementById("screenQuiz").classList.remove("active");
-        document.getElementById("screenSetup").classList.add("active");
+        initAudio();
+        alert("Configuração pronta!\nÁrea: " + selectedArea + "\nSub: " + selectedSub + "\nNível: " + selectedLevel);
       };
 
       updateSongDisplay();
