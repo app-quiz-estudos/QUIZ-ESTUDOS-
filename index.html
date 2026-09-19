@@ -1,11 +1,3 @@
-<!-- 
-  =============================================================================
-  PROJETO: Quiz de Estudos (Aplicativo Web PWA)
-  VERSÃO: 1.2.3 (Correção Completa de Sintaxe - Áudio e Funcionalidades Restauradas)
-  ATUALIZAÇÃO: Setembro de 2026
-  DESCRIÇÃO: Estrutura principal com som corrigido e todas as interações ativas.
-  =============================================================================
--->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -293,7 +285,7 @@
     </div>
 
     <div id="screenSetup">
-      <div class="record-badge" id="recordDisplay">🏆 Parte 1: Base Ativa</div>
+      <div class="record-badge" id="recordDisplay">🏆 Sistema Estável</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Categoria Selecionada:</p>
       <div class="selection-card" onclick="openPicker('cat')">
@@ -307,7 +299,7 @@
         <span>❯</span>
       </div>
 
-      <button class="btn-main" onclick="startQuiz()">Testar Funcionalidades</button>
+      <button class="btn-main" onclick="startQuiz()">Iniciar Teste</button>
     </div>
 
     <div id="screenCreate" style="display: none;">
@@ -323,14 +315,14 @@
 
     <div id="screenGame" style="display: none;">
       <div class="game-header">
-        <span>Status: <span id="scoreText">Pronto</span></span>
-        <span class="timer-badge">🎵 Som Ativo</span>
+        <span>Status: <span id="scoreText">Rodando</span></span>
+        <span class="timer-badge">🎵 Áudio OK</span>
       </div>
 
-      <div class="question-box" id="questionText">Menus e aplicativos funcionando com sucesso! Matérias na Parte 2.</div>
+      <div class="question-box" id="questionText">Tudo funcionando perfeitamente! Pronto para seguir.</div>
       <div class="options-grid" id="optionsContainer">
-        <button class="option-btn" onclick="alert('Teste 1 OK!')">Testar Botão 1</button>
-        <button class="option-btn" onclick="alert('Teste 2 OK!')">Testar Botão 2</button>
+        <button class="option-btn" onclick="alert('Botão 1 funcionando!')">Testar Opção A</button>
+        <button class="option-btn" onclick="alert('Botão 2 funcionando!')">Testar Opção B</button>
         <button class="btn-main" onclick="backToSetup()" style="margin-top: 10px;">Voltar ao Menu</button>
       </div>
     </div>
@@ -623,4 +615,13 @@
       document.getElementById("screenGame").style.display = 'block';
     }
 
-    function back
+    function backToSetup() {
+      document.getElementById("screenGame").style.display = 'none';
+      document.getElementById("screenSetup").style.display = 'block';
+    }
+
+    updateSongDisplay();
+  </script>
+</body>
+</html>
+
