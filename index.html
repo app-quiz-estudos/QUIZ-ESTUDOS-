@@ -14,7 +14,6 @@
       --text-color: #2d3748;
       --primary-color: #2563eb;
       --primary-hover: #1d4ed8;
-      /* Azul da barra de música bem mais claro e brilhante */
       --music-bar-bg: #60a5fa;
       --success-color: #22c55e;
       --error-color: #ef4444;
@@ -70,6 +69,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 10;
     }
 
     .owl-icon {
@@ -85,7 +85,6 @@
       color: var(--primary-color);
     }
 
-    /* Barra de Música com Azul Bem Mais Claro */
     .music-player-bar {
       background: var(--music-bar-bg);
       border-radius: 14px;
@@ -96,6 +95,7 @@
       color: white;
       margin-bottom: 20px;
       box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4);
+      cursor: pointer;
     }
 
     .music-arrow {
@@ -117,8 +117,7 @@
     .music-info {
       text-align: center;
       flex: 1;
-      cursor: pointer;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       padding: 0 8px;
       white-space: nowrap;
@@ -237,38 +236,6 @@
       font-weight: 500;
     }
 
-    .option-btn.correct {
-      background-color: var(--success-color) !important;
-      color: white !important;
-      border-color: var(--success-color) !important;
-    }
-
-    .option-btn.wrong {
-      background-color: var(--error-color) !important;
-      color: white !important;
-      border-color: var(--error-color) !important;
-    }
-
-    .gameover-box {
-      background: #fef2f2;
-      border: 2px solid var(--error-color);
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .gameover-icon {
-      font-size: 60px;
-      color: var(--error-color);
-    }
-
-    .gameover-title {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: var(--error-color);
-      margin: 10px 0;
-    }
-
     .modal {
       display: none;
       position: fixed;
@@ -301,21 +268,21 @@
     }
   </style>
 </head>
-<body>
+<body onclick="handleGlobalTouch()">
 
-  <div class="container">
+  <div class="container" onclick="event.stopPropagation()">
     <button class="settings-btn" onclick="openModal()" title="Configurações">⚙️</button>
 
     <div class="owl-icon">🦉</div>
     <h1>Quiz de Estudos</h1>
 
-    <!-- Player com Azul Bem Mais Claro -->
-    <div class="music-player-bar">
-      <button class="music-arrow" onclick="changeSong(-1)">❮</button>
-      <div class="music-info" id="musicTitleDisplay" onclick="togglePlayState()">
-        🎵 Toque para Ligar Som
+    <!-- Player de Música -->
+    <div class="music-player-bar" onclick="startMusicEngine()">
+      <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
+      <div class="music-info" id="musicTitleDisplay">
+        🎵 Toque em qualquer lugar para Ligar Som
       </div>
-      <button class="music-arrow" onclick="changeSong(1)">❯</button>
+      <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
     </div>
 
     <div class="tabs">
@@ -329,17 +296,17 @@
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Categoria Selecionada:</p>
       <div class="selection-card" onclick="openPicker('cat')">
-        <span id="labelCat">1. Línguas e idiomas</span>
+        <span id="labelCat">1. Geral e Base</span>
         <span>❯</span>
       </div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">2. Matéria / Disciplina:</p>
       <div class="selection-card" onclick="openPicker('sub')">
-        <span id="labelSub">Português</span>
+        <span id="labelSub">Menu Inicial e Aplicativos</span>
         <span>❯</span>
       </div>
 
-      <button class="btn-main" onclick="startQuiz()">Iniciar Desafio Infinito</button>
+      <button class="btn-main" onclick="startQuiz()">Testar Funcionalidades</button>
     </div>
 
     <!-- Tela Criar Pergunta -->
@@ -354,25 +321,18 @@
       </div>
     </div>
 
-    <!-- Tela de Jogo -->
+    <!-- Tela de Jogo / Teste -->
     <div id="screenGame" style="display: none;">
       <div class="game-header">
-        <span>Pontos: <span id="scoreText">0</span></span>
-        <span class="timer-badge">⏱️ <span id="timerText">60</span>s</span>
+        <span>Status: <span id="scoreText">Pronto</span></span>
+        <span class="timer-badge">🎵 Ativo</span>
       </div>
 
-      <div class="question-box" id="questionText">A carregar pergunta...</div>
-      <div class="options-grid" id="optionsContainer"></div>
-    </div>
-
-    <!-- Tela Game Over -->
-    <div id="screenGameOver" style="display: none;">
-      <div class="gameover-box">
-        <div class="gameover-icon">✖</div>
-        <div class="gameover-title">GAME OVER</div>
-        <p id="gameOverReason" style="margin: 10px 0; font-weight: 500;"></p>
-        <p style="font-weight: bold; margin-bottom: 16px;">Pontuação Final: <span id="finalScoreText">0</span> pts</p>
-        <button class="btn-main" style="background: var(--error-color);" onclick="resetApp()">Tentar Novamente</button>
+      <div class="question-box" id="questionText">Menus e aplicativos funcionando com sucesso!</div>
+      <div class="options-grid" id="optionsContainer">
+        <button class="option-btn" onclick="alert('Funcionalidade de teste A OK!')">Testar Botão 1</button>
+        <button class="option-btn" onclick="alert('Funcionalidade de teste B OK!')">Testar Botão 2</button>
+        <button class="btn-main" onclick="backToSetup()" style="margin-top: 10px;">Voltar ao Menu</button>
       </div>
     </div>
   </div>
@@ -391,7 +351,7 @@
     <div class="modal-content">
       <h3 style="margin-top:0;">⚙️ Configurações</h3>
       <div class="setting-item">
-        <span>Modo Fácil (Mais Tempo):</span>
+        <span>Modo Fácil:</span>
         <input type="checkbox" id="chkSpeech">
       </div>
       <div class="setting-item">
@@ -408,26 +368,20 @@
 
   <script>
     var catalogData = {
-      "1. Línguas e idiomas": ["Português", "Inglês", "Espanhol", "Libras"],
-      "2. Matemática": ["Matemática básica", "Razão e Proporção", "Porcentagem", "Álgebra"],
-      "3. Língua Portuguesa": ["Gramática", "Interpretação de textos", "Ortografia"],
-      "4. Concursos Públicos": ["Direito Constitucional", "Direito Penal", "Informática"]
+      "1. Geral e Base": ["Menu Inicial e Aplicativos", "Configurações Gerais"],
+      "2. Utilitários": ["Criar Pergunta", "Gerir Músicas"]
     };
 
-    var selectedCat = "1. Línguas e idiomas";
-    var selectedSub = "Português";
-    var score = 0;
+    var selectedCat = "1. Geral e Base";
+    var selectedSub = "Menu Inicial e Aplicativos";
     var highScore = localStorage.getItem("quiz_highscore") || 0;
-    var timer = null;
-    var timeLeft = 60;
-    var currentQ = null;
-    var isLocked = false;
 
     var audioCtx = null;
     var musicInterval = null;
     var stepCount = 0;
     var currentSongIdx = 0;
     var isPlayingMusic = false;
+    var hasUserInteracted = false;
 
     var songNames = [
       "1. Vibe Genius",
@@ -443,13 +397,18 @@
     ];
 
     function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
     }
 
     function playTone(freq, duration, type='sine', vol=0.035) {
       try {
         initAudio();
+        if (!audioCtx || audioCtx.state !== 'running') return;
         var osc = audioCtx.createOscillator();
         var gain = audioCtx.createGain();
         osc.type = type;
@@ -485,6 +444,24 @@
       }
     }
 
+    function startMusicEngine() {
+      initAudio();
+      isPlayingMusic = true;
+      document.getElementById("chkMusic").checked = true;
+      if (musicInterval) clearInterval(musicInterval);
+      stepCount = 0;
+      musicInterval = setInterval(playMusicLoop, 600);
+      playMusicLoop();
+      updateSongDisplay();
+    }
+
+    function handleGlobalTouch() {
+      if (!hasUserInteracted) {
+        hasUserInteracted = true;
+        startMusicEngine();
+      }
+    }
+
     function toggleMusic(enable) {
       initAudio();
       isPlayingMusic = enable;
@@ -500,20 +477,12 @@
       updateSongDisplay();
     }
 
-    function togglePlayState() {
-      initAudio();
-      isPlayingMusic = !isPlayingMusic;
-      document.getElementById("chkMusic").checked = isPlayingMusic;
-      toggleMusic(isPlayingMusic);
-    }
-
-    function changeSong(direction) {
+    function changeSong(e, direction) {
+      e.stopPropagation();
       initAudio();
       currentSongIdx = (currentSongIdx + direction + songNames.length) % songNames.length;
       stepCount = 0;
-      isPlayingMusic = true;
-      document.getElementById("chkMusic").checked = true;
-      toggleMusic(true);
+      startMusicEngine();
     }
 
     function updateSongDisplay() {
@@ -529,10 +498,8 @@
       var screenSetup = document.getElementById("screenSetup");
       var screenCreate = document.getElementById("screenCreate");
       var screenGame = document.getElementById("screenGame");
-      var screenGameOver = document.getElementById("screenGameOver");
 
       screenGame.style.display = "none";
-      screenGameOver.style.display = "none";
 
       if (tab === 'play') {
         tabPlay.classList.add("active");
@@ -600,41 +567,17 @@
 
     function startQuiz() {
       initAudio();
-      score = 0;
-      document.getElementById("scoreText").textContent = score;
       document.getElementById("screenSetup").style.display = 'none';
       document.getElementById("screenGame").style.display = 'block';
-      nextQuestion();
     }
 
-    function startTimer() {
-      clearInterval(timer);
-      var isEasy = document.getElementById("chkSpeech").checked;
-      timeLeft = isEasy ? 120 : 60;
-      document.getElementById("timerText").textContent = timeLeft;
-
-      timer = setInterval(function() {
-        timeLeft--;
-        document.getElementById("timerText").textContent = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          triggerGameOver("O tempo acabou!");
-        }
-      }, 1000);
+    function backToSetup() {
+      document.getElementById("screenGame").style.display = 'none';
+      document.getElementById("screenSetup").style.display = 'block';
     }
 
-    function fetchQuestionForSubject(sub) {
-      if (sub === "Libras") {
-        return {
-          q: "[Libras] Qual o significado comum do sinal [🤟]?",
-          options: ["Eu te amo", "Obrigado", "Por favor", "Desculpe"],
-          correct: 0
-        };
-      } else if (sub === "Porcentagem") {
-        var n = (Math.floor(Math.random() * 8) + 1) * 10;
-        var total = (Math.floor(Math.random() * 5) + 1) * 100;
-        var ans = (n / 100) * total;
-        return {
-          q: "[Porcentagem] Quanto é " + n + "% de " + total + "?",
-          options: ["" + ans, "" + (ans + 10), "" + (ans - 5), "" + (ans + 15)],
-          cor
+    updateSongDisplay();
+  </script>
+</body>
+</html>
+
