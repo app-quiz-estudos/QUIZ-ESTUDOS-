@@ -100,7 +100,7 @@
     .success-title { color: var(--success-color); font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
   </style>
 </head>
-<body>
+<body id="pageBody">
 
   <div class="container">
     <button class="settings-btn" onclick="openModal()" title="Configurações">⚙️</button>
@@ -110,7 +110,7 @@
 
     <div class="music-player-bar" onclick="startMusicEngine()">
       <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
-      <div class="music-info" id="musicTitleDisplay">🎵 Toque aqui para ligar o som</div>
+      <div class="music-info" id="musicTitleDisplay">🎵 Toque em qualquer lugar para iniciar</div>
       <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
     </div>
 
@@ -217,6 +217,7 @@
     var stepCount = 0;
     var currentSongIdx = 4;
     var isPlayingMusic = false;
+    var hasUserStarted = false;
 
     var songList = [
       { name: "1. 👻 Terror Sombrio", type: "sawtooth", tempo: 500, baseFreq: 110 },
@@ -274,8 +275,20 @@
       musicInterval = setInterval(playMusicLoop, song.tempo);
       playMusicLoop();
       updateSongDisplay();
-      speakText("Música ativada. Bem-vindo ao Quiz de Estudos.");
+
+      // Dispara a descrição de boas-vindas assim que o usuário toca pela primeira vez na tela
+      if (!hasUserStarted) {
+        hasUserStarted = true;
+        speakText("Bem-vindo ao Quiz de Estudos. Nível selecionado atual: " + document.getElementById("labelNivel").textContent + ". Toque duas vezes no botão Iniciar Simulados para começar.");
+      }
     }
+
+    // Ouvinte global: assim que tocar em qualquer lugar da tela pela primeira vez, destrava o som e a voz
+    document.addEventListener('click', function() {
+      if (!hasUserStarted) {
+        startMusicEngine();
+      }
+    }, { once: true });
 
     function toggleMusic(enable) {
       initAudio();
@@ -458,22 +471,4 @@
         if (isTimerDisabled) return;
         timeLeft--;
         updateTimerDisplay();
-        if (timeLeft <= 0) {
-          clearInterval(currentTimer);
-          triggerGameOver("O seu tempo de 2 minutos esgotou para esta questão!");
-        }
-      }, 1000);
-    }
-
-    function updateTimerDisplay() {
-      if (isTimerDisabled) return;
-      var mins = Math.floor(timeLeft / 60);
-      var secs = timeLeft % 60;
-      document.getElementById("timerBadge").textContent = "⏱️ " + (mins > 0 ? (mins + "m " + secs + "s") : (secs + "s"));
-    }
-
-    function checkAnswer(escolhida, correta) {
-      clearInterval(currentTimer);
-      if (escolhida === correta) {
-        triggerSuccess();
-     
+        if 
