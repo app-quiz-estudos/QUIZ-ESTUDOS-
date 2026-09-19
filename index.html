@@ -1,9 +1,9 @@
 <!-- 
   =============================================================================
   PROJETO: Quiz de Estudos (Aplicativo Web PWA)
-  VERSÃO: 1.2.1 (Base, Navegação, Sintetizador de Áudio e Assinatura Final)
+  VERSÃO: 1.2.2 (Base, Navegação, Sintetizador de Áudio com Pagode Ajustado)
   ATUALIZAÇÃO: Setembro de 2026
-  DESCRIÇÃO: Estrutura principal com 10 músicas customizadas e assinatura completa.
+  DESCRIÇÃO: Estrutura principal com 10 músicas customizadas (pagode com mais suingue).
   =============================================================================
 -->
 <!DOCTYPE html>
@@ -288,7 +288,7 @@
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" id="tabPlay" onclick="switchTab('play')">Jogar</button>
+      <button class="tab-btn active" id="tabPlay" onclick="switchTab('play')">Jogار</button>
       <button class="tab-btn" id="tabCreate" onclick="switchTab('create')">Criar Pergunta</button>
     </div>
 
@@ -384,8 +384,8 @@
       { name: "2. 🦇 Mistério Noturno", id: "terror2" },
       { name: "3. 🌸 Leveza Suave", id: "leveza1" },
       { name: "4. 🍃 Brisa Serena", id: "leveza2" },
-      { name: "5. 🪘 Pagode Raiz", id: "pagode1" },
-      { name: "6. 🥁 Suingue Baiano", id: "pagode2" },
+      { name: "5. 🪘 Pagode Suingado", id: "pagode1" },
+      { name: "6. 🥁 Pagode Raiz Acelerado", id: "pagode2" },
       { name: "7. 🎸 Rock Pesado", id: "rock1" },
       { name: "8. ⚡ Rock Elétrico", id: "rock2" },
       { name: "9. 🎧 Eletrônica Dance", id: "eletronica1" },
@@ -448,18 +448,34 @@
         if (s === 4 || s === 12) playCustomTone(164, 0.4, 'triangle', 0.015);
       }
       else if (songId === "pagode1") {
-        var notes = [196, 164, 220, 174, 196, 246, 220, 196];
-        if (s % 2 === 0) {
-          playCustomTone(notes[(s/2) % notes.length], 0.15, 'triangle', 0.04);
+        // Pagode Suingado: Ritmo sincopado simulando tantã/rebolo e banjo (swing de levada)
+        var melodia = [261, 0, 330, 392, 0, 330, 261, 220];
+        if (s % 2 === 0 && melodia[(s/2) % melodia.length] > 0) {
+          playCustomTone(melodia[(s/2) % melodia.length], 0.18, 'triangle', 0.045);
         }
-        if (s % 4 === 2) playCustomTone(392, 0.08, 'square', 0.02);
+        // Tantã simulado nos tempos fortes e contratempos (suingue)
+        if (s === 0 || s === 6 || s === 10 || s === 14) {
+          playCustomTone(110, 0.12, 'sine', 0.06);
+        }
+        // Pandeiro / Repique simulado no contratempo
+        if (s === 3 || s === 7 || s === 11 || s === 15) {
+          playCustomTone(440, 0.05, 'square', 0.02);
+        }
       } 
       else if (songId === "pagode2") {
-        var notes = [220, 196, 174, 164, 220, 261, 220, 196];
-        if (s % 2 === 1) {
-          playCustomTone(notes[s % notes.length], 0.18, 'triangle', 0.04);
+        // Pagode Raiz Acelerado: Mais balanço e síncope típica de roda de samba/pagode
+        var melodia2 = [330, 0, 392, 440, 392, 330, 294, 330];
+        if (s % 2 === 0 && melodia2[(s/2) % melodia2.length] > 0) {
+          playCustomTone(melodia2[(s/2) % melodia2.length], 0.15, 'sawtooth', 0.035);
         }
-        if (s % 4 === 0) playCustomTone(110, 0.12, 'square', 0.035);
+        // Batida marcada de tantã
+        if (s === 0 || s === 4 || s === 8 || s === 12) {
+          playCustomTone(98, 0.14, 'triangle', 0.06);
+        }
+        // Marcação de repique/pandeiro ligeiro
+        if (s === 2 || s === 6 || s === 10 || s === 14) {
+          playCustomTone(523, 0.04, 'square', 0.025);
+        }
       }
       else if (songId === "rock1") {
         var notes = [146, 146, 174, 196, 146, 130, 146, 220];
@@ -604,23 +620,4 @@
     }
 
     function closePicker() { document.getElementById("pickerModal").style.display = "none"; }
-    function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; }
-    function closeModal() { document.getElementById("settingsModal").style.display = "none"; }
-
-    function startQuiz() {
-      initAudio();
-      document.getElementById("screenSetup").style.display = 'none';
-      document.getElementById("screenGame").style.display = 'block';
-    }
-
-    function backToSetup() {
-      document.getElementById("screenGame").style.display = 'none';
-      document.getElementById("screenSetup").style.display = 'block';
-    }
-
-    updateSongDisplay();
-  </script>
-</body>
-</html>
-<!-- FIM DO CÓDIGO - QUIZ DE ESTUDOS v1.2.1 -->
-
+    function openModal() 
