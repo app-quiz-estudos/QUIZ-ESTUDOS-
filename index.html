@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -12,7 +11,8 @@
       --text-color: #333333;
       --primary-color: #5c56e2;
       --primary-hover: #4a44cc;
-      --accent-color: #ff9f43;
+      --success-color: #28a745;
+      --error-color: #dc3545;
       --font-size: 16px;
     }
 
@@ -22,7 +22,8 @@
       --text-color: #ffffff;
       --primary-color: #ffff00;
       --primary-hover: #cccc00;
-      --accent-color: #00ffff;
+      --success-color: #00ff00;
+      --error-color: #ff0000;
     }
 
     body {
@@ -50,20 +51,6 @@
       box-sizing: border-box;
     }
 
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .owl-icon {
-      font-size: 42px;
-      margin: 0 auto;
-      display: block;
-      text-align: center;
-    }
-
     .settings-btn {
       background: #eef0f5;
       border: none;
@@ -75,6 +62,13 @@
       position: absolute;
       right: 20px;
       top: 20px;
+    }
+
+    .owl-icon {
+      font-size: 42px;
+      margin: 0 auto;
+      display: block;
+      text-align: center;
     }
 
     h1 {
@@ -156,7 +150,6 @@
       background: var(--primary-hover);
     }
 
-    /* Tela de Jogo */
     .game-header {
       display: flex;
       justify-content: space-between;
@@ -194,9 +187,49 @@
       text-align: left;
       font-size: 0.95rem;
       cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
     }
 
-    /* Modal Acessibilidade */
+    .option-btn.correct {
+      background-color: var(--success-color) !important;
+      color: white !important;
+      border-color: var(--success-color) !important;
+    }
+
+    .option-btn.wrong {
+      background-color: var(--error-color) !important;
+      color: white !important;
+      border-color: var(--error-color) !important;
+    }
+
+    .gameover-box {
+      background: #fff0f0;
+      border: 2px solid var(--error-color);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .gameover-icon {
+      font-size: 64px;
+      color: var(--error-color);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .gameover-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--error-color);
+      margin-bottom: 12px;
+    }
+
+    .gameover-msg {
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -243,18 +276,12 @@
 
       <div class="form-group">
         <label for="selectCategory">1. Categoria Principal:</label>
-        <select id="selectCategory">
-          <option value="enem">ENEM / Vestibulares</option>
-          <option value="concursos">Concursos Públicos</option>
-          <option value="geral">Conhecimentos Gerais</option>
-        </select>
+        <select id="selectCategory"></select>
       </div>
 
       <div class="form-group">
         <label for="selectSubject">2. Matéria / Disciplina:</label>
-        <select id="selectSubject">
-          <!-- Preenchido via JS -->
-        </select>
+        <select id="selectSubject"></select>
       </div>
 
       <button class="btn-main" id="btnStart">Iniciar Desafio Infinito</button>
@@ -269,8 +296,17 @@
 
       <div class="question-box" id="questionText">A carregar pergunta...</div>
 
-      <div class="options-grid" id="optionsContainer">
-        <!-- Botões de opções inseridos dinamicamente -->
+      <div class="options-grid" id="optionsContainer"></div>
+    </div>
+
+    <!-- Tela de Game Over -->
+    <div id="screenGameOver" style="display: none;">
+      <div class="gameover-box">
+        <div class="gameover-icon">✖</div>
+        <div class="gameover-title">GAME OVER</div>
+        <div class="gameover-msg" id="gameOverReason">Você errou a resposta!</div>
+        <p style="font-weight: bold; margin-bottom: 16px;">Pontuação Final: <span id="finalScoreText">0</span> pts</p>
+        <button class="btn-main" id="btnRestart" style="background: var(--error-color);">Tentar Novamente</button>
       </div>
     </div>
 
@@ -331,37 +367,117 @@
   <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-      // Dados de Matérias
-      const subjectsMap = {
-        enem: ["Português", "Matemática", "História do Brasil", "Geografia de Minas Gerais", "Biologia", "Química", "Física"],
-        concursos: ["Língua Portuguesa", "Direito Constitucional", "Raciocínio Lógico", "Informática", "Geografia de Minas Gerais"],
-        geral: ["Conhecimentos Gerais", "Atualidades", "Geografia", "História"]
+      // Lista Completa de Categorias e Matérias
+      const catalogData = {
+        "Ensino Fundamental": ["Matemática Básica", "Língua Portuguesa", "Ciências", "História Geral", "Geografia do Brasil"],
+        "Ensino Médio": ["Álgebra e Geometria", "Gramática e Literatura", "Física", "Química", "Biologia", "História Geral", "Geografia do Brasil"],
+        "ENEM e Vestibulares": ["Português", "Matemática", "História do Brasil", "Geografia de Minas Gerais", "Biologia", "Química", "Física"],
+        "Concursos Públicos": ["Língua Portuguesa", "Direito Constitucional", "Direito Penal", "Raciocínio Lógico", "Informática", "Geografia de Minas Gerais"],
+        "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Libras"],
+        "Matemática e Exatas": ["Aritmética", "Matemática Financeira", "Álgebra", "Geometria Plana", "Estatística", "Lógica Matemática"],
+        "Ciências da Natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética"],
+        "Ciências Humanas e Sociais": ["Filosofia", "Sociologia", "Psicologia", "Economia", "História Antiga"],
+        "Informática e Tecnologia": ["Informática Básica", "Redes e Segurança", "Programação", "Inteligência Artificial"],
+        "Estudos em Geral": ["Conhecimentos Gerais", "Atualidades", "Cultura Geral", "Raciocínio Lógico"]
       };
 
-      // Banco de Perguntas
       const questionBank = [
-        { cat: "enem", sub: "Geografia de Minas Gerais", q: "Qual é a capital do estado de Minas Gerais?", options: ["Belo Horizonte", "Uberlândia", "Ouro Preto", "Juiz de Fora"], correct: 0 },
-        { cat: "enem", sub: "Geografia de Minas Gerais", q: "Qual o principal bioma presente no norte de Minas Gerais?", options: ["Cerrado / Caatinga", "Mata Atlântica", "Pampa", "Pantanal"], correct: 0 },
-        { cat: "enem", sub: "História do Brasil", q: "Em que ano ocorreu a Proclamação da República no Brasil?", options: ["1889", "1500", "1822", "1988"], correct: 0 },
-        { cat: "enem", sub: "Matemática", q: "Qual é o resultado de 12 x 12?", options: ["144", "124", "154", "134"], correct: 0 },
-        { cat: "enem", sub: "Português", q: "Qual palavra é um substantivo abstrato?", options: ["Saudade", "Mesa", "Cadeira", "Livro"], correct: 0 }
+        { sub: "Geografia de Minas Gerais", q: "Qual é a capital do estado de Minas Gerais?", options: ["Belo Horizonte", "Uberlândia", "Ouro Preto", "Juiz de Fora"], correct: 0 },
+        { sub: "Geografia de Minas Gerais", q: "Qual o principal bioma presente no norte de Minas Gerais?", options: ["Cerrado / Caatinga", "Mata Atlântica", "Pampa", "Pantanal"], correct: 0 },
+        { sub: "Matemática Básica", q: "Quanto é 7 x 8?", options: ["56", "54", "48", "64"], correct: 0 },
+        { sub: "Língua Portuguesa", q: "Qual o plural de 'cidadão'?", options: ["Cidadãos", "Cidadões", "Cidadães", "Cidadans"], correct: 0 },
+        { sub: "Física", q: "Qual a aceleração da gravidade aproximada na Terra?", options: ["9,8 m/s²", "5,0 m/s²", "12,4 m/s²", "1,6 m/s²"], correct: 0 },
+        { sub: "Direito Constitucional", q: "Qual o texto supremo do ordenamento jurídico no Brasil?", options: ["Constituição Federal de 1988", "Código Civil", "Código Penal", "CLT"], correct: 0 },
+        { sub: "Inglês", q: "Como se traduz a palavra 'Book' para o português?", options: ["Livro", "Caderno", "Caneta", "Mesa"], correct: 0 }
       ];
 
-      // Estado do App
       let currentScore = 0;
       let recordScore = parseInt(localStorage.getItem("quiz_record") || "0");
       let timer = 60;
       let timerInterval = null;
       let currentQuestion = null;
-      let customQuestions = JSON.parse(localStorage.getItem("custom_questions") || "[]");
+      let isAnswerLocked = false;
 
-      // Elementos do DOM
+      // Web Audio API
+      let audioCtx = null;
+      let musicOsc = null;
+      let musicGain = null;
+      let isMusicPlaying = false;
+
+      function initAudio() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      }
+
+      function playSound(freq, type, duration) {
+        try {
+          initAudio();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch(e){}
+      }
+
+      function playCorrectSound() {
+        playSound(523.25, 'triangle', 0.15);
+        setTimeout(() => playSound(659.25, 'triangle', 0.25), 150);
+      }
+
+      function playWrongSound() {
+        playSound(180, 'sawtooth', 0.4);
+      }
+
+      function startContinuousMusic() {
+        initAudio();
+        if (isMusicPlaying) return;
+        
+        try {
+          musicOsc = audioCtx.createOscillator();
+          musicGain = audioCtx.createGain();
+          
+          musicOsc.type = 'sine';
+          musicOsc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          
+          musicGain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+          
+          musicOsc.connect(musicGain);
+          musicGain.connect(audioCtx.destination);
+          
+          musicOsc.start();
+          isMusicPlaying = true;
+        } catch(e){}
+      }
+
+      function stopContinuousMusic() {
+        if (musicOsc) {
+          try {
+            musicOsc.stop();
+            musicOsc.disconnect();
+          } catch(e){}
+          musicOsc = null;
+        }
+        isMusicPlaying = false;
+      }
+
+      // Elementos DOM
       const selectCategory = document.getElementById("selectCategory");
       const selectSubject = document.getElementById("selectSubject");
       const recordDisplay = document.getElementById("recordDisplay");
       const btnStart = document.getElementById("btnStart");
       const screenSetup = document.getElementById("screenSetup");
       const screenGame = document.getElementById("screenGame");
+      const screenGameOver = document.getElementById("screenGameOver");
       const screenCreate = document.getElementById("screenCreate");
       const tabPlay = document.getElementById("tabPlay");
       const tabCreate = document.getElementById("tabCreate");
@@ -369,12 +485,25 @@
       const optionsContainer = document.getElementById("optionsContainer");
       const scoreText = document.getElementById("scoreText");
       const timerText = document.getElementById("timerText");
+      const finalScoreText = document.getElementById("finalScoreText");
+      const gameOverReason = document.getElementById("gameOverReason");
+      const btnRestart = document.getElementById("btnRestart");
 
-      // Atualizar lista de Matérias
+      function populateCategories() {
+        selectCategory.innerHTML = "";
+        for (let cat in catalogData) {
+          const opt = document.createElement("option");
+          opt.value = cat;
+          opt.textContent = cat;
+          selectCategory.appendChild(opt);
+        }
+        updateSubjects();
+      }
+
       function updateSubjects() {
         const cat = selectCategory.value;
         selectSubject.innerHTML = "";
-        const list = subjectsMap[cat] || [];
+        const list = catalogData[cat] || [];
         list.forEach(sub => {
           const opt = document.createElement("option");
           opt.value = sub;
@@ -384,17 +513,17 @@
       }
 
       selectCategory.addEventListener("change", updateSubjects);
-      updateSubjects(); // Executa no carregamento inicial
+      populateCategories();
 
       recordDisplay.textContent = `🏆 Seu Recorde: ${recordScore} pts`;
 
-      // Navegação por Abas
       tabPlay.addEventListener("click", () => {
         tabPlay.classList.add("active");
         tabCreate.classList.remove("active");
         screenSetup.style.display = "block";
         screenCreate.style.display = "none";
         screenGame.style.display = "none";
+        screenGameOver.style.display = "none";
       });
 
       tabCreate.addEventListener("click", () => {
@@ -403,9 +532,9 @@
         screenSetup.style.display = "none";
         screenCreate.style.display = "block";
         screenGame.style.display = "none";
+        screenGameOver.style.display = "none";
       });
 
-      // Função de Falar (Acessibilidade)
       function speak(text) {
         if (document.getElementById("chkSpeech").checked && 'speechSynthesis' in window) {
           window.speechSynthesis.cancel();
@@ -415,13 +544,19 @@
         }
       }
 
-      // Iniciar Jogo
       btnStart.addEventListener("click", () => {
+        initAudio();
         currentScore = 0;
         scoreText.textContent = currentScore;
         screenSetup.style.display = "none";
+        screenGameOver.style.display = "none";
         screenGame.style.display = "block";
         nextQuestion();
+      });
+
+      btnRestart.addEventListener("click", () => {
+        screenGameOver.style.display = "none";
+        screenSetup.style.display = "block";
       });
 
       function startTimer() {
@@ -433,36 +568,28 @@
           timerText.textContent = timer;
           if (timer <= 0) {
             clearInterval(timerInterval);
-            gameOver("Tempo esgotado!");
+            triggerGameOver("O tempo acabou!");
           }
         }, 1000);
       }
 
       function nextQuestion() {
+        isAnswerLocked = false;
         startTimer();
-        const cat = selectCategory.value;
         const sub = selectSubject.value;
 
-        // Filtrar perguntas
         let available = questionBank.filter(q => q.sub === sub);
+        
         if (available.length === 0) {
-          // Gerador Dinâmico se não houver no banco
-          currentQuestion = {
-            q: `Quanto é ${Math.floor(Math.random()*20 + 1)} + ${Math.floor(Math.random()*20 + 1)}?`,
-            options: ["0", "0", "0", "0"],
-            correct: 0
-          };
-          const num1 = Math.floor(Math.random()*20 + 1);
-          const num2 = Math.floor(Math.random()*20 + 1);
+          const num1 = Math.floor(Math.random()*15 + 1);
+          const num2 = Math.floor(Math.random()*15 + 1);
           const ans = num1 + num2;
-          currentQuestion.q = `Qual é o resultado de ${num1} + ${num2}?`;
-          currentQuestion.options = [
-            `${ans}`,
-            `${ans + 2}`,
-            `${ans - 1}`,
-            `${ans + 5}`
-          ].sort(() => Math.random() - 0.5);
-          currentQuestion.correct = currentQuestion.options.indexOf(`${ans}`);
+          const opts = [`${ans}`, `${ans + 2}`, `${ans - 1}`, `${ans + 4}`].sort(() => Math.random() - 0.5);
+          currentQuestion = {
+            q: `[${sub}] Qual o resultado de ${num1} + ${num2}?`,
+            options: opts,
+            correct: opts.indexOf(`${ans}`)
+          };
         } else {
           currentQuestion = available[Math.floor(Math.random() * available.length)];
         }
@@ -475,91 +602,30 @@
           const btn = document.createElement("button");
           btn.className = "option-btn";
           btn.textContent = opt;
-          btn.onclick = () => checkAnswer(idx);
+          btn.onclick = () => checkAnswer(idx, btn);
           optionsContainer.appendChild(btn);
         });
       }
 
-      function checkAnswer(selectedIdx) {
+      function checkAnswer(selectedIdx, btnElement) {
+        if (isAnswerLocked) return;
+        isAnswerLocked = true;
         clearInterval(timerInterval);
+
+        const allButtons = optionsContainer.querySelectorAll(".option-btn");
+
         if (selectedIdx === currentQuestion.correct) {
+          btnElement.classList.add("correct");
+          playCorrectSound();
           currentScore += 10;
           scoreText.textContent = currentScore;
+          
           if (currentScore > recordScore) {
             recordScore = currentScore;
             localStorage.setItem("quiz_record", recordScore);
             recordDisplay.textContent = `🏆 Seu Recorde: ${recordScore} pts`;
           }
-          speak("Resposta correta!");
-          nextQuestion();
-        } else {
-          gameOver("Resposta incorreta!");
-        }
-      }
 
-      function gameOver(reason) {
-        speak(`Fim de jogo. ${reason}`);
-        alert(`GAME OVER! ${reason}\nSua pontuação: ${currentScore} pontos.`);
-        screenGame.style.display = "none";
-        screenSetup.style.display = "block";
-      }
-
-      // Guardar Pergunta Personalizada
-      document.getElementById("btnSaveCustom").addEventListener("click", () => {
-        const qText = document.getElementById("customQText").value;
-        const correct = document.getElementById("customCorrect").value;
-        const w1 = document.getElementById("customWrong1").value;
-        const w2 = document.getElementById("customWrong2").value;
-        const w3 = document.getElementById("customWrong3").value;
-
-        if (!qText || !correct || !w1 || !w2 || !w3) {
-          alert("Por favor, preencha todos os campos!");
-          return;
-        }
-
-        const newQ = {
-          cat: "enem",
-          sub: "Geografia de Minas Gerais",
-          q: qText,
-          options: [correct, w1, w2, w3].sort(() => Math.random() - 0.5),
-          correct: 0
-        };
-        newQ.correct = newQ.options.indexOf(correct);
-
-        questionBank.push(newQ);
-        alert("Pergunta guardada com sucesso!");
-        
-        document.getElementById("customQText").value = "";
-        document.getElementById("customCorrect").value = "";
-        document.getElementById("customWrong1").value = "";
-        document.getElementById("customWrong2").value = "";
-        document.getElementById("customWrong3").value = "";
-      });
-
-      // Configurações e Acessibilidade
-      const btnSettings = document.getElementById("btnSettings");
-      const settingsModal = document.getElementById("settingsModal");
-      const btnCloseSettings = document.getElementById("btnCloseSettings");
-      const chkContrast = document.getElementById("chkContrast");
-      const selectFontSize = document.getElementById("selectFontSize");
-
-      btnSettings.onclick = () => settingsModal.style.display = "flex";
-      btnCloseSettings.onclick = () => settingsModal.style.display = "none";
-
-      chkContrast.addEventListener("change", (e) => {
-        if (e.target.checked) {
-          document.body.classList.add("high-contrast");
-        } else {
-          document.body.classList.remove("high-contrast");
-        }
-      });
-
-      selectFontSize.addEventListener("change", (e) => {
-        document.documentElement.style.setProperty('--font-size', e.target.value);
-      });
-
-    });
-  </script>
-</body>
-</html>
-
+          setTimeout(() => {
+            nextQuestion();
+          }, 
