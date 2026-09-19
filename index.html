@@ -13,7 +13,6 @@
       --card-bg: #ffffff;
       --text-color: #2d3748;
       --primary-color: #2563eb;
-      --music-bar-bg: #60a5fa;
       --border-color: #e2e8f0;
       --badge-bg: #eff6ff;
       --badge-color: #1e40af;
@@ -32,21 +31,8 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; max-width: 440px; padding: 24px 20px;
       position: relative; box-sizing: border-box;
     }
-    .settings-btn {
-      background: #e2e8f0; border: none; border-radius: 50%; width: 40px; height: 40px;
-      font-size: 20px; cursor: pointer; position: absolute; right: 20px; top: 20px;
-      display: flex; align-items: center; justify-content: center; z-index: 10;
-    }
     .owl-icon { font-size: 48px; text-align: center; margin-bottom: 2px; }
-    h1 { text-align: center; margin: 0 0 16px 0; font-size: 1.5rem; color: var(--primary-color); }
-    
-    .music-player-bar {
-      background: var(--music-bar-bg); border-radius: 14px; padding: 12px 16px;
-      display: flex; align-items: center; justify-content: space-between; color: white; margin-bottom: 20px;
-      cursor: pointer; font-weight: bold; font-size: 0.9rem;
-    }
-    .music-arrow { background: none; border: none; color: inherit; font-size: 22px; font-weight: bold; cursor: pointer; padding: 5px 10px; }
-    .music-info { text-align: center; flex: 1; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    h1 { text-align: center; margin: 0 0 20px 0; font-size: 1.5rem; color: var(--primary-color); }
     
     .selection-card {
       background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 12px;
@@ -73,7 +59,7 @@
     .picker-item { padding: 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; font-weight: bold; }
     .picker-item:hover { background: #f8fafc; }
 
-    /* Estilos da Tela de Quiz Estável */
+    /* Estilos do Quiz */
     .screen { display: none; }
     .screen.active { display: block; }
     .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.85rem; font-weight: bold; opacity: 0.8; }
@@ -93,46 +79,37 @@
 <body>
 
   <div class="container">
-    <button class="settings-btn" id="btnSettings" aria-label="Abrir Configurações">⚙️</button>
-
     <div class="owl-icon" aria-hidden="true">🦉</div>
     <h1>Quiz Multidisciplinar</h1>
-
-    <!-- Player de Música -->
-    <div class="music-player-bar" id="musicBar" aria-label="Barra de Música. Toque para ligar ou alternar trilha">
-      <button class="music-arrow" id="musicPrev" aria-label="Música anterior">❮</button>
-      <div class="music-info" id="musicTitleDisplay">🎵 Música de Fundo</div>
-      <button class="music-arrow" id="musicNext" aria-label="Próxima música">❯</button>
-    </div>
 
     <!-- Tela Inicial / Setup -->
     <div id="screenSetup" class="screen active">
       <p style="font-weight: bold; margin-bottom: 6px;">1. Grande Área:</p>
-      <div class="selection-card" id="cardArea" aria-label="Selecionar Grande Área">
+      <div class="selection-card" id="cardArea">
         <span id="labelArea">Matemática</span>
-        <span aria-hidden="true">❯</span>
+        <span>❯</span>
       </div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">2. Subdisciplina Específica:</p>
-      <div class="selection-card" id="cardSub" aria-label="Selecionar Subdisciplina">
+      <div class="selection-card" id="cardSub">
         <span id="labelSub">Matemática básica</span>
-        <span aria-hidden="true">❯</span>
+        <span>❯</span>
       </div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">3. Nível de Ensino:</p>
-      <div class="selection-card" id="cardNivel" aria-label="Selecionar Nível de Ensino">
+      <div class="selection-card" id="cardNivel">
         <span id="labelNivel">Ensino Fundamental</span>
-        <span aria-hidden="true">❯</span>
+        <span>❯</span>
       </div>
 
-      <button class="btn-main" id="btnStartQuiz" aria-label="Iniciar Simulados">Iniciar Simulados</button>
+      <button class="btn-main" id="btnStartQuiz">Iniciar Simulados</button>
 
-      <div class="accessibility-footer-badge" aria-label="Leitor de Tela Detectado. Modo Adaptado Ativo.">
+      <div class="accessibility-footer-badge">
         <span>♿</span> <span>Leitor de Tela Detectado (Modo Adaptado Ativo)</span>
       </div>
     </div>
 
-    <!-- Tela de Execução do Quiz (Simulador de 100 Questões) -->
+    <!-- Tela de Execução do Quiz (100 Questões) -->
     <div id="screenQuiz" class="screen">
       <div class="quiz-header">
         <span id="quizSubjectTag">Matemática / Básica</span>
@@ -146,23 +123,12 @@
     </div>
   </div>
 
-  <!-- Modais -->
-  <div class="modal" id="pickerModal" role="dialog" aria-modal="true">
+  <!-- Modal de Seleção -->
+  <div class="modal" id="pickerModal">
     <div class="modal-content">
       <h3 id="pickerTitle" style="margin-top:0;">Selecione</h3>
       <div class="picker-list" id="pickerContainer"></div>
-      <button class="btn-main" id="btnClosePicker" style="margin-top:15px;" aria-label="Fechar seletor">Fechar</button>
-    </div>
-  </div>
-
-  <div class="modal" id="settingsModal" role="dialog" aria-modal="true">
-    <div class="modal-content">
-      <h3 style="margin-top:0;">⚙️ Configurações</h3>
-      <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Música de Fundo:</span>
-        <input type="checkbox" id="chkMusic" checked aria-label="Ligar ou desligar música de fundo" style="width: 20px; height: 20px; cursor: pointer;">
-      </div>
-      <button class="btn-main" id="btnCloseSettings" aria-label="Fechar configurações">Fechar</button>
+      <button class="btn-main" id="btnClosePicker" style="margin-top:15px;">Fechar</button>
     </div>
   </div>
 
@@ -203,120 +169,13 @@
       let selectedLevel = "Ensino Fundamental";
       let questaoAtualIndex = 0;
 
-      let audioCtx = null;
-      let musicInterval = null;
-      let stepCount = 0;
-      let currentSongIdx = 4;
-      let isPlayingMusic = false;
-      let hasUserStarted = false;
-
-      const songList = [
-        { name: "1. 👻 Terror Sombrio", type: "sawtooth", tempo: 500, baseFreq: 110 },
-        { name: "2. 🦇 Mistério Noturno", type: "sine", tempo: 600, baseFreq: 146 },
-        { name: "3. 🌸 Leveza Suave", type: "triangle", tempo: 400, baseFreq: 330 },
-        { name: "4. 🍃 Brisa Serena", type: "sine", tempo: 450, baseFreq: 261 },
-        { name: "5. 🪘 Pagode Suingado", type: "triangle", tempo: 320, baseFreq: 220 },
-        { name: "6. 🥁 Pagode Raiz", type: "square", tempo: 220, baseFreq: 196 }
-      ];
-
-      function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-      }
-
-      function playCustomTone(freq, duration, type='sine', vol=0.04) {
-        try {
-          initAudio();
-          if (!audioCtx || audioCtx.state !== 'running') return;
-          let osc = audioCtx.createOscillator();
-          let gain = audioCtx.createGain();
-          osc.type = type;
-          osc.frequency.value = freq;
-          gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start();
-          osc.stop(audioCtx.currentTime + duration);
-        } catch(e){}
-      }
-
-      function playMusicLoop() {
-        let chk = document.getElementById("chkMusic");
-        if (!isPlayingMusic || !chk || !chk.checked) return;
-        let song = songList[currentSongIdx];
-        let s = stepCount % 16;
-        let melodia = [song.baseFreq, 0, song.baseFreq * 1.25, song.baseFreq * 1.5, 0, song.baseFreq * 1.25, song.baseFreq, song.baseFreq * 0.8];
-        if (s % 2 === 0 && melodia[(s/2) % melodia.length] > 0) {
-          playCustomTone(melodia[(s/2) % melodia.length], 0.18, song.type, 0.045);
-        }
-        if (s === 0 || s === 8) playCustomTone(song.baseFreq * 0.5, 0.15, 'sine', 0.06);
-        stepCount = (stepCount + 1) % 32;
-      }
-
-      function startMusicEngine() {
-        initAudio();
-        isPlayingMusic = true;
-        let chk = document.getElementById("chkMusic");
-        if (chk) chk.checked = true;
-        let song = songList[currentSongIdx];
-        if (musicInterval) clearInterval(musicInterval);
-        stepCount = 0;
-        musicInterval = setInterval(playMusicLoop, song.tempo);
-        playMusicLoop();
-        updateSongDisplay();
-      }
-
-      function updateSongDisplay() {
-        let chk = document.getElementById("chkMusic");
-        let isChecked = chk ? chk.checked : true;
-        let el = document.getElementById("musicTitleDisplay");
-        if (el) el.textContent = (isPlayingMusic && isChecked ? "▶ " : "⏸ ") + songList[currentSongIdx].name;
-      }
-
-      document.addEventListener('click', function() {
-        if (!hasUserStarted) {
-          hasUserStarted = true;
-          startMusicEngine();
-        }
-      }, { once: true });
-
-      document.getElementById("musicBar").onclick = function() { startMusicEngine(); };
-      document.getElementById("musicPrev").onclick = function(e) {
-        e.stopPropagation();
-        initAudio();
-        currentSongIdx = (currentSongIdx - 1 + songList.length) % songList.length;
-        startMusicEngine();
-      };
-      document.getElementById("musicNext").onclick = function(e) {
-        e.stopPropagation();
-        initAudio();
-        currentSongIdx = (currentSongIdx + 1) % songList.length;
-        startMusicEngine();
-      };
-
-      document.getElementById("chkMusic").onchange = function(e) {
-        initAudio();
-        isPlayingMusic = e.target.checked;
-        if (isPlayingMusic) {
-          if (musicInterval) clearInterval(musicInterval);
-          musicInterval = setInterval(playMusicLoop, songList[currentSongIdx].tempo);
-          playMusicLoop();
-        } else {
-          clearInterval(musicInterval);
-        }
-        updateSongDisplay();
-      };
-
       const modal = document.getElementById("pickerModal");
       const pickerTitle = document.getElementById("pickerTitle");
       const pickerContainer = document.getElementById("pickerContainer");
 
       document.getElementById("cardArea").onclick = function() {
-        initAudio();
         pickerTitle.textContent = "Selecione a Grande Área";
         pickerContainer.innerHTML = "";
-
         Object.keys(baseDisciplinas).forEach(function(area) {
           let item = document.createElement("div");
           item.className = "picker-item";
@@ -335,10 +194,8 @@
       };
 
       document.getElementById("cardSub").onclick = function() {
-        initAudio();
         pickerTitle.textContent = "Selecione a Subdisciplina";
         pickerContainer.innerHTML = "";
-
         let subs = baseDisciplinas[selectedArea] || ["Geral"];
         subs.forEach(function(sub) {
           let item = document.createElement("div");
@@ -355,10 +212,8 @@
       };
 
       document.getElementById("cardNivel").onclick = function() {
-        initAudio();
         pickerTitle.textContent = "Selecione o Nível";
         pickerContainer.innerHTML = "";
-
         niveisDisponíveis.forEach(function(nivel) {
           let item = document.createElement("div");
           item.className = "picker-item";
@@ -377,20 +232,80 @@
         modal.style.display = "none";
       };
 
-      document.getElementById("btnSettings").onclick = function() {
-        initAudio();
-        document.getElementById("settingsModal").style.display = "flex";
-      };
-
-      document.getElementById("btnCloseSettings").onclick = function() {
-        document.getElementById("settingsModal").style.display = "none";
-      };
-
-      // Motor Estável de 100 Questões por Matéria Selecionada
       function gerarQuestao100(sub, nivel, index) {
         let num = index + 1;
         return {
           enunciado: `[Questão ${num}/100] Avalie os conceitos fundamentais de ${sub} (${nivel}) referentes ao item ${num}:`,
           opcoes: [
             `Aplica-se diretamente aos princípios normativos e teóricos de ${sub}.`,
-            `Trata-se de uma exceção sem validade prática para este nível
+            `Trata-se de uma exceção sem validade prática para este nível.`,
+            `Corresponde a um método obsoleto superado pelas diretrizes atuais.`,
+            `Não possui relevância nos manuais acadêmicos de ${nivel}.`
+          ].sort(() => Math.random() - 0.5),
+          correta: `Aplica-se diretamente aos princípios normativos e teóricos de ${sub}.`,
+          explicacao: `Esta é a resposta correta de acordo com os padrões exigidos em ${sub}.`
+        };
+      }
+
+      function carregarQuiz() {
+        document.getElementById("quizSubjectTag").textContent = `${selectedArea} > ${selectedSub}`;
+        document.getElementById("quizCounter").textContent = `Questão ${questaoAtualIndex + 1}/100`;
+
+        let q = gerarQuestao100(selectedSub, selectedLevel, questaoAtualIndex);
+        document.getElementById("questionText").textContent = q.enunciado;
+
+        let optContainer = document.getElementById("optionsContainer");
+        optContainer.innerHTML = "";
+
+        let feedbackBox = document.getElementById("feedbackBox");
+        feedbackBox.style.display = "none";
+        feedbackBox.className = "feedback-box";
+        document.getElementById("btnNextQuestion").style.display = "none";
+
+        q.opcoes.forEach(function(textoOpcao) {
+          let btn = document.createElement("button");
+          btn.className = "quiz-option";
+          btn.textContent = textoOpcao;
+          btn.onclick = function() {
+            let todosBotoes = optContainer.querySelectorAll(".quiz-option");
+            todosBotoes.forEach(b => b.disabled = true);
+
+            if (textoOpcao === q.correta) {
+              btn.classList.add("correct");
+              feedbackBox.textContent = "✔ Resposta Correta! " + q.explicacao;
+              feedbackBox.className = "feedback-box correct";
+            } else {
+              btn.classList.add("incorrect");
+              todosBotoes.forEach(b => {
+                if (b.textContent === q.correta) b.classList.add("correct");
+              });
+              feedbackBox.textContent = "✘ Resposta Incorreta. " + q.explicacao;
+              feedbackBox.className = "feedback-box incorrect";
+            }
+            feedbackBox.style.display = "block";
+            document.getElementById("btnNextQuestion").style.display = "block";
+          };
+          optContainer.appendChild(btn);
+        });
+      }
+
+      document.getElementById("btnStartQuiz").onclick = function() {
+        questaoAtualIndex = 0;
+        document.getElementById("screenSetup").classList.remove("active");
+        document.getElementById("screenQuiz").classList.add("active");
+        carregarQuiz();
+      };
+
+      document.getElementById("btnNextQuestion").onclick = function() {
+        questaoAtualIndex = (questaoAtualIndex + 1) % 100;
+        carregarQuiz();
+      };
+
+      document.getElementById("btnBackSetup").onclick = function() {
+        document.getElementById("screenQuiz").classList.remove("active");
+        document.getElementById("screenSetup").classList.add("active");
+      };
+    });
+  </script>
+</body>
+</html>
