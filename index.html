@@ -41,13 +41,14 @@
       display: flex; align-items: center; justify-content: space-between; color: white; margin-bottom: 20px;
       cursor: pointer; font-weight: bold; font-size: 0.9rem;
     }
-    .music-arrow { background: none; border: none; color: white; font-size: 22px; font-weight: bold; cursor: pointer; }
+    .music-arrow { background: none; border: none; color: white; font-size: 22px; font-weight: bold; cursor: pointer; padding: 5px 10px; }
     .music-info { text-align: center; flex: 1; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .selection-card {
       background: var(--card-bg); border: 2px solid #e2e8f0; border-radius: 12px;
       padding: 14px 16px; margin-bottom: 12px; cursor: pointer; display: flex;
       justify-content: space-between; align-items: center; font-weight: bold;
     }
+    .selection-card:active { background: #f1f5f9; }
     .btn-main {
       width: 100%; padding: 15px; background: var(--primary-color); color: white;
       border: none; border-radius: 10px; font-size: 1.05rem; font-weight: bold; cursor: pointer;
@@ -78,6 +79,8 @@
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
     .modal-content { background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 350px; text-align: center; }
     .picker-list { max-height: 280px; overflow-y: auto; margin-top: 10px; text-align: left; }
+    .picker-item { padding: 12px; border-bottom: 1px solid #e2e8f0; cursor: pointer; font-weight: bold; }
+    .picker-item:hover { background: #f8fafc; }
     .gameover-box { background: #fef2f2; border: 2px solid var(--error-color); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px; }
     .gameover-title { color: var(--error-color); font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
     .success-box { background: #ecfdf5; border: 2px solid var(--success-color); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px; }
@@ -173,7 +176,7 @@
     <div class="modal-content">
       <h3 id="pickerTitle" style="margin-top:0;">Selecione</h3>
       <div class="picker-list" id="pickerContainer"></div>
-      <button class="btn-main" onclick="closePicker()" aria-label="Fechar seletor">Fechar</button>
+      <button class="btn-main" onclick="closePicker()" aria-label="Fechar seletor" style="margin-top:15px;">Fechar</button>
     </div>
   </div>
 
@@ -332,11 +335,10 @@
 
       Object.keys(baseDisciplinas).forEach(function(area) {
         var item = document.createElement("div");
-        item.className = "selection-card";
+        item.className = "picker-item";
         item.textContent = area;
         item.setAttribute("aria-label", "Selecionar área " + area);
-        item.onclick = function(e) {
-          e.stopPropagation();
+        item.onclick = function() {
           selectedArea = area;
           document.getElementById("labelArea").textContent = area;
           var subs = baseDisciplinas[area];
@@ -359,11 +361,10 @@
       var subs = baseDisciplinas[selectedArea] || ["Geral"];
       subs.forEach(function(sub) {
         var item = document.createElement("div");
-        item.className = "selection-card";
+        item.className = "picker-item";
         item.textContent = sub;
         item.setAttribute("aria-label", "Selecionar subdisciplina " + sub);
-        item.onclick = function(e) {
-          e.stopPropagation();
+        item.onclick = function() {
           selectedSub = sub;
           document.getElementById("labelSub").textContent = sub;
           closePicker();
@@ -376,9 +377,4 @@
     function openLevelPicker() {
       initAudio();
       var modal = document.getElementById("pickerModal");
-      document.getElementById("pickerTitle").textContent = "Selecione o Nível";
-      var container = document.getElementById("pickerContainer");
-      container.innerHTML = "";
-
-      niveisDisponíveis.forEach(function(nivel) {
-        var it
+      document.getElementById("pickerTitle").textContent = "Sel
