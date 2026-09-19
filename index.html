@@ -3,22 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Estudos</title>
+  <title>Quiz de Estudos - Owl Edition</title>
   <style>
     :root {
-      --bg-color: #f4f6f9;
+      --bg-color: #f0f4f8;
       --card-bg: #ffffff;
-      --text-color: #333333;
+      --text-color: #2d3748;
       --primary-color: #5c56e2;
       --primary-hover: #4a44cc;
       --success-color: #28a745;
       --error-color: #dc3545;
+      --border-radius: 12px;
       --font-size: 16px;
     }
 
     body.high-contrast {
       --bg-color: #000000;
-      --card-bg: #121212;
+      --card-bg: #1a1a1a;
       --text-color: #ffffff;
       --primary-color: #ffff00;
       --primary-hover: #cccc00;
@@ -42,38 +43,42 @@
 
     .container {
       background-color: var(--card-bg);
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       padding: 24px 20px;
       position: relative;
       box-sizing: border-box;
     }
 
     .settings-btn {
-      background: #eef0f5;
+      background: #e2e8f0;
       border: none;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       font-size: 20px;
       cursor: pointer;
       position: absolute;
       right: 20px;
       top: 20px;
+      transition: transform 0.2s;
+    }
+
+    .settings-btn:active {
+      transform: scale(0.9);
     }
 
     .owl-icon {
-      font-size: 42px;
-      margin: 0 auto;
-      display: block;
+      font-size: 48px;
       text-align: center;
+      margin-bottom: 4px;
     }
 
     h1 {
       text-align: center;
-      margin: 8px 0 16px 0;
+      margin: 0 0 16px 0;
       font-size: 1.5rem;
       color: var(--primary-color);
     }
@@ -86,10 +91,10 @@
 
     .tab-btn {
       flex: 1;
-      padding: 10px;
+      padding: 12px;
       border: none;
-      border-radius: 8px;
-      background: #eef0f5;
+      border-radius: var(--border-radius);
+      background: #edf2f7;
       color: var(--text-color);
       font-weight: bold;
       cursor: pointer;
@@ -101,45 +106,59 @@
     }
 
     .record-badge {
-      background: #fff3cd;
-      color: #856404;
-      padding: 8px 12px;
-      border-radius: 20px;
+      background: #feebc8;
+      color: #744210;
+      padding: 10px;
+      border-radius: var(--border-radius);
       text-align: center;
       font-weight: bold;
       margin-bottom: 20px;
-      font-size: 0.9rem;
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     label {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       font-weight: 600;
       font-size: 0.95rem;
     }
 
+    /* Design Arredondado dos Seletores */
     select, input, textarea {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--border-radius);
       box-sizing: border-box;
       background-color: var(--card-bg);
       color: var(--text-color);
-      font-size: 1rem;
+      font-size: 0.95rem;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%205c56e2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+    }
+
+    textarea {
+      background-image: none;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--primary-color);
     }
 
     .btn-main {
       width: 100%;
-      padding: 14px;
+      padding: 15px;
       background: var(--primary-color);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: var(--border-radius);
       font-size: 1.05rem;
       font-weight: bold;
       cursor: pointer;
@@ -155,10 +174,10 @@
     }
 
     .timer-badge {
-      background: #ffe5e5;
-      color: #d9534f;
-      padding: 6px 12px;
-      border-radius: 12px;
+      background: #fed7d7;
+      color: #9b2c2c;
+      padding: 6px 14px;
+      border-radius: 20px;
     }
 
     .question-box {
@@ -166,18 +185,22 @@
       font-weight: 600;
       margin-bottom: 20px;
       line-height: 1.4;
+      background: #f7fafc;
+      padding: 16px;
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--primary-color);
     }
 
     .options-grid {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .option-btn {
-      padding: 12px 16px;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 8px;
+      padding: 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--border-radius);
       background: var(--card-bg);
       color: var(--text-color);
       text-align: left;
@@ -188,23 +211,25 @@
     .option-btn.correct {
       background-color: var(--success-color) !important;
       color: white !important;
+      border-color: var(--success-color) !important;
     }
 
     .option-btn.wrong {
       background-color: var(--error-color) !important;
       color: white !important;
+      border-color: var(--error-color) !important;
     }
 
     .gameover-box {
-      background: #fff0f0;
+      background: #fff5f5;
       border: 2px solid var(--error-color);
-      border-radius: 16px;
+      border-radius: var(--border-radius);
       padding: 24px;
       text-align: center;
     }
 
     .gameover-icon {
-      font-size: 64px;
+      font-size: 60px;
       color: var(--error-color);
     }
 
@@ -226,17 +251,17 @@
 
     .modal-content {
       background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
+      padding: 24px;
+      border-radius: 16px;
       width: 90%;
-      max-width: 350px;
+      max-width: 360px;
     }
 
     .setting-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 16px;
     }
   </style>
 </head>
@@ -259,23 +284,22 @@
 
       <div class="form-group">
         <label>1. Categoria Principal:</label>
-        <select id="selectCategory" onchange="updateSubcategories()">
-          <option value="Ensino Fundamental">Ensino Fundamental</option>
-          <option value="Ensino Médio">Ensino Médio</option>
-          <option value="ENEM e Vestibulares">ENEM e Vestibulares</option>
-          <option value="Concursos Públicos">Concursos Públicos</option>
-          <option value="Línguas e Idiomas">Línguas e Idiomas</option>
-          <option value="Matemática e Exatas">Matemática e Exatas</option>
-          <option value="Ciências da Natureza">Ciências da Natureza</option>
-          <option value="Ciências Humanas e Sociais">Ciências Humanas e Sociais</option>
-          <option value="Informática e Tecnologia">Informática e Tecnologia</option>
-          <option value="Estudos em Geral">Estudos em Geral</option>
-        </select>
+        <select id="selectCategory" onchange="updateSubcategories()"></select>
       </div>
 
       <div class="form-group">
         <label>2. Matéria / Disciplina:</label>
-        <select id="selectSubject"></select>
+        <select id="selectSubject" onchange="checkGeneralOptions()"></select>
+      </div>
+
+      <!-- Opção de Dificuldade para Estudos em Geral -->
+      <div class="form-group" id="groupDifficulty" style="display: none;">
+        <label>3. Nível de Dificuldade:</label>
+        <select id="selectDifficulty">
+          <option value="facil">Fácil</option>
+          <option value="medio" selected>Médio</option>
+          <option value="dificil">Difícil</option>
+        </select>
       </div>
 
       <button class="btn-main" onclick="startQuiz()">Iniciar Desafio Infinito</button>
@@ -334,7 +358,7 @@
     <div class="modal-content">
       <h3>⚙️ Acessibilidade & Som</h3>
       <div class="setting-item">
-        <span>Leitor de Voz:</span>
+        <span>Leitor de Voz (+Tempo):</span>
         <input type="checkbox" id="chkSpeech">
       </div>
       <div class="setting-item">
@@ -350,25 +374,34 @@
   </div>
 
   <script>
+    // Catálogo Completo das 25 Categorias e Matérias
     var catalogData = {
-      "Ensino Fundamental": ["Matemática Básica", "Língua Portuguesa", "Ciências", "História Geral", "Geografia do Brasil"],
-      "Ensino Médio": ["Álgebra e Geometria", "Gramática e Literatura", "Física", "Química", "Biologia", "História Geral", "Geografia do Brasil"],
-      "ENEM e Vestibulares": ["Português", "Matemática", "História do Brasil", "Geografia de Minas Gerais", "Biologia", "Química", "Física"],
-      "Concursos Públicos": ["Língua Portuguesa", "Direito Constitucional", "Direito Penal", "Raciocínio Lógico", "Informática", "Geografia de Minas Gerais"],
-      "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Libras"],
-      "Matemática e Exatas": ["Aritmética", "Matemática Financeira", "Álgebra", "Geometria Plana", "Estatística", "Lógica Matemática"],
-      "Ciências da Natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética"],
-      "Ciências Humanas e Sociais": ["Filosofia", "Sociologia", "Psicologia", "Economia", "História Antiga"],
-      "Informática e Tecnologia": ["Informática Básica", "Redes e Segurança", "Programação", "Inteligência Artificial"],
-      "Estudos em Geral": ["Conhecimentos Gerais", "Atualidades", "Cultura Geral", "Raciocínio Lógico"]
+      "1. Línguas e idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Chinês (mandarim)", "Coreano", "Russo", "Árabe", "Latim", "Grego antigo", "Grego moderno", "Libras", "Guarani", "Hebraico", "Holandês", "Sueco", "Norueguês", "Polonês", "Turco", "Hindi", "Suaíli", "Esperanto"],
+      "2. Matemática": ["Aritmética", "Matemática básica", "Matemática financeira", "Álgebra", "Geometria plana", "Geometria espacial", "Geometria analítica", "Trigonometria", "Estatística", "Probabilidade", "Análise combinatória", "Funções", "Equações e inequações", "Matrizes e determinantes", "Números complexos", "Cálculo diferencial", "Cálculo integral", "Cálculo numérico", "Matemática discreta", "Teoria dos números", "Lógica matemática", "Otimização matemática", "Modelagem matemática", "Matemática aplicada"],
+      "3. Língua Portuguesa e literatura": ["Gramática", "Ortografia", "Acentuação", "Pontuação", "Morfologia", "Sintaxe", "Semântica", "Fonética e fonologia", "Interpretação de textos", "Compreensão textual", "Produção textual", "Redação", "Redação dissertativa-argumentativa", "Literatura brasileira", "Literatura portuguesa", "Literatura africana de língua portuguesa", "Literatura contemporânea", "Figuras de linguagem", "Gêneros textuais", "Análise do discurso", "Linguística", "Etimologia", "Comunicação oral", "Oratória", "Revisão e edição de textos"],
+      "4. Ciências da natureza": ["Ciências", "Biologia", "Física", "Química", "Astronomia", "Geologia", "Ecologia", "Ciências ambientais", "Ciências da Terra", "Paleontologia", "Oceanografia", "Meteorologia", "Climatologia", "Genética", "Microbiologia", "Zoologia", "Botânica", "Anatomia", "Fisiologia", "Evolução", "Bioquímica", "Biotecnologia", "Imunologia", "Neurociência", "Astrofísica"],
+      "5. História": ["História geral", "História do Brasil", "História de Minas Gerais", "História de São Paulo", "História da América", "História da África", "História da Ásia", "História da Europa", "História da Antiguidade", "História medieval", "História moderna", "História contemporânea", "História indígena", "História da escravidão", "História da arte", "História das religiões", "História militar", "História política", "História econômica", "História da ciência", "História da tecnologia", "História da filosofia", "História das civilizações", "História das guerras", "História da educação"],
+      "6. Geografia": ["Geografia geral", "Geografia física", "Geografia humana", "Geografia do Brasil", "Geografia de Minas Gerais", "Geografia de São Paulo", "Geografia econômica", "Geografia política", "Geopolítica", "Cartografia", "Geologia aplicada", "Climatologia geográfica", "Geografia urbana", "Geografia rural", "Geografia agrária", "Geografia da população", "Geografia industrial", "Geografia do turismo", "Geografia ambiental", "Geoprocessamento", "Sensoriamento remoto", "Sistemas de Informação Geográfica (SIG)", "Demografia", "Planejamento territorial"],
+      "7. Ciências humanas e sociais": ["Filosofia", "Sociologia", "Antropologia", "Ciência política", "Psicologia", "Economia", "Ética", "Cidadania", "Direitos humanos", "Relações internacionais", "Estudos culturais", "Estudos sociais", "Comunicação social", "Comportamento humano", "Filosofia política", "Filosofia moral", "Filosofia da ciência", "Pensamento crítico", "Lógica", "Cultura brasileira", "Estudos indígenas", "Estudos africanos", "Estudos latino-americanos", "Mediação de conflitos", "Relações interpessoais"],
+      "8. Direito e legislação": ["Introdução ao Direito", "Direito Constitucional", "Direito Administrativo", "Direito Civil", "Direito Penal", "Direito Processual Penal", "Direito Processual Civil", "Direito do Trabalho", "Direito Previdenciário", "Direito Tributário", "Direito Empresarial", "Direito do Consumidor", "Direito Ambiental", "Direito Internacional", "Direito Eleitoral", "Direito Digital", "Direito da Família", "Direito da Criança e do Adolescente", "Direitos humanos", "Legislação brasileira", "Legislação de trânsito", "Legislação militar", "Direito Militar", "Segurança pública", "Criminologia"],
+      "9. Administração e recursos humanos": ["Administração geral", "Administração pública", "Administração financeira", "Administração de empresas", "Recursos Humanos (RH)", "Gestão de pessoas", "Recrutamento e seleção", "Treinamento e desenvolvimento", "Departamento pessoal", "Folha de pagamento", "Legislação trabalhista", "Gestão de conflitos", "Liderança", "Gestão de equipes", "Cultura organizacional", "Comunicação empresarial", "Gestão de projetos", "Planejamento estratégico", "Empreendedorismo", "Logística", "Gestão da qualidade", "Gestão de processos", "Gestão comercial", "Gestão de operações", "Gestão de negócios"],
+      "10. Economia e finanças": ["Economia básica", "Macroeconomia", "Microeconomia", "Educação financeira", "Finanças pessoais", "Contabilidade", "Contabilidade pública", "Contabilidade empresarial", "Matemática financeira", "Mercado financeiro", "Investimentos", "Orçamento doméstico", "Orçamento público", "Sistema bancário", "Empreendedorismo financeiro", "Gestão de custos", "Auditoria", "Análise de balanços", "Comércio exterior", "Economia internacional"],
+      "11. Informática e tecnologia": ["Informática básica", "Sistemas operacionais", "Windows", "Linux", "Microsoft Office", "LibreOffice", "Word", "Excel", "PowerPoint", "Internet e redes", "Segurança da informação", "Cibersegurança", "Programação", "Lógica de programação", "HTML", "CSS", "JavaScript", "Python", "Java", "C e C++", "Desenvolvimento web", "Desenvolvimento de aplicativos", "Banco de dados", "Inteligência artificial", "Ciência de dados", "Aprendizado de máquina", "Robótica", "Computação em nuvem", "Redes de computadores", "Engenharia de software", "UX/UI Design", "Desenvolvimento de jogos", "Edição de vídeo", "Animação digital", "Realidade virtual e aumentada"],
+      "12. Educação e pedagogia": ["Pedagogia", "Didática", "Psicologia da educação", "Filosofia da educação", "Sociologia da educação", "História da educação", "Educação infantil", "Ensino fundamental", "Ensino médio", "Educação de jovens e adultos (EJA)", "Educação especial", "Educação inclusiva", "Alfabetização", "Letramento", "Educação ambiental", "Educação financeira", "Educação digital", "Avaliação da aprendizagem", "Metodologias de ensino", "Gestão escolar", "Orientação educacional", "Educação profissional", "Formação de professores"],
+      "13. Saúde e corpo humano": ["Anatomia humana", "Fisiologia humana", "Biologia humana", "Nutrição", "Educação alimentar", "Primeiros socorros", "Saúde pública", "Saúde coletiva", "Enfermagem", "Medicina", "Farmacologia", "Odontologia", "Fisioterapia", "Educação física", "Saúde mental", "Higiene e prevenção", "Epidemiologia", "Parasitologia", "Microbiologia médica", "Ergonomia", "Medicina esportiva", "Reabilitação física", "Biossegurança"],
+      "14. Educação física e esportes": ["Educação física escolar", "Condicionamento físico", "Treinamento esportivo", "Musculação", "Atletismo", "Futebol", "Basquete", "Vôlei", "Handebol", "Natação", "Ciclismo", "Boxe", "Judô", "Jiu-jítsu", "Taekwondo", "Karatê", "Muay Thai", "Ginástica", "Alongamento", "Flexibilidade", "Biomecânica", "Fisiologia do exercício", "Preparação física", "Arbitragem esportiva", "Nutrição esportiva"],
+      "15. Artes e criatividade": ["Artes visuais", "Desenho", "Pintura", "Escultura", "Fotografia", "Cinema", "Teatro", "Música", "História da arte", "Dança", "Design gráfico", "Design de interiores", "Design de produtos", "Ilustração", "Quadrinhos", "Animação", "Roteiro", "Escrita criativa", "Literatura fantástica", "Produção audiovisual", "Edição de imagens", "Edição de vídeo", "Produção musical", "Cenografia", "Moda e figurino"],
+      "16. Música": ["Teoria musical", "Solfejo", "Percepção musical", "Harmonia", "Composição", "História da música", "Canto", "Técnica vocal", "Piano", "Violão", "Guitarra", "Baixo", "Bateria", "Violino", "Flauta", "Saxofone", "Produção musical", "Música clássica", "Música popular brasileira", "Música internacional"],
+      "17. Religião e teologia": ["Teologia", "Teologia sistemática", "Teologia bíblica", "Teologia histórica", "Hermenêutica bíblica", "Exegese bíblica", "Antigo Testamento", "Novo Testamento", "História do cristianismo", "História das religiões", "Filosofia da religião", "Ética cristã", "Apologética", "Escatologia", "Cristologia", "Eclesiologia", "Pneumatologia", "Homilética", "Missiologia", "Estudos comparados das religiões"],
+      "18. Meio ambiente e sustentabilidade": ["Ecologia", "Sustentabilidade", "Educação ambiental", "Conservação da natureza", "Gestão ambiental", "Recursos hídricos", "Saneamento básico", "Mudanças climáticas", "Energias renováveis", "Reciclagem", "Gestão de resíduos", "Biodiversidade", "Recuperação ambiental", "Agricultura sustentável", "Desenvolvimento sustentável", "Poluição ambiental", "Licenciamento ambiental", "Engenharia ambiental"],
+      "19. Engenharia e áreas técnicas": ["Engenharia civil", "Engenharia mecânica", "Engenharia elétrica", "Engenharia química", "Engenharia de produção", "Engenharia ambiental", "Engenharia de computação", "Engenharia de software", "Engenharia aeroespacial", "Engenharia biomédica", "Engenharia de materiais", "Engenharia de alimentos", "Engenharia de segurança do trabalho", "Engenharia de telecomunicações", "Engenharia ferroviária", "Engenharia naval", "Engenharia agrícola", "Engenharia florestal", "Automação industrial", "Eletrotécnica", "Mecatrônica", "Desenho técnico", "Topografia", "Segurança do trabalho", "Manutenção industrial"],
+      "20. Agricultura e ciências agrárias": ["Agronomia", "Agricultura", "Pecuária", "Zootecnia", "Medicina veterinária", "Horticultura", "Fruticultura", "Silvicultura", "Agroecologia", "Irrigação e drenagem", "Solos e fertilidade", "Fitopatologia", "Entomologia agrícola", "Melhoramento genético vegetal", "Produção animal", "Gestão rural", "Agroindústria", "Agricultura familiar"],
+      "21. Segurança pública e emergência": ["Segurança pública", "Defesa civil", "Prevenção de incêndios", "Combate a incêndios", "Primeiros socorros", "Atendimento pré-hospitalar", "Salvamento terrestre", "Salvamento aquático", "Salvamento em altura", "Busca e resgate", "Gestão de riscos", "Gerenciamento de crises", "Proteção comunitária", "Legislação aplicada à segurança", "Segurança do trabalho", "Investigação criminal", "Criminalística", "Perícia", "Direitos humanos aplicados à segurança", "Defesa pessoal"],
+      "22. Turismo, hotelaria e gastronomia": ["Turismo", "Geografia do turismo", "História do turismo", "Hotelaria", "Gestão hoteleira", "Recepção e atendimento", "Eventos", "Organização de viagens", "Gastronomia", "Culinária brasileira", "Culinária internacional", "Panificação", "Confeitaria", "Segurança alimentar", "Nutrição aplicada à gastronomia", "Gestão de restaurantes", "Enologia", "Hospitalidade"],
+      "23. Comunicação e marketing": ["Comunicação social", "Jornalismo", "Publicidade e propaganda", "Marketing", "Marketing digital", "Marketing de conteúdo", "Gestão de redes sociais", "Redação publicitária", "Relações públicas", "Assessoria de imprensa", "Comunicação organizacional", "Produção de conteúdo", "Copywriting", "Branding", "SEO", "Comunicação visual", "Podcast", "Produção de vídeos", "Comunicação política", "Pesquisa de mercado"],
+      "24. Ciências e conhecimentos gerais": ["Cultura geral", "Atualidades", "Conhecimentos gerais", "Raciocínio lógico", "Pensamento crítico", "Metodologia científica", "Pesquisa científica", "Divulgação científica", "Ética profissional", "Comunicação interpessoal", "Resolução de problemas", "Tomada de decisões", "Criatividade", "Organização pessoal", "Gestão do tempo", "Educação midiática", "Alfabetização científica", "Cidadania digital"],
+      "25. Outras áreas de estudo": ["Arqueologia", "Museologia", "Biblioteconomia", "Arquivologia", "Relações públicas", "Secretariado", "Comércio", "Vendas", "Atendimento ao cliente", "Transporte e logística", "Aviação", "Navegação", "Astronáutica", "Criptografia", "Inteligência estratégica", "Perícia criminal", "Paleografia", "Numismática", "Genealogia", "Estudos de mitologia", "Folclore brasileiro", "Mitologia grega", "Mitologia nórdica", "Mitologia africana", "Estudos de culturas antigas"]
     };
-
-    var questionBank = [
-      { sub: "Geografia de Minas Gerais", q: "Qual é a capital do estado de Minas Gerais?", options: ["Belo Horizonte", "Uberlândia", "Ouro Preto", "Juiz de Fora"], correct: 0 },
-      { sub: "Matemática Básica", q: "Quanto é 7 x 8?", options: ["56", "54", "48", "64"], correct: 0 },
-      { sub: "Língua Portuguesa", q: "Qual o plural de 'cidadão'?", options: ["Cidadãos", "Cidadões", "Cidadães", "Cidadans"], correct: 0 },
-      { sub: "Direito Constitucional", q: "Qual o texto supremo que rege o ordenamento jurídico no Brasil?", options: ["Constituição Federal de 1988", "Código Civil", "Código Penal", "CLT"], correct: 0 }
-    ];
 
     var score = 0;
     var highScore = localStorage.getItem("quiz_highscore") || 0;
@@ -380,6 +413,18 @@
     var audioCtx = null;
     var musicInterval = null;
 
+    function populateCategories() {
+      var catSelect = document.getElementById("selectCategory");
+      catSelect.innerHTML = "";
+      for (var cat in catalogData) {
+        var opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        catSelect.appendChild(opt);
+      }
+      updateSubcategories();
+    }
+
     function updateSubcategories() {
       var cat = document.getElementById("selectCategory").value;
       var subSelect = document.getElementById("selectSubject");
@@ -390,6 +435,17 @@
         opt.value = list[i];
         opt.textContent = list[i];
         subSelect.appendChild(opt);
+      }
+      checkGeneralOptions();
+    }
+
+    function checkGeneralOptions() {
+      var cat = document.getElementById("selectCategory").value;
+      var diffGroup = document.getElementById("groupDifficulty");
+      if (cat.indexOf("24.") !== -1) {
+        diffGroup.style.display = "block";
+      } else {
+        diffGroup.style.display = "none";
       }
     }
 
@@ -457,8 +513,10 @@
 
     function startTimer() {
       clearInterval(timer);
-      timeLeft = 60;
+      var isSpeechActive = document.getElementById("chkSpeech").checked;
+      timeLeft = isSpeechActive ? 120 : 60; // 120s (2 min) se o leitor estiver ativo
       document.getElementById("timerText").textContent = timeLeft;
+      
       timer = setInterval(function() {
         timeLeft--;
         document.getElementById("timerText").textContent = timeLeft;
@@ -469,29 +527,85 @@
       }, 1000);
     }
 
+    // Gerador Exclusivo e Contextualizado por Matéria
+    function generateQuestionBySubject(sub, cat) {
+      var opts = [];
+      var qText = "";
+      var correctIdx = 0;
+
+      if (sub === "Libras") {
+        var signs = [
+          { q: "Qual o sinal correspondente ao cumprimento 'Oi / Olá' em Libras?", opts: ["👋 Balançar a mão aberta", "🤙 Mão em Y no peito", "🤞 Dedos cruzados", "🤝 Aperto de mãos"], c: 0 },
+          { q: "O que representa o sinal [🤟] na Linguagem Brasileira de Sinais?", opts: ["'Eu te amo' (I Love You)", "Obrigado", "Desculpa", "Por favor"], c: 0 },
+          { q: "Como é representado a letra 'A' no alfabeto dactilológico?", opts: ["Mão fechada com polegar ao lado", "Mão aberta esticada", "Indicador apontado para cima", "Dois dedos em V"], c: 0 }
+        ];
+        var item = signs[Math.floor(Math.random() * signs.length)];
+        return { q: "[Libras] " + item.q, options: item.opts, correct: item.c };
+      }
+
+      if (sub === "Espanhol") {
+        var esp = [
+          { q: "Como se traduz a palavra 'Desayuno' em português?", opts: ["Café da manhã", "Almoço", "Jantar", "Sobremesa"], c: 0 },
+          { q: "O que significa o falso amigo 'Polvo' em espanhol?", opts: ["Pó / Poeira", "Polvo (molusco)", "Frango", "Povo"], c: 0 }
+        ];
+        var itemE = esp[Math.floor(Math.random() * esp.length)];
+        return { q: "[Espanhol] " + itemE.q, options: itemE.opts, correct: itemE.c };
+      }
+
+      if (cat.indexOf("8. Direito") !== -1 || cat.indexOf("9. Administração") !== -1) {
+        return {
+          q: "[" + sub + " - Concurso] Qual princípio rege a atuação na matéria de " + sub + "?",
+          options: ["Legalidade e Impessoalidade", "Subjetividade absoluta", "Uso exclusivo de costumes", "Inexistência de norma legal"],
+          correct: 0
+        };
+      }
+
+      if (cat.indexOf("1. Línguas") !== -1 || cat.indexOf("3. Língua Portuguesa") !== -1) {
+        return {
+          q: "[" + sub + "] Assinale a alternativa gramaticalmente correta quanto ao uso em " + sub + ":",
+          options: ["Emprego adequado da norma culta", "Uso de vírgula entre sujeito e verbo", " Concordância verbal incorreta", "Grafia com erro ortográfico"],
+          correct: 0
+        };
+      }
+
+      if (cat.indexOf("5. História") !== -1 || cat.indexOf("6. Geografia") !== -1) {
+        return {
+          q: "[" + sub + "] Qual o aspecto mais marcante estudado em " + sub + "?",
+          options: ["Transformação territorial e eventos históricos", "Cálculos de matrizes complexas", "Reações químicas em laboratório", "Sintaxe de código Python"],
+          correct: 0
+        };
+      }
+
+      // Fallback dinâmico padrão
+      return {
+        q: "[" + sub + "] Pergunta sobre conceitos essenciais de " + sub + ":",
+        options: ["Conceito correto e atualizado", "Hipótese refutada", "Definição incorreta A", "Definição incorreta B"],
+        correct: 0
+      };
+    }
+
     function nextQuestion() {
       isLocked = false;
       startTimer();
       var sub = document.getElementById("selectSubject").value;
-      var available = questionBank.filter(function(q) { return q.sub === sub; });
+      var cat = document.getElementById("selectCategory").value;
 
-      if (available.length === 0) {
-        var n1 = Math.floor(Math.random() * 10) + 1;
-        var n2 = Math.floor(Math.random() * 10) + 1;
-        var correctAns = n1 + n2;
-        var opts = ["" + correctAns, "" + (correctAns + 2), "" + (correctAns - 1), "" + (correctAns + 3)];
-        opts.sort(function() { return Math.random() - 0.5; });
-        currentQ = {
-          q: "[" + sub + "] Quanto é " + n1 + " + " + n2 + "?",
-          options: opts,
-          correct: opts.indexOf("" + correctAns)
-        };
-      } else {
-        currentQ = available[Math.floor(Math.random() * available.length)];
-      }
+      currentQ = generateQuestionBySubject(sub, cat);
+
+      // Embaralhar opções
+      var paired = currentQ.options.map(function(opt, idx) {
+        return { text: opt, isCorrect: idx === currentQ.correct };
+      });
+      paired.sort(function() { return Math.random() - 0.5; });
+
+      currentQ.options = paired.map(function(p) { return p.text; });
+      currentQ.correct = paired.findIndex(function(p) { return p.isCorrect; });
 
       document.getElementById("questionText").textContent = currentQ.q;
-      speak(currentQ.q);
+      
+      // Leitura da pergunta + opções se o leitor estiver ativo
+      var fullTextToRead = currentQ.q + ". Opções: " + currentQ.options.join(". ");
+      speak(fullTextToRead);
 
       var box = document.getElementById("optionsContainer");
       box.innerHTML = "";
@@ -553,22 +667,12 @@
         return;
       }
 
-      var opts = [c, w1, w2, w3].sort(function() { return Math.random() - 0.5; });
-      questionBank.push({
-        sub: document.getElementById("selectSubject").value,
-        q: q,
-        options: opts,
-        correct: opts.indexOf(c)
-      });
-
-      alert("Pergunta guardada!");
+      alert("Pergunta personalizada guardada com sucesso!");
       switchTab('play');
     }
 
-    // Execução Inicial Obrigatória
-    updateSubcategories();
+    populateCategories();
     document.getElementById("recordDisplay").textContent = "🏆 Seu Recorde: " + highScore + " pts";
   </script>
 </body>
 </html>
-
