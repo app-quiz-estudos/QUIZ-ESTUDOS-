@@ -117,7 +117,7 @@
     .music-info {
       text-align: center;
       flex: 1;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 700;
       padding: 0 8px;
       white-space: nowrap;
@@ -171,11 +171,6 @@
       font-weight: bold;
       color: var(--text-color);
       box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-    }
-
-    .selection-card:active {
-      border-color: var(--primary-color);
-      background: #f8fafc;
     }
 
     .btn-main {
@@ -276,11 +271,11 @@
     <div class="owl-icon">🦉</div>
     <h1>Quiz de Estudos</h1>
 
-    <!-- Player de Música -->
+    <!-- Player de Música com Temas Variados -->
     <div class="music-player-bar" onclick="startMusicEngine()">
       <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
       <div class="music-info" id="musicTitleDisplay">
-        🎵 Toque em qualquer lugar para Ligar Som
+        🎵 Toque para Ligar o Som
       </div>
       <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
     </div>
@@ -292,7 +287,7 @@
 
     <!-- Tela Setup / Jogar -->
     <div id="screenSetup">
-      <div class="record-badge" id="recordDisplay">🏆 Seu Recorde: 0 pts</div>
+      <div class="record-badge" id="recordDisplay">🏆 Parte 1: Base Ativa</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Categoria Selecionada:</p>
       <div class="selection-card" onclick="openPicker('cat')">
@@ -325,13 +320,13 @@
     <div id="screenGame" style="display: none;">
       <div class="game-header">
         <span>Status: <span id="scoreText">Pronto</span></span>
-        <span class="timer-badge">🎵 Ativo</span>
+        <span class="timer-badge">🎵 Som Ativo</span>
       </div>
 
-      <div class="question-box" id="questionText">Menus e aplicativos funcionando com sucesso!</div>
+      <div class="question-box" id="questionText">Menus e aplicativos funcionando com sucesso! Matérias na Parte 2.</div>
       <div class="options-grid" id="optionsContainer">
-        <button class="option-btn" onclick="alert('Funcionalidade de teste A OK!')">Testar Botão 1</button>
-        <button class="option-btn" onclick="alert('Funcionalidade de teste B OK!')">Testar Botão 2</button>
+        <button class="option-btn" onclick="alert('Teste 1 OK!')">Testar Botão 1</button>
+        <button class="option-btn" onclick="alert('Teste 2 OK!')">Testar Botão 2</button>
         <button class="btn-main" onclick="backToSetup()" style="margin-top: 10px;">Voltar ao Menu</button>
       </div>
     </div>
@@ -374,7 +369,6 @@
 
     var selectedCat = "1. Geral e Base";
     var selectedSub = "Menu Inicial e Aplicativos";
-    var highScore = localStorage.getItem("quiz_highscore") || 0;
 
     var audioCtx = null;
     var musicInterval = null;
@@ -383,17 +377,18 @@
     var isPlayingMusic = false;
     var hasUserInteracted = false;
 
-    var songNames = [
-      "1. Vibe Genius",
-      "2. Chill Study",
-      "3. Acústico Suave",
-      "4. Ritmo Profundo",
-      "5. Espacial & Sereno",
-      "6. Pop Alternativo",
-      "7. Melodia Fluida",
-      "8. Batida Lo-Fi",
-      "9. Vibe Aveludada",
-      "10. Harmonia Dinâmica"
+    // 10 Músicas com temas bem definidos e diferentes entre si
+    var songList = [
+      { name: "1. 👻 Terror Sombrio", type: "terror" },
+      { name: "2. 🦇 Mistério Noturno", type: "terror" },
+      { name: "3. 🌸 Leveza Suave", type: "leveza" },
+      { name: "4. 🍃 Brisa Serena", type: "leveza" },
+      { name: "5. 🪘 Pagode Raiz", type: "pagode" },
+      { name: "6. 🥁 Suingue Baiano", type: "pagode" },
+      { name: "7. 🎸 Rock Pesado", type: "rock" },
+      { name: "8. ⚡ Rock Elétrico", type: "rock" },
+      { name: "9. 🎧 Eletrônica Dance", type: "eletronica" },
+      { name: "10. 🚀 Techno Futurista", type: "eletronica" }
     ];
 
     function initAudio() {
@@ -405,7 +400,7 @@
       }
     }
 
-    function playTone(freq, duration, type='sine', vol=0.035) {
+    function playCustomTone(freq, duration, type='sine', vol=0.04) {
       try {
         initAudio();
         if (!audioCtx || audioCtx.state !== 'running') return;
@@ -422,26 +417,51 @@
       } catch(e){}
     }
 
-    var playlists = [
-      function(s) { playTone([196,246,293,349][s%4], 0.7, 'triangle', 0.03); if(s%2===0) playTone(85,0.12,'sine',0.025); },
-      function(s) { playTone([220,277,329,440][s%4], 0.5, 'sine', 0.03); if(s%4===0) playTone(110,0.2,'triangle',0.03); },
-      function(s) { playTone([261,329,392,523][s%4], 0.6, 'sine', 0.025); if(s%2===0) playTone(130,0.15,'sine',0.02); },
-      function(s) { playTone([174,220,261,329][s%4], 0.8, 'triangle', 0.03); if(s%4===2) playTone(349,0.4,'sine',0.015); },
-      function(s) { playTone([246,293,369,440][s%4], 0.7, 'sine', 0.03); if(s%8===4) playTone(587,1.0,'triangle',0.01); },
-      function(s) { playTone([196,261,293,392][s%4], 0.4, 'triangle', 0.035); if(s%2===0) playTone(98,0.1,'sine',0.03); },
-      function(s) { playTone([293,349,440,523][s%4], 0.6, 'sine', 0.025); if(s%4===0) playTone(220,0.5,'triangle',0.02); },
-      function(s) { playTone([164,207,246,329][s%4], 0.7, 'triangle', 0.03); if(s%4===2) playTone(493,0.3,'sine',0.015); },
-      function(s) { playTone([220,261,329,392][s%4], 0.5, 'sine', 0.03); if(s%8===0) playTone(659,0.8,'sine',0.015); },
-      function(s) { playTone([130,196,261,392][s%4], 0.6, 'triangle', 0.035); if(s%2===0) playTone(65,0.15,'sine',0.03); }
-    ];
-
+    // Geradores de Ritmos Distintos para cada Estilo
     function playMusicLoop() {
       if (!isPlayingMusic || !document.getElementById("chkMusic").checked) return;
-      playlists[currentSongIdx](stepCount);
-      stepCount++;
-      if (stepCount >= 32) {
-        stepCount = 0;
+      var currentTheme = songList[currentSongIdx].type;
+      var s = stepCount % 16;
+
+      if (currentTheme === "terror") {
+        // Notas tensas, graves e com pausas dramáticas
+        var notes = [130, 123, 110, 146, 130, 0, 98, 110];
+        if (s % 2 === 0 && notes[s/2 % notes.length] > 0) {
+          playCustomTone(notes[(s/2)%notes.length], 0.4, 'sawtooth', 0.035);
+        }
+        if (s === 0 || s === 8) playCustomTone(65, 0.8, 'sine', 0.05); // Bumbo fúnebre
+      } 
+      else if (currentTheme === "leveza") {
+        // Arpejos suaves e celestiais em tom maior
+        var notes = [261, 329, 392, 523, 392, 329, 440, 349];
+        playCustomTone(notes[s % notes.length], 0.6, 'sine', 0.025);
+        if (s === 0) playCustomTone(130, 0.5, 'triangle', 0.015);
+      } 
+      else if (currentTheme === "pagode") {
+        // Ritmo cadenciado estilo percussão / cavaco
+        var bassNotes = [196, 164, 220, 174];
+        if (s % 2 === 0) {
+          playCustomTone(bassNotes[(s/2) % bassNotes.length], 0.15, 'triangle', 0.04);
+        }
+        if (s % 4 === 2) {
+          playCustomTone(392, 0.08, 'square', 0.02); // Tico / repique
+        }
+      } 
+      else if (currentTheme === "rock") {
+        // Acordes pesados e ritmo acelerado de rock
+        var rockNotes = [146, 146, 174, 196, 146, 130, 146, 220];
+        playCustomTone(rockNotes[s % rockNotes.length], 0.25, 'sawtooth', 0.035);
+        if (s % 4 === 0) playCustomTone(73, 0.2, 'square', 0.04); // Bumbo forte
+      } 
+      else if (currentTheme === "eletronica") {
+        // Batida sintética e rápida de dança
+        var synthNotes = [220, 440, 330, 550, 293, 587, 392, 784];
+        playCustomTone(synthNotes[s % synthNotes.length], 0.12, 'sawtooth', 0.025);
+        if (s % 2 === 0) playCustomTone(110, 0.1, 'square', 0.04); // Beat eletrônico
       }
+
+      stepCount++;
+      if (stepCount >= 32) stepCount = 0;
     }
 
     function startMusicEngine() {
@@ -450,7 +470,7 @@
       document.getElementById("chkMusic").checked = true;
       if (musicInterval) clearInterval(musicInterval);
       stepCount = 0;
-      musicInterval = setInterval(playMusicLoop, 600);
+      musicInterval = setInterval(playMusicLoop, 350); // Ritmo mais ágil e envolvente
       playMusicLoop();
       updateSongDisplay();
     }
@@ -468,7 +488,7 @@
       if (enable) {
         if (musicInterval) clearInterval(musicInterval);
         stepCount = 0;
-        musicInterval = setInterval(playMusicLoop, 600);
+        musicInterval = setInterval(playMusicLoop, 350);
         playMusicLoop();
       } else {
         clearInterval(musicInterval);
@@ -480,7 +500,7 @@
     function changeSong(e, direction) {
       e.stopPropagation();
       initAudio();
-      currentSongIdx = (currentSongIdx + direction + songNames.length) % songNames.length;
+      currentSongIdx = (currentSongIdx + direction + songList.length) % songList.length;
       stepCount = 0;
       startMusicEngine();
     }
@@ -488,7 +508,7 @@
     function updateSongDisplay() {
       var display = document.getElementById("musicTitleDisplay");
       var status = isPlayingMusic ? "▶" : "⏸";
-      display.textContent = status + " " + songNames[currentSongIdx];
+      display.textContent = status + " " + songList[currentSongIdx].name;
     }
 
     function switchTab(tab) {
@@ -580,4 +600,3 @@
   </script>
 </body>
 </html>
-
