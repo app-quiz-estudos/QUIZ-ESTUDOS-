@@ -63,6 +63,11 @@
       border: none; border-radius: 10px; font-size: 1.05rem; font-weight: bold; cursor: pointer;
       margin-top: 10px;
     }
+    .btn-secondary {
+      width: 100%; padding: 14px; background: #e2e8f0; color: var(--text-color);
+      border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer;
+      margin-top: 8px;
+    }
     .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-weight: bold; }
     .timer-badge { background: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; }
     .question-box { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; line-height: 1.4; background: #f8fafc; padding: 16px; border-radius: 12px; border-left: 4px solid var(--primary-color); }
@@ -107,12 +112,12 @@
 
     <div class="music-player-bar" onclick="startMusicEngine()">
       <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
-      <div class="music-info" id="musicTitleDisplay">🎵 Toque para Ligar o Som</div>
+      <div class="music-info" id="musicTitleDisplay">🎵 Toque em qualquer lugar para iniciar o som e leitor</div>
       <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
     </div>
 
     <div id="screenSetup">
-      <div class="record-badge">🏆 Parte 2: Ajuste de Configurações & Acessibilidade</div>
+      <div class="record-badge">🏆 Parte 2: Acessibilidade Total</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
       <div class="selection-card" onclick="openPicker()">
@@ -142,14 +147,15 @@
     </div>
   </div>
 
-  <!-- Modal de Game Over Customizado -->
+  <!-- Modal de Game Over Completo (Reiniciar ou Voltar ao Menu) -->
   <div class="modal" id="gameOverModal">
     <div class="modal-content">
       <div class="gameover-box">
         <div class="gameover-title">❌ GAME OVER</div>
         <p id="gameOverText" style="font-weight: 500; margin-bottom: 15px;">Você errou ou o tempo esgotou!</p>
       </div>
-      <button class="btn-main" onclick="nextQuestionAfterGameOver()">Avançar para Próxima</button>
+      <button class="btn-main" onclick="restartGameAfterGameOver()">Reiniciar Questão / Bloco</button>
+      <button class="btn-secondary" onclick="returnToMainMenu()">Voltar para o Menu Principal</button>
     </div>
   </div>
 
@@ -161,7 +167,7 @@
     </div>
   </div>
 
-  <!-- Modal de Configurações com Rótulo Genérico -->
+  <!-- Modal de Configurações -->
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <h3 style="margin-top:0;">⚙️ Configurações</h3>
@@ -277,6 +283,7 @@
       if (!hasUserInteracted) {
         hasUserInteracted = true;
         startMusicEngine();
+        speakText("Bem-vindo ao Quiz de Estudos. Toque em Iniciar Simulados para começar.");
       }
     }
 
@@ -361,7 +368,7 @@
       if (currentQuestIndex >= lista.length) {
         alert("Parabéns! Bloco concluído.");
         speakText("Parabéns! Bloco de questões concluído.");
-        location.reload();
+        returnToMainMenu();
         return;
       }
 
@@ -390,7 +397,6 @@
         textoLeitura += " Alternativa " + letra + ": " + opt + ".";
       });
 
-      // Aviso sonoro exato logo após a leitura de todas as alternativas orientando sobre o relógio no rodapé
       textoLeitura += " Lembre-se: há um relógio no rodapé da tela para desativar o cronômetro e jogar sem tempo.";
 
       speakText(textoLeitura);
@@ -450,13 +456,20 @@
     function triggerGameOver(motivo) {
       document.getElementById("gameOverText").textContent = motivo;
       document.getElementById("gameOverModal").style.display = "flex";
-      speakText("Game Over. " + motivo);
+      speakText("Game Over. " + motivo + ". Escolha entre reiniciar ou voltar para o menu principal.");
     }
 
-    function nextQuestionAfterGameOver() {
+    function restartGameAfterGameOver() {
       document.getElementById("gameOverModal").style.display = "none";
-      currentQuestIndex++;
       loadQuestion();
+    }
+
+    function returnToMainMenu() {
+      document.getElementById("gameOverModal").style.display = "none";
+      document.getElementById("screenGame").style.display = 'none';
+      document.getElementById("screenSetup").style.display = 'block';
+      currentQuestIndex = 0;
+      speakText("Retornado ao menu principal.");
     }
 
     updateSongDisplay();
