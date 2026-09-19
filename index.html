@@ -112,7 +112,7 @@
     </div>
 
     <div id="screenSetup">
-      <div class="record-badge">🏆 Parte 2: Configurações & Acessibilidade</div>
+      <div class="record-badge">🏆 Parte 2: Ajuste de Configurações & Acessibilidade</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
       <div class="selection-card" onclick="openPicker()">
@@ -161,12 +161,12 @@
     </div>
   </div>
 
-  <!-- Modal de Configurações Completo com o interruptor da música -->
+  <!-- Modal de Configurações com Rótulo Genérico -->
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <h3 style="margin-top:0;">⚙️ Configurações</h3>
       <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Música de Fundo (Pagode):</span>
+        <span>Música de Fundo / Efeito Sonoro:</span>
         <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)">
       </div>
       <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
@@ -333,10 +333,7 @@
       currentQuestIndex = 0;
       document.getElementById("screenSetup").style.display = 'none';
       document.getElementById("screenGame").style.display = 'block';
-      
-      // Aviso explícito sobre o cronômetro de 2 min e o botão do relógio no rodapé
-      speakText("Quiz iniciado com cronômetro de 2 minutos. Atenção: o botão do relógio localizado no rodapé da tela desativa o cronômetro sem precisar de temporizador.");
-      
+      speakText("Quiz iniciado com cronômetro de 2 minutos.");
       loadQuestion();
     }
 
@@ -355,7 +352,7 @@
         btn.textContent = "⏱️";
         badge.textContent = "⏱️ 120s";
         setupTimer();
-        speakText("Modo com tempo de 2 minutos ativado.");
+        speakText("Modo com tempo ativado.");
       }
     }
 
@@ -392,6 +389,9 @@
         optContainer.appendChild(btn);
         textoLeitura += " Alternativa " + letra + ": " + opt + ".";
       });
+
+      // Aviso sonoro exato logo após a leitura de todas as alternativas orientando sobre o relógio no rodapé
+      textoLeitura += " Lembre-se: há um relógio no rodapé da tela para desativar o cronômetro e jogar sem tempo.";
 
       speakText(textoLeitura);
       setupTimer();
