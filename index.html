@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -147,10 +146,6 @@
       margin-top: 10px;
     }
 
-    .btn-main:hover {
-      background: var(--primary-hover);
-    }
-
     .game-header {
       display: flex;
       justify-content: space-between;
@@ -188,19 +183,16 @@
       text-align: left;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: background-color 0.2s, border-color 0.2s;
     }
 
     .option-btn.correct {
       background-color: var(--success-color) !important;
       color: white !important;
-      border-color: var(--success-color) !important;
     }
 
     .option-btn.wrong {
       background-color: var(--error-color) !important;
       color: white !important;
-      border-color: var(--error-color) !important;
     }
 
     .gameover-box {
@@ -209,26 +201,17 @@
       border-radius: 16px;
       padding: 24px;
       text-align: center;
-      margin-top: 10px;
     }
 
     .gameover-icon {
       font-size: 64px;
       color: var(--error-color);
-      line-height: 1;
-      margin-bottom: 8px;
     }
 
     .gameover-title {
       font-size: 1.8rem;
       font-weight: bold;
       color: var(--error-color);
-      margin-bottom: 12px;
-    }
-
-    .gameover-msg {
-      font-size: 1rem;
-      margin-bottom: 16px;
     }
 
     .modal {
@@ -260,32 +243,42 @@
 <body>
 
   <div class="container">
-    <button class="settings-btn" id="btnSettings" title="Acessibilidade e Configurações">⚙️</button>
+    <button class="settings-btn" onclick="openModal()">⚙️</button>
 
     <div class="owl-icon">🦉</div>
     <h1>Quiz de Estudos</h1>
 
-    <!-- Abas -->
-    <div class="tabs" id="tabContainer">
-      <button class="tab-btn active" id="tabPlay">Jogar</button>
-      <button class="tab-btn" id="tabCreate">Criar Pergunta</button>
+    <div class="tabs">
+      <button class="tab-btn active" id="tabPlay" onclick="switchTab('play')">Jogar</button>
+      <button class="tab-btn" id="tabCreate" onclick="switchTab('create')">Criar Pergunta</button>
     </div>
 
-    <!-- Tela Inicial de Seleção -->
+    <!-- Tela Setup -->
     <div id="screenSetup">
       <div class="record-badge" id="recordDisplay">🏆 Seu Recorde: 0 pts</div>
 
       <div class="form-group">
-        <label for="selectCategory">1. Categoria Principal:</label>
-        <select id="selectCategory"></select>
+        <label>1. Categoria Principal:</label>
+        <select id="selectCategory" onchange="updateSubcategories()">
+          <option value="Ensino Fundamental">Ensino Fundamental</option>
+          <option value="Ensino Médio">Ensino Médio</option>
+          <option value="ENEM e Vestibulares">ENEM e Vestibulares</option>
+          <option value="Concursos Públicos">Concursos Públicos</option>
+          <option value="Línguas e Idiomas">Línguas e Idiomas</option>
+          <option value="Matemática e Exatas">Matemática e Exatas</option>
+          <option value="Ciências da Natureza">Ciências da Natureza</option>
+          <option value="Ciências Humanas e Sociais">Ciências Humanas e Sociais</option>
+          <option value="Informática e Tecnologia">Informática e Tecnologia</option>
+          <option value="Estudos em Geral">Estudos em Geral</option>
+        </select>
       </div>
 
       <div class="form-group">
-        <label for="selectSubject">2. Matéria / Disciplina:</label>
+        <label>2. Matéria / Disciplina:</label>
         <select id="selectSubject"></select>
       </div>
 
-      <button class="btn-main" id="btnStart">Iniciar Desafio Infinito</button>
+      <button class="btn-main" onclick="startQuiz()">Iniciar Desafio Infinito</button>
     </div>
 
     <!-- Tela de Jogo -->
@@ -296,22 +289,21 @@
       </div>
 
       <div class="question-box" id="questionText">A carregar pergunta...</div>
-
       <div class="options-grid" id="optionsContainer"></div>
     </div>
 
-    <!-- Tela de Game Over -->
+    <!-- Tela Game Over -->
     <div id="screenGameOver" style="display: none;">
       <div class="gameover-box">
         <div class="gameover-icon">✖</div>
         <div class="gameover-title">GAME OVER</div>
-        <div class="gameover-msg" id="gameOverReason">Você errou a resposta!</div>
+        <p id="gameOverReason" style="margin: 10px 0;"></p>
         <p style="font-weight: bold; margin-bottom: 16px;">Pontuação Final: <span id="finalScoreText">0</span> pts</p>
-        <button class="btn-main" id="btnRestart" style="background: var(--error-color);">Tentar Novamente</button>
+        <button class="btn-main" style="background: var(--error-color);" onclick="resetApp()">Tentar Novamente</button>
       </div>
     </div>
 
-    <!-- Tela de Criar Pergunta -->
+    <!-- Tela Criar Pergunta -->
     <div id="screenCreate" style="display: none;">
       <div class="form-group">
         <label>Pergunta:</label>
@@ -333,11 +325,11 @@
         <label>Opção Incorreta 3:</label>
         <input type="text" id="customWrong3" placeholder="Resposta errada 3">
       </div>
-      <button class="btn-main" id="btnSaveCustom">Guardar Pergunta</button>
+      <button class="btn-main" onclick="saveCustomQuestion()">Guardar Pergunta</button>
     </div>
   </div>
 
-  <!-- Modal de Configurações -->
+  <!-- Configurações -->
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <h3>⚙️ Acessibilidade & Som</h3>
@@ -347,286 +339,236 @@
       </div>
       <div class="setting-item">
         <span>Música de Fundo:</span>
-        <input type="checkbox" id="chkMusic">
+        <input type="checkbox" id="chkMusic" onchange="toggleMusic(this.checked)">
       </div>
       <div class="setting-item">
         <span>Alto Contraste:</span>
-        <input type="checkbox" id="chkContrast">
+        <input type="checkbox" id="chkContrast" onchange="document.body.classList.toggle('high-contrast')">
       </div>
-      <div class="setting-item">
-        <span>Tamanho do Texto:</span>
-        <select id="selectFontSize">
-          <option value="16px">Normal</option>
-          <option value="18px">Grande</option>
-          <option value="20px">Muito Grande</option>
-        </select>
-      </div>
-      <button class="btn-main" id="btnCloseSettings">Fechar</button>
+      <button class="btn-main" onclick="closeModal()">Fechar</button>
     </div>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    var catalogData = {
+      "Ensino Fundamental": ["Matemática Básica", "Língua Portuguesa", "Ciências", "História Geral", "Geografia do Brasil"],
+      "Ensino Médio": ["Álgebra e Geometria", "Gramática e Literatura", "Física", "Química", "Biologia", "História Geral", "Geografia do Brasil"],
+      "ENEM e Vestibulares": ["Português", "Matemática", "História do Brasil", "Geografia de Minas Gerais", "Biologia", "Química", "Física"],
+      "Concursos Públicos": ["Língua Portuguesa", "Direito Constitucional", "Direito Penal", "Raciocínio Lógico", "Informática", "Geografia de Minas Gerais"],
+      "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Libras"],
+      "Matemática e Exatas": ["Aritmética", "Matemática Financeira", "Álgebra", "Geometria Plana", "Estatística", "Lógica Matemática"],
+      "Ciências da Natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética"],
+      "Ciências Humanas e Sociais": ["Filosofia", "Sociologia", "Psicologia", "Economia", "História Antiga"],
+      "Informática e Tecnologia": ["Informática Básica", "Redes e Segurança", "Programação", "Inteligência Artificial"],
+      "Estudos em Geral": ["Conhecimentos Gerais", "Atualidades", "Cultura Geral", "Raciocínio Lógico"]
+    };
 
-      // Lista Completa de Categorias e Matérias
-      const catalogData = {
-        "Ensino Fundamental": ["Matemática Básica", "Língua Portuguesa", "Ciências", "História Geral", "Geografia do Brasil"],
-        "Ensino Médio": ["Álgebra e Geometria", "Gramática e Literatura", "Física", "Química", "Biologia", "História Geral", "Geografia do Brasil"],
-        "ENEM e Vestibulares": ["Português", "Matemática", "História do Brasil", "Geografia de Minas Gerais", "Biologia", "Química", "Física"],
-        "Concursos Públicos": ["Língua Portuguesa", "Direito Constitucional", "Direito Penal", "Raciocínio Lógico", "Informática", "Geografia de Minas Gerais"],
-        "Línguas e Idiomas": ["Português", "Inglês", "Espanhol", "Francês", "Italiano", "Alemão", "Japonês", "Libras"],
-        "Matemática e Exatas": ["Aritmética", "Matemática Financeira", "Álgebra", "Geometria Plana", "Estatística", "Lógica Matemática"],
-        "Ciências da Natureza": ["Biologia", "Física", "Química", "Astronomia", "Ecologia", "Genética"],
-        "Ciências Humanas e Sociais": ["Filosofia", "Sociologia", "Psicologia", "Economia", "História Antiga"],
-        "Informática e Tecnologia": ["Informática Básica", "Redes e Segurança", "Programação", "Inteligência Artificial"],
-        "Estudos em Geral": ["Conhecimentos Gerais", "Atualidades", "Cultura Geral", "Raciocínio Lógico"]
-      };
+    var questionBank = [
+      { sub: "Geografia de Minas Gerais", q: "Qual é a capital do estado de Minas Gerais?", options: ["Belo Horizonte", "Uberlândia", "Ouro Preto", "Juiz de Fora"], correct: 0 },
+      { sub: "Matemática Básica", q: "Quanto é 7 x 8?", options: ["56", "54", "48", "64"], correct: 0 },
+      { sub: "Língua Portuguesa", q: "Qual o plural de 'cidadão'?", options: ["Cidadãos", "Cidadões", "Cidadães", "Cidadans"], correct: 0 },
+      { sub: "Direito Constitucional", q: "Qual o texto supremo que rege o ordenamento jurídico no Brasil?", options: ["Constituição Federal de 1988", "Código Civil", "Código Penal", "CLT"], correct: 0 }
+    ];
 
-      const questionBank = [
-        { sub: "Geografia de Minas Gerais", q: "Qual é a capital do estado de Minas Gerais?", options: ["Belo Horizonte", "Uberlândia", "Ouro Preto", "Juiz de Fora"], correct: 0 },
-        { sub: "Geografia de Minas Gerais", q: "Qual o principal bioma presente no norte de Minas Gerais?", options: ["Cerrado / Caatinga", "Mata Atlântica", "Pampa", "Pantanal"], correct: 0 },
-        { sub: "Matemática Básica", q: "Quanto é 7 x 8?", options: ["56", "54", "48", "64"], correct: 0 },
-        { sub: "Língua Portuguesa", q: "Qual o plural de 'cidadão'?", options: ["Cidadãos", "Cidadões", "Cidadães", "Cidadans"], correct: 0 },
-        { sub: "Física", q: "Qual a aceleração da gravidade aproximada na Terra?", options: ["9,8 m/s²", "5,0 m/s²", "12,4 m/s²", "1,6 m/s²"], correct: 0 },
-        { sub: "Direito Constitucional", q: "Qual o texto supremo do ordenamento jurídico no Brasil?", options: ["Constituição Federal de 1988", "Código Civil", "Código Penal", "CLT"], correct: 0 },
-        { sub: "Inglês", q: "Como se traduz a palavra 'Book' para o português?", options: ["Livro", "Caderno", "Caneta", "Mesa"], correct: 0 }
-      ];
+    var score = 0;
+    var highScore = localStorage.getItem("quiz_highscore") || 0;
+    var timer = null;
+    var timeLeft = 60;
+    var currentQ = null;
+    var isLocked = false;
 
-      let currentScore = 0;
-      let recordScore = parseInt(localStorage.getItem("quiz_record") || "0");
-      let timer = 60;
-      let timerInterval = null;
-      let currentQuestion = null;
-      let isAnswerLocked = false;
+    var audioCtx = null;
+    var musicInterval = null;
 
-      // Web Audio API
-      let audioCtx = null;
-      let musicOsc = null;
-      let musicGain = null;
-      let isMusicPlaying = false;
-
-      function initAudio() {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
+    function updateSubcategories() {
+      var cat = document.getElementById("selectCategory").value;
+      var subSelect = document.getElementById("selectSubject");
+      subSelect.innerHTML = "";
+      var list = catalogData[cat] || [];
+      for (var i = 0; i < list.length; i++) {
+        var opt = document.createElement("option");
+        opt.value = list[i];
+        opt.textContent = list[i];
+        subSelect.appendChild(opt);
       }
+    }
 
-      function playSound(freq, type, duration) {
-        try {
-          initAudio();
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = type;
-          osc.frequency.value = freq;
-          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start();
-          osc.stop(audioCtx.currentTime + duration);
-        } catch(e){}
-      }
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
 
-      function playCorrectSound() {
-        playSound(523.25, 'triangle', 0.15);
-        setTimeout(() => playSound(659.25, 'triangle', 0.25), 150);
-      }
-
-      function playWrongSound() {
-        playSound(180, 'sawtooth', 0.4);
-      }
-
-      function startContinuousMusic() {
+    function playTone(freq, duration) {
+      try {
         initAudio();
-        if (isMusicPlaying) return;
-        
-        try {
-          musicOsc = audioCtx.createOscillator();
-          musicGain = audioCtx.createGain();
-          
-          musicOsc.type = 'sine';
-          musicOsc.frequency.setValueAtTime(220, audioCtx.currentTime);
-          
-          musicGain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-          
-          musicOsc.connect(musicGain);
-          musicGain.connect(audioCtx.destination);
-          
-          musicOsc.start();
-          isMusicPlaying = true;
-        } catch(e){}
-      }
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e){}
+    }
 
-      function stopContinuousMusic() {
-        if (musicOsc) {
-          try {
-            musicOsc.stop();
-            musicOsc.disconnect();
-          } catch(e){}
-          musicOsc = null;
+    function toggleMusic(enable) {
+      initAudio();
+      if (enable) {
+        var notes = [261.63, 329.63, 392.00, 523.25];
+        var step = 0;
+        musicInterval = setInterval(function() {
+          playTone(notes[step % notes.length], 0.2);
+          step++;
+        }, 500);
+      } else {
+        clearInterval(musicInterval);
+      }
+    }
+
+    function speak(text) {
+      if (document.getElementById("chkSpeech").checked && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = 'pt-BR';
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    function switchTab(tab) {
+      document.getElementById("screenSetup").style.display = tab === 'play' ? 'block' : 'none';
+      document.getElementById("screenCreate").style.display = tab === 'create' ? 'block' : 'none';
+      document.getElementById("screenGame").style.display = 'none';
+      document.getElementById("screenGameOver").style.display = 'none';
+      document.getElementById("tabPlay").className = tab === 'play' ? 'tab-btn active' : 'tab-btn';
+      document.getElementById("tabCreate").className = tab === 'create' ? 'tab-btn active' : 'tab-btn';
+    }
+
+    function openModal() { document.getElementById("settingsModal").style.display = 'flex'; }
+    function closeModal() { document.getElementById("settingsModal").style.display = 'none'; }
+
+    function startQuiz() {
+      initAudio();
+      score = 0;
+      document.getElementById("scoreText").textContent = score;
+      document.getElementById("screenSetup").style.display = 'none';
+      document.getElementById("screenGame").style.display = 'block';
+      nextQuestion();
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      timeLeft = 60;
+      document.getElementById("timerText").textContent = timeLeft;
+      timer = setInterval(function() {
+        timeLeft--;
+        document.getElementById("timerText").textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          triggerGameOver("O tempo acabou!");
         }
-        isMusicPlaying = false;
+      }, 1000);
+    }
+
+    function nextQuestion() {
+      isLocked = false;
+      startTimer();
+      var sub = document.getElementById("selectSubject").value;
+      var available = questionBank.filter(function(q) { return q.sub === sub; });
+
+      if (available.length === 0) {
+        var n1 = Math.floor(Math.random() * 10) + 1;
+        var n2 = Math.floor(Math.random() * 10) + 1;
+        var correctAns = n1 + n2;
+        var opts = ["" + correctAns, "" + (correctAns + 2), "" + (correctAns - 1), "" + (correctAns + 3)];
+        opts.sort(function() { return Math.random() - 0.5; });
+        currentQ = {
+          q: "[" + sub + "] Quanto é " + n1 + " + " + n2 + "?",
+          options: opts,
+          correct: opts.indexOf("" + correctAns)
+        };
+      } else {
+        currentQ = available[Math.floor(Math.random() * available.length)];
       }
 
-      // Elementos DOM
-      const selectCategory = document.getElementById("selectCategory");
-      const selectSubject = document.getElementById("selectSubject");
-      const recordDisplay = document.getElementById("recordDisplay");
-      const btnStart = document.getElementById("btnStart");
-      const screenSetup = document.getElementById("screenSetup");
-      const screenGame = document.getElementById("screenGame");
-      const screenGameOver = document.getElementById("screenGameOver");
-      const screenCreate = document.getElementById("screenCreate");
-      const tabPlay = document.getElementById("tabPlay");
-      const tabCreate = document.getElementById("tabCreate");
-      const questionText = document.getElementById("questionText");
-      const optionsContainer = document.getElementById("optionsContainer");
-      const scoreText = document.getElementById("scoreText");
-      const timerText = document.getElementById("timerText");
-      const finalScoreText = document.getElementById("finalScoreText");
-      const gameOverReason = document.getElementById("gameOverReason");
-      const btnRestart = document.getElementById("btnRestart");
+      document.getElementById("questionText").textContent = currentQ.q;
+      speak(currentQ.q);
 
-      function populateCategories() {
-        selectCategory.innerHTML = "";
-        for (let cat in catalogData) {
-          const opt = document.createElement("option");
-          opt.value = cat;
-          opt.textContent = cat;
-          selectCategory.appendChild(opt);
+      var box = document.getElementById("optionsContainer");
+      box.innerHTML = "";
+      currentQ.options.forEach(function(opt, idx) {
+        var btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = opt;
+        btn.onclick = function() { checkAnswer(idx, btn); };
+        box.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selectedIdx, btn) {
+      if (isLocked) return;
+      isLocked = true;
+      clearInterval(timer);
+
+      if (selectedIdx === currentQ.correct) {
+        btn.classList.add("correct");
+        playTone(523.25, 0.2);
+        score += 10;
+        document.getElementById("scoreText").textContent = score;
+        if (score > highScore) {
+          highScore = score;
+          localStorage.setItem("quiz_highscore", highScore);
+          document.getElementById("recordDisplay").textContent = "🏆 Seu Recorde: " + highScore + " pts";
         }
-        updateSubjects();
+        setTimeout(nextQuestion, 1000);
+      } else {
+        btn.classList.add("wrong");
+        playTone(180, 0.4);
+        setTimeout(function() { triggerGameOver("Você errou a resposta!"); }, 1000);
+      }
+    }
+
+    function triggerGameOver(reason) {
+      clearInterval(timer);
+      document.getElementById("screenGame").style.display = 'none';
+      document.getElementById("screenGameOver").style.display = 'block';
+      document.getElementById("gameOverReason").textContent = reason;
+      document.getElementById("finalScoreText").textContent = score;
+      speak("Fim de jogo. " + reason);
+    }
+
+    function resetApp() {
+      document.getElementById("screenGameOver").style.display = 'none';
+      document.getElementById("screenSetup").style.display = 'block';
+    }
+
+    function saveCustomQuestion() {
+      var q = document.getElementById("customQText").value;
+      var c = document.getElementById("customCorrect").value;
+      var w1 = document.getElementById("customWrong1").value;
+      var w2 = document.getElementById("customWrong2").value;
+      var w3 = document.getElementById("customWrong3").value;
+
+      if (!q || !c || !w1 || !w2 || !w3) {
+        alert("Preencha todos os campos!");
+        return;
       }
 
-      function updateSubjects() {
-        const cat = selectCategory.value;
-        selectSubject.innerHTML = "";
-        const list = catalogData[cat] || [];
-        list.forEach(sub => {
-          const opt = document.createElement("option");
-          opt.value = sub;
-          opt.textContent = sub;
-          selectSubject.appendChild(opt);
-        });
-      }
-
-      selectCategory.addEventListener("change", updateSubjects);
-      populateCategories();
-
-      recordDisplay.textContent = `🏆 Seu Recorde: ${recordScore} pts`;
-
-      tabPlay.addEventListener("click", () => {
-        tabPlay.classList.add("active");
-        tabCreate.classList.remove("active");
-        screenSetup.style.display = "block";
-        screenCreate.style.display = "none";
-        screenGame.style.display = "none";
-        screenGameOver.style.display = "none";
+      var opts = [c, w1, w2, w3].sort(function() { return Math.random() - 0.5; });
+      questionBank.push({
+        sub: document.getElementById("selectSubject").value,
+        q: q,
+        options: opts,
+        correct: opts.indexOf(c)
       });
 
-      tabCreate.addEventListener("click", () => {
-        tabCreate.classList.add("active");
-        tabPlay.classList.remove("active");
-        screenSetup.style.display = "none";
-        screenCreate.style.display = "block";
-        screenGame.style.display = "none";
-        screenGameOver.style.display = "none";
-      });
+      alert("Pergunta guardada!");
+      switchTab('play');
+    }
 
-      function speak(text) {
-        if (document.getElementById("chkSpeech").checked && 'speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const utt = new SpeechSynthesisUtterance(text);
-          utt.lang = "pt-BR";
-          window.speechSynthesis.speak(utt);
-        }
-      }
+    // Execução Inicial Obrigatória
+    updateSubcategories();
+    document.getElementById("recordDisplay").textContent = "🏆 Seu Recorde: " + highScore + " pts";
+  </script>
+</body>
+</html>
 
-      btnStart.addEventListener("click", () => {
-        initAudio();
-        currentScore = 0;
-        scoreText.textContent = currentScore;
-        screenSetup.style.display = "none";
-        screenGameOver.style.display = "none";
-        screenGame.style.display = "block";
-        nextQuestion();
-      });
-
-      btnRestart.addEventListener("click", () => {
-        screenGameOver.style.display = "none";
-        screenSetup.style.display = "block";
-      });
-
-      function startTimer() {
-        clearInterval(timerInterval);
-        timer = 60;
-        timerText.textContent = timer;
-        timerInterval = setInterval(() => {
-          timer--;
-          timerText.textContent = timer;
-          if (timer <= 0) {
-            clearInterval(timerInterval);
-            triggerGameOver("O tempo acabou!");
-          }
-        }, 1000);
-      }
-
-      function nextQuestion() {
-        isAnswerLocked = false;
-        startTimer();
-        const sub = selectSubject.value;
-
-        let available = questionBank.filter(q => q.sub === sub);
-        
-        if (available.length === 0) {
-          const num1 = Math.floor(Math.random()*15 + 1);
-          const num2 = Math.floor(Math.random()*15 + 1);
-          const ans = num1 + num2;
-          const opts = [`${ans}`, `${ans + 2}`, `${ans - 1}`, `${ans + 4}`].sort(() => Math.random() - 0.5);
-          currentQuestion = {
-            q: `[${sub}] Qual o resultado de ${num1} + ${num2}?`,
-            options: opts,
-            correct: opts.indexOf(`${ans}`)
-          };
-        } else {
-          currentQuestion = available[Math.floor(Math.random() * available.length)];
-        }
-
-        questionText.textContent = currentQuestion.q;
-        speak(currentQuestion.q);
-
-        optionsContainer.innerHTML = "";
-        currentQuestion.options.forEach((opt, idx) => {
-          const btn = document.createElement("button");
-          btn.className = "option-btn";
-          btn.textContent = opt;
-          btn.onclick = () => checkAnswer(idx, btn);
-          optionsContainer.appendChild(btn);
-        });
-      }
-
-      function checkAnswer(selectedIdx, btnElement) {
-        if (isAnswerLocked) return;
-        isAnswerLocked = true;
-        clearInterval(timerInterval);
-
-        const allButtons = optionsContainer.querySelectorAll(".option-btn");
-
-        if (selectedIdx === currentQuestion.correct) {
-          btnElement.classList.add("correct");
-          playCorrectSound();
-          currentScore += 10;
-          scoreText.textContent = currentScore;
-          
-          if (currentScore > recordScore) {
-            recordScore = currentScore;
-            localStorage.setItem("quiz_record", recordScore);
-            recordDisplay.textContent = `🏆 Seu Recorde: ${recordScore} pts`;
-          }
-
-          setTimeout(() => {
-            nextQuestion();
-          }, 
