@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Estudos - Acessibilidade Nativa</title>
+  <title>Quiz de Estudos - Acessibilidade Total</title>
   
   <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>">
   
@@ -59,11 +59,13 @@
       padding: 14px 16px; margin-bottom: 12px; cursor: pointer; display: flex;
       justify-content: space-between; align-items: center; font-weight: bold;
     }
+    .selection-card.pending-selection { border-color: var(--primary-color); background: #eff6ff; }
     .btn-main {
       width: 100%; padding: 15px; background: var(--primary-color); color: white;
       border: none; border-radius: 10px; font-size: 1.05rem; font-weight: bold; cursor: pointer;
       margin-top: 10px;
     }
+    .btn-main.pending-selection { border: 3px solid #1e293b; background: #1d4ed8; }
     .btn-secondary {
       width: 100%; padding: 14px; background: #e2e8f0; color: var(--text-color);
       border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer;
@@ -77,6 +79,7 @@
       padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; background: var(--card-bg);
       color: var(--text-color); text-align: left; font-size: 0.95rem; cursor: pointer; font-weight: 500;
     }
+    .option-btn.pending-selection { border-color: var(--primary-color); background: #eff6ff; }
     .game-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 14px; margin-top: 10px; }
     .timer-toggle-bottom-btn {
       background: #e2e8f0; border: none; border-radius: 50%; width: 44px; height: 44px;
@@ -94,33 +97,33 @@
 <body id="pageBody">
 
   <div class="container">
-    <button class="settings-btn" onclick="openModal()" aria-label="Configurações" title="Configurações">⚙️</button>
+    <button class="settings-btn" onclick="openModal()" title="Configurações">⚙️</button>
 
-    <div class="owl-icon" aria-hidden="true">🦉</div>
+    <div class="owl-icon">🦉</div>
     <h1>Quiz de Estudos</h1>
 
-    <div class="music-player-bar" onclick="startMusicEngine()" aria-label="Barra de Música de Fundo. Toque para iniciar.">
-      <button class="music-arrow" onclick="changeSong(event, -1)" aria-label="Música anterior">❮</button>
+    <div class="music-player-bar" onclick="startMusicEngine()">
+      <button class="music-arrow" onclick="changeSong(event, -1)">❮</button>
       <div class="music-info" id="musicTitleDisplay">🎵 Música de Fundo</div>
-      <button class="music-arrow" onclick="changeSong(event, 1)" aria-label="Próxima música">❯</button>
+      <button class="music-arrow" onclick="changeSong(event, 1)">❯</button>
     </div>
 
     <div id="screenSetup">
-      <div class="record-badge">🏆 Quiz Acessível Nativo</div>
+      <div class="record-badge">🏆 Parte 2: Acessibilidade Total</div>
 
       <p style="font-weight: bold; margin-bottom: 6px;">1. Nível de Ensino / Prova:</p>
-      <div class="selection-card" id="cardNivel" onclick="openPicker()" role="button" aria-label="Nível de ensino selecionado: Ensino Fundamental. Toque duas vezes para alterar.">
+      <div class="selection-card" id="cardNivel" onclick="handleNivelClick()">
         <span id="labelNivel">Ensino Fundamental</span>
-        <span aria-hidden="true">❯</span>
+        <span>❯</span>
       </div>
 
-      <button class="btn-main" id="btnIniciar" onclick="startQuiz()" aria-label="Iniciar Simulados. Toque duas vezes para começar.">Iniciar Simulados</button>
+      <button class="btn-main" id="btnIniciar" onclick="handleStartClick()">Iniciar Simulados</button>
     </div>
 
     <div id="screenGame" style="display: none;">
       <div class="game-header">
-        <span id="progressIndicator" aria-label="Progresso da questão">Questão 1 de 2</span>
-        <span class="timer-badge" id="timerBadge" aria-label="Cronômetro: 120 segundos">⏱️ 120s</span>
+        <span id="progressIndicator">Questão 1 de 2</span>
+        <span class="timer-badge" id="timerBadge">⏱️ 120s</span>
       </div>
 
       <div class="question-box" id="questionText">Carregando questão...</div>
@@ -131,7 +134,7 @@
           <span style="font-size: 0.85rem; font-weight: bold; display: block; color: var(--text-color);">Modo Sem Tempo:</span>
           <span style="font-size: 0.75rem; color: #64748b;">Toque no relógio ao lado para cancelar o tempo</span>
         </div>
-        <button class="timer-toggle-bottom-btn" id="timerToggleBtn" onclick="toggleTimerMode()" aria-label="Ativar ou desativar o cronômetro">⏱️</button>
+        <button class="timer-toggle-bottom-btn" id="timerToggleBtn" onclick="toggleTimerMode()" title="Ativar/Desativar Tempo">⏱️</button>
       </div>
     </div>
   </div>
@@ -142,7 +145,7 @@
         <div class="success-title">✔️ RESPOSTA CORRETA!</div>
         <p style="font-weight: 500; margin-bottom: 15px;">Muito bem, você acertou a questão!</p>
       </div>
-      <button class="btn-main" onclick="nextQuestionAfterSuccess()" aria-label="Avançar para a próxima questão">Avançar para Próxima</button>
+      <button class="btn-main" onclick="nextQuestionAfterSuccess()">Avançar para Próxima</button>
     </div>
   </div>
 
@@ -152,8 +155,8 @@
         <div class="gameover-title">❌ GAME OVER</div>
         <p id="gameOverText" style="font-weight: 500; margin-bottom: 15px;">Você errou ou o tempo esgotou!</p>
       </div>
-      <button class="btn-main" onclick="restartGameAfterGameOver()" aria-label="Reiniciar questão">Reiniciar Questão / Bloco</button>
-      <button class="btn-secondary" onclick="returnToMainMenu()" aria-label="Voltar para o menu principal">Voltar para o Menu Principal</button>
+      <button class="btn-main" onclick="restartGameAfterGameOver()">Reiniciar Questão / Bloco</button>
+      <button class="btn-secondary" onclick="returnToMainMenu()">Voltar para o Menu Principal</button>
     </div>
   </div>
 
@@ -161,7 +164,7 @@
     <div class="modal-content">
       <h3 style="margin-top:0;">Selecione o Nível</h3>
       <div class="picker-list" id="pickerContainer"></div>
-      <button class="btn-main" onclick="closePicker()" aria-label="Fechar janela">Fechar</button>
+      <button class="btn-main" onclick="closePicker()">Fechar</button>
     </div>
   </div>
 
@@ -170,17 +173,17 @@
       <h3 style="margin-top:0;">⚙️ Configurações</h3>
       <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
         <span>Música de Fundo / Efeito Sonoro:</span>
-        <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)" aria-label="Ativar ou desativar música de fundo">
+        <input type="checkbox" id="chkMusic" checked onchange="toggleMusic(this.checked)">
       </div>
       <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
         <span>Alto Contraste:</span>
-        <input type="checkbox" id="chkContrast" onchange="document.body.classList.toggle('high-contrast')" aria-label="Ativar ou desativar alto contraste">
+        <input type="checkbox" id="chkContrast" onchange="document.body.classList.toggle('high-contrast')">
       </div>
       <div style="margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-        <span>Leitor de Voz (App):</span>
+        <span>Leitor de Voz (Reação TalkBack):</span>
         <input type="checkbox" id="chkScreenReader" checked onchange="isScreenReaderActive = this.checked">
       </div>
-      <button class="btn-main" onclick="closeModal()" aria-label="Fechar configurações">Fechar</button>
+      <button class="btn-main" onclick="closeModal()">Fechar</button>
     </div>
   </div>
 
@@ -195,6 +198,9 @@
     var timeLeft = 120;
     var isTimerDisabled = false;
     var isScreenReaderActive = true;
+    var selectedAnswerPending = null;
+    var pendingNivelClick = false;
+    var pendingStartClick = false;
 
     var audioCtx = null;
     var musicInterval = null;
@@ -259,11 +265,11 @@
 
       if (!hasUserStarted) {
         hasUserStarted = true;
-        speakText("Bem-vindo ao Quiz de Estudos. Toque em Iniciar Simulados.");
+        speakText("Bem-vindo ao Quiz de Estudos. Sistema pronto para o TalkBack.");
       }
     }
 
-    // Primeiro toque na tela inicia a música e o som normalmente como antes
+    // Inicia música e áudio no primeiro toque na tela
     document.addEventListener('click', function() {
       if (!hasUserStarted) {
         startMusicEngine();
@@ -307,6 +313,21 @@
       }
     }
 
+    // Função que faz o jogo reagir e perguntar "Tem certeza?" simulando o toque duplo / TalkBack
+    function handleNivelClick() {
+      initAudio();
+      if (pendingNivelClick) {
+        pendingNivelClick = false;
+        document.getElementById("cardNivel").classList.remove("pending-selection");
+        openPicker();
+      } else {
+        pendingNivelClick = true;
+        document.getElementById("cardNivel").classList.add("pending-selection");
+        var nivelAtual = document.getElementById("labelNivel").textContent;
+        speakText("Tem certeza que quer abrir o nível " + nivelAtual + "? Toque novamente para confirmar.");
+      }
+    }
+
     function openPicker() {
       initAudio();
       var modal = document.getElementById("pickerModal");
@@ -314,28 +335,37 @@
       container.innerHTML = "";
 
       ["Ensino Fundamental", "ENEM", "Concurso Público"].forEach(function(n) {
-        var item = document.createElement("button");
+        var item = document.createElement("div");
         item.className = "selection-card";
-        item.style.width = "100%";
-        item.style.textAlign = "left";
         item.textContent = n;
-        item.setAttribute("aria-label", "Selecionar nível " + n);
         item.onclick = function(e) {
           e.stopPropagation();
           document.getElementById("labelNivel").textContent = n;
-          document.getElementById("cardNivel").setAttribute("aria-label", "Nível de ensino selecionado: " + n + ". Toque duas vezes para alterar.");
-          speakText("Nível selecionado: " + n);
+          speakText("Nível alterado para: " + n);
           closePicker();
         };
         container.appendChild(item);
       });
       modal.style.display = "flex";
-      speakText("Janela de seleção aberta. Escolha o nível.");
+      speakText("Selecione entre Ensino Fundamental, ENEM ou Concurso Público.");
     }
 
     function closePicker() { document.getElementById("pickerModal").style.display = "none"; }
     function openModal() { initAudio(); document.getElementById("settingsModal").style.display = "flex"; speakText("Configurações abertas."); }
     function closeModal() { document.getElementById("settingsModal").style.display = "none"; }
+
+    function handleStartClick() {
+      initAudio();
+      if (pendingStartClick) {
+        pendingStartClick = false;
+        document.getElementById("btnIniciar").classList.remove("pending-selection");
+        startQuiz();
+      } else {
+        pendingStartClick = true;
+        document.getElementById("btnIniciar").classList.add("pending-selection");
+        speakText("Tem certeza que deseja Iniciar os Simulados? Toque novamente para confirmar.");
+      }
+    }
 
     function startQuiz() {
       initAudio();
@@ -373,6 +403,7 @@
         return;
       }
 
+      selectedAnswerPending = null;
       var q = lista[currentQuestIndex];
       document.getElementById("progressIndicator").textContent = "Questão " + (currentQuestIndex + 1) + " de " + lista.length;
       document.getElementById("questionText").textContent = q.pergunta;
@@ -387,18 +418,32 @@
         var letra = letras[idx];
         var btn = document.createElement("button");
         btn.className = "option-btn";
+        btn.id = "opt-btn-" + idx;
         btn.textContent = letra + ") " + opt;
-        btn.setAttribute("aria-label", "Alternativa " + letra + ": " + opt + ". Toque duas vezes para responder.");
         
         btn.onclick = function() {
-          checkAnswer(idx, q.correta);
+          handleOptionClick(idx, letra, opt, q.correta);
         };
         optContainer.appendChild(btn);
         textoLeitura += " Alternativa " + letra + ": " + opt + ". ";
       });
 
-      speakText(textoLeiteur ? textoLeitura : "");
+      speakText(textoLeitura);
       setupTimer();
+    }
+
+    function handleOptionClick(idx, letra, texto, correta) {
+      initAudio();
+      if (selectedAnswerPending === idx) {
+        selectedAnswerPending = null;
+        checkAnswer(idx, correta);
+      } else {
+        selectedAnswerPending = idx;
+        var buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(function(b) { b.classList.remove('pending-selection'); });
+        document.getElementById("opt-btn-" + idx).classList.add('pending-selection');
+        speakText("Tem certeza que é a alternativa " + letra + "? Toque novamente para confirmar.");
+      }
     }
 
     function setupTimer() {
@@ -426,37 +471,4 @@
     }
 
     function checkAnswer(escolhida, correta) {
-      clearInterval(currentTimer);
-      if (escolhida === correta) {
-        triggerSuccess();
-      } else {
-        triggerGameOver("Você escolheu a alternativa incorreta!");
-      }
-    }
-
-    function triggerSuccess() {
-      document.getElementById("successModal").style.display = "flex";
-      speakText("Resposta correta! Muito bem.");
-    }
-
-    function nextQuestionAfterSuccess() {
-      document.getElementById("successModal").style.display = "none";
-      currentQuestIndex++;
-      loadQuestion();
-    }
-
-    function triggerGameOver(motivo) {
-      document.getElementById("gameOverText").textContent = motivo;
-      document.getElementById("gameOverModal").style.display = "flex";
-      speakText("Game Over. " + motivo);
-    }
-
-    function restartGameAfterGameOver() {
-      document.getElementById("gameOverModal").style.display = "none";
-      loadQuestion();
-    }
-
-    function returnToMainMenu() {
-      document.getElementById("gameOverModal").style.display = "none";
-      document.getElementById("successModal").style.display = "none";
-      document.getElementById("screenGame").styl
+      clearInterval(c
